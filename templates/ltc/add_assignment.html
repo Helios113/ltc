@@ -1,0 +1,25 @@
+{% extends 'ltc/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+	Add assignment
+{% endblock %}
+
+{% block body_block %}
+    {% if added %}
+    <strong>New assignment added!</strong>
+    <a href="{% url 'ltc:index' %}">Back to homepage.</a><br />
+    {% endif %}
+    <form id="assignment_form" method="post" action="{% url 'ltc:add_assignment' %}"
+    enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <!-- Display each form -->
+    {{ form.as_p }}
+    <!-- Provide a button to click to submit the form. -->
+
+    <input type="submit" name="submit" value="Add new assignment" />
+    </form>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'ltc/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+	Course Page
+{% endblock %}
+
+{% block body_block %}
+    {{ course }}
+    <hr />
+    {{ course.name }}
+    <hr />
+    {{ course.description }}
+    <hr />
+    {{ course.professor }}
+    <hr />
+
+    <ul>
+    {% for pre in prerequisite %}
+    <li>{{ pre }}</li>
+    {% endfor %}
+    {% for s in student %}
+    <li>{{ s }}</li>
+    {% endfor %}
+    {% for t in time_period %}
+    <li>{{ t }}</li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

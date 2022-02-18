@@ -1,0 +1,27 @@
+{% extends 'ltc/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+	Homepage
+{% endblock %}
+
+{% block body_block %}
+{% if user.is_authenticated %}
+{{ user.username }}
+{{ user.is_staff }}
+<br />
+{% endif%}
+{% if error_msg %}
+{{ error_msg }}
+<hr />
+{% endif %}
+<a href="{% url 'ltc:register' %}">Go to the Registration page.</a><br />
+<a href="{% url 'ltc:login' %}">Go to the login page.</a><br />
+<a href="{% url 'ltc:add_course' %}">Add a new course.</a><br />
+<a href="{% url 'ltc:add_assignment' %}">Add a new assignment.</a><br />
+<a href="{% url 'ltc:logout' %}">Log out.</a><br />
+<a href="{% url 'ltc:student_page' %}">Go to student page.</a><br />
+<a href="{% url 'ltc:professor_page' %}">Go to professor page.</a><br />
+<hr />
+<a href="/admin/">Go to the administration page.</a><br />
+{% endblock %}
