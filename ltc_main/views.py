@@ -137,3 +137,4 @@ def course_page(request, slug):
     time_period = c.time_period.all()
     context = {'course': c, 'prerequisite': prerequisite, 'student': student, 'time_period': time_period, }
     return render(request, 'ltc/course_page.html', context)
+
