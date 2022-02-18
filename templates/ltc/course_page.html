@@ -6,25 +6,51 @@
 {% endblock %}
 
 {% block body_block %}
-    {{ course }}
+    Course name: {{ course.name }}
     <hr />
-    {{ course.name }}
+    Course description: {{ course.description }}
     <hr />
-    {{ course.description }}
-    <hr />
-    {{ course.professor }}
+    Professor: <a href="{% url 'ltc:professor_page' course.professor.slug %}">{{ course.professor }}</a>
     <hr />
 
+    Prerequisites:
     <ul>
-    {% for pre in prerequisite %}
-    <li>{{ pre }}</li>
-    {% endfor %}
-    {% for s in student %}
-    <li>{{ s }}</li>
-    {% endfor %}
-    {% for t in time_period %}
-    <li>{{ t }}</li>
+    {% for pre in prerequisites %}
+       <li><a href="{% url 'ltc:course_page' pre.slug %}">{{ pre }}</a></li>
+    {% empty %}
+        No prerequisite
     {% endfor %}
     </ul>
+    <hr />
+
+    Students:
+    <ul>
+    {% for s in students %}
+        <li><a href="{% url 'ltc:student_page' s.slug %}">{{ s }}</a></li>
+    {% empty %}
+        No student.
+    {% endfor %}
+    </ul>
+    <hr />
+
+    Time_slots:
+    <ul>
+    {% for t in time_slots %}
+        <li><a href="{% url 'ltc:time_slot_page' t.slug %}">{{ t }}</a></li>
+    {% empty %}
+        No time slot.
+    {% endfor %}
+    </ul>
+    <hr />
+
+    Assignments:
+    <ul>
+    {% for a in assignments %}
+        <li><a href="{% url 'ltc:assignment_page' a.slug %}">{{ a }}</a></li>
+    {% empty %}
+        No assignment.
+    {% endfor %}
+    </ul>
+    <hr />
 
 {% endblock %}

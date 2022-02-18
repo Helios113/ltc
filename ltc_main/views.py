@@ -10,6 +10,11 @@ from .models import *
 # Create your views here.
 def index(request):
     context = {}
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            context = {'professor': Professor.objects.get(user=request.user)}
+        else:
+            context = {'student': Student.objects.get(user=request.user)}
     return render(request, 'ltc/index.html', context)
 
 
@@ -60,50 +65,49 @@ def user_login(request):
         return render(request, 'ltc/login.html')
 
 
-def add_course(request):
-    form = CourseForm()
-    added = False
-    if request.method == 'POST':
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            t = form.save()
-            added = True
-        else:
-            print(form.errors)
-    else:
-        pass
-    context = {'form': form, 'added': added}
-    return render(request, 'ltc/add_course.html', context)
-
-
-def add_assignment(request):
-    form = AssignmentForm()
-    added = False
-    if request.method == 'POST':
-        form = AssignmentForm(request.POST)
-        if form.is_valid():
-            t = form.save()
-            added = True
-        else:
-            print(form.errors)
-    else:
-        pass
-    context = {'form': form, 'added': added}
-    return render(request, 'ltc/add_assignment.html', context)
-
-
 @login_required
 def user_logout(request):
     logout(request)
     return redirect(reverse('ltc:index'))
 
 
+def add_anything(request, Form, html):
+    form = Form()
+    added = False
+    if request.method == 'POST':
+        form = Form(request.POST)
+        if form.is_valid():
+            t = form.save()
+            added = True
+        else:
+            print(form.errors)
+    else:
+        pass
+    context = {'form': form, 'added': added}
+    return render(request, html, context)
+
+
 @login_required
-def student_page(request):
+def add_course(request):
+    return add_anything(request, CourseForm, 'ltc/add_course.html')
+
+
+@login_required
+def add_assignment(request):
+    return add_anything(request, AssignmentForm, 'ltc/add_assignment.html')
+
+
+@login_required
+def add_time_slot(request):
+    return add_anything(request, TimeSlotForm, 'ltc/add_time_slot.html')
+
+
+@login_required
+def student_page(request, slug):
     try:
-        s = request.user.student
+        s = Student.objects.get(slug=slug)
     except:
-        error_msg = "You are not a logged student."
+        error_msg = "Student not found."
         context = {'error_msg': error_msg}
         return render(request, 'ltc/index.html', context)
 
@@ -111,12 +115,13 @@ def student_page(request):
     context = {'student': s, 'courses': courses}
     return render(request, 'ltc/student_page.html', context)
 
+
 @login_required
-def professor_page(request):
+def professor_page(request, slug):
     try:
-        p = request.user.professor
+        p = Professor.objects.get(slug=slug)
     except:
-        error_msg = "You are not a logged professor."
+        error_msg = "Professor not found."
         context = {'error_msg': error_msg}
         return render(request, 'ltc/index.html', context)
 
@@ -125,6 +130,7 @@ def professor_page(request):
     return render(request, 'ltc/professor_page.html', context)
 
 
+@login_required
 def course_page(request, slug):
     try:
         c = Course.objects.get(slug=slug)
@@ -132,9 +138,40 @@ def course_page(request, slug):
         error_msg = "Course not found."
         context = {'error_msg': error_msg}
         return render(request, 'ltc/index.html', context)
-    prerequisite = c.prerequisite.all()
-    student = c.student.all()
-    time_period = c.time_period.all()
-    context = {'course': c, 'prerequisite': prerequisite, 'student': student, 'time_period': time_period, }
+    prerequisites = c.prerequisite.all()
+    students = c.student.all()
+    time_slots = c.time_slot.all()
+    assignments = c.assignment_set.all()
+    context = {'course': c, 'prerequisites': prerequisites, 'students': students, 'time_slots': time_slots, 'assignments': assignments, }
     return render(request, 'ltc/course_page.html', context)
+    # return render(request, 'ltc/show_everything_page.html', {'everything': context})
 
+
+@login_required
+def time_slot_page(request, slug):
+    try:
+        t = TimeSlot.objects.get(slug=slug)
+    except:
+        error_msg = "Time slot not found."
+        context = {'error_msg': error_msg}
+        return render(request, 'ltc/index.html', context)
+
+    day = t.day
+    time = t.time
+    context = {'day': day, 'time': time}
+    return render(request, 'ltc/time_slot_page.html', context)
+
+
+@login_required
+def assignment_page(request, slug):
+    try:
+        t = Assignment.objects.get(slug=slug)
+    except:
+        error_msg = "Assignment not found."
+        context = {'error_msg': error_msg}
+        return render(request, 'ltc/index.html', context)
+    course = t.course
+    title = t.title
+    detail = t.detail
+    context = {'course': course, 'title': title, 'detail': detail}
+    return render(request, 'ltc/assignment_page.html', context)
