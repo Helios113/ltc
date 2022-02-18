@@ -8,7 +8,7 @@ Hello everyone! Here is how to populate some dummy data into the database for te
   You may want to back up or delete your previous one.
 
 ```
-python manage.py makemigrations ltc
+python manage.py makemigrations ltc_main
 python manage.py migrate
 ```
 
