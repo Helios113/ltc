@@ -1,0 +1,16 @@
+{% extends 'ltc/base_simple.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+	Professor Page
+{% endblock %}
+
+{% block body_block %}
+    {{ professor }}
+    <hr />
+    <ul>
+    {% for course in courses %}
+    <li><a href="{% url 'ltc:course_page' course.slug %}">{{course}}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

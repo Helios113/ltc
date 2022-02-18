@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+
+    <head lang="en">
+        <meta charset="UTF-8" />
+        <title>
+            LTC++
+            {% block title_block %}
+                Default title.
+            {% endblock %}
+        </title>
+    </head>
+
+    <body>
+        <div>
+        {% block body_block %}
+            Default body.
+        {% endblock %}
+        </div>
+    </body>
+
+</html>
