@@ -6,10 +6,10 @@
 {% endblock %}
 
 {% block body_block %}
-    Name:{{ student }}
+    Student Name:{{ student }}
     <hr />
 
-    Courses:
+    Courses Enrolled:
     <ul>
     {% for course in courses %}
         <li><a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a></li>
@@ -17,4 +17,5 @@
         No course.
     {% endfor %}
     </ul>
+    <a href="{% url 'ltc:delete_student' student.slug %}"><button>Delete Student</button></a>
 {% endblock %}

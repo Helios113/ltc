@@ -2,15 +2,11 @@
 {% load staticfiles %}
 
 {% block title_block %}
-	Add Time Slot
+	Edit Assignment
 {% endblock %}
 
 {% block body_block %}
-    {% if added %}
-    <strong>New time slot added!</strong>
-    <a href="{% url 'ltc:index' %}">Back to homepage.</a><br />
-    {% endif %}
-    <form id="course_form" method="post" action="{% url 'ltc:add_time_slot' %}"
+    <form id="course_form" method="post" action="{% url 'ltc:edit_assignment' slug %}"
     enctype="multipart/form-data">
 
     {% csrf_token %}
@@ -19,7 +15,7 @@
     {{ form.as_p }}
     <!-- Provide a button to click to submit the form. -->
 
-    <input type="submit" name="submit" value="Add new time slot" />
+    <input type="submit" name="submit" value="Edit assignment" />
     </form>
 
 {% endblock %}

@@ -6,10 +6,10 @@
 {% endblock %}
 
 {% block body_block %}
-    Name:{{ professor }}
+    Professor Name:{{ professor }}
     <hr />
 
-    Courses:
+    Courses Teaching:
     <ul>
     {% for course in courses %}
         <li><a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a></li>
@@ -17,4 +17,5 @@
         No course.
     {% endfor %}
     </ul>
+    <a href="{% url 'ltc:delete_professor' professor.slug %}"><button>Delete Professor</button></a>
 {% endblock %}

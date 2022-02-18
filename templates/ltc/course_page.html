@@ -6,11 +6,11 @@
 {% endblock %}
 
 {% block body_block %}
-    Course name: {{ course.name }}
+    Course Name: {{ course.name }}
     <hr />
-    Course description: {{ course.description }}
+    Course Description: {{ course.description }}
     <hr />
-    Professor: <a href="{% url 'ltc:professor_page' course.professor.slug %}">{{ course.professor }}</a>
+    By Which Professor: <a href="{% url 'ltc:professor_page' course.professor.slug %}">{{ course.professor }}</a>
     <hr />
 
     Prerequisites:
@@ -18,12 +18,12 @@
     {% for pre in prerequisites %}
        <li><a href="{% url 'ltc:course_page' pre.slug %}">{{ pre }}</a></li>
     {% empty %}
-        No prerequisite
+        No prerequisite.
     {% endfor %}
     </ul>
     <hr />
 
-    Students:
+    Students On Course:
     <ul>
     {% for s in students %}
         <li><a href="{% url 'ltc:student_page' s.slug %}">{{ s }}</a></li>
@@ -33,7 +33,7 @@
     </ul>
     <hr />
 
-    Time_slots:
+    Time Slots:
     <ul>
     {% for t in time_slots %}
         <li><a href="{% url 'ltc:time_slot_page' t.slug %}">{{ t }}</a></li>
@@ -52,5 +52,6 @@
     {% endfor %}
     </ul>
     <hr />
-
+    <a href="{% url 'ltc:edit_course' course.slug %}"><button>Edit Course</button></a>
+    <a href="{% url 'ltc:delete_course' course.slug %}"><button>Delete Course</button></a>
 {% endblock %}
