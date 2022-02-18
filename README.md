@@ -6,7 +6,7 @@
 
 Here is how to populate some dummy data into the database for testing.
 
-* First, set up your virtual environment with Django==2.2.
+* First, set up your virtual environment with Django==2.1.5
 * Run the following commands to create a database because \*.sqlite3 files will not be tracked by Git.
 
 ```
