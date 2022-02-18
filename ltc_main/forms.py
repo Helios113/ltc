@@ -29,4 +29,11 @@ class AssignmentForm(forms.ModelForm):
 
     class Meta:
         model = Assignment
-        exclude = ()
+        exclude = ('slug',)
+
+
+class TimeSlotForm(forms.ModelForm):
+
+    class Meta:
+        model = TimeSlot
+        exclude = ('slug',)

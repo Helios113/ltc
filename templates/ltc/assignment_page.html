@@ -1,0 +1,14 @@
+{% extends 'ltc/base_simple.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+	Assignment Page
+{% endblock %}
+
+{% block body_block %}
+    Course:<a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a>
+    <br />
+    Title:{{ title }}
+    <br />
+    Detail:{{ detail }}
+{% endblock %}

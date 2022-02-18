@@ -6,11 +6,15 @@
 {% endblock %}
 
 {% block body_block %}
-    {{ professor }}
+    Name:{{ professor }}
     <hr />
+
+    Courses:
     <ul>
     {% for course in courses %}
-    <li><a href="{% url 'ltc:course_page' course.slug %}">{{course}}</a></li>
+        <li><a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a></li>
+    {% empty %}
+        No course.
     {% endfor %}
     </ul>
 {% endblock %}

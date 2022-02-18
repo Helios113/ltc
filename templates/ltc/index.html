@@ -11,17 +11,24 @@
 {{ user.is_staff }}
 <br />
 {% endif%}
+    {% if professor %}
+    <strong><a href="{% url 'ltc:professor_page' professor.slug %}">Go to My Page</a></strong><hr />
+{% endif %}
+{% if student %}
+    <strong><a href="{% url 'ltc:student_page' student.slug %}">Go to My Page</a></strong><hr />
+{% endif %}
 {% if error_msg %}
 {{ error_msg }}
 <hr />
 {% endif %}
 <a href="{% url 'ltc:register' %}">Go to the Registration page.</a><br />
 <a href="{% url 'ltc:login' %}">Go to the login page.</a><br />
+<a href="{% url 'ltc:logout' %}">Log out.</a><br />
+
 <a href="{% url 'ltc:add_course' %}">Add a new course.</a><br />
 <a href="{% url 'ltc:add_assignment' %}">Add a new assignment.</a><br />
-<a href="{% url 'ltc:logout' %}">Log out.</a><br />
-<a href="{% url 'ltc:student_page' %}">Go to student page.</a><br />
-<a href="{% url 'ltc:professor_page' %}">Go to professor page.</a><br />
+<a href="{% url 'ltc:add_time_slot' %}">Add a new time slot.</a><br />
+
 <hr />
 <a href="/admin/">Go to the administration page.</a><br />
 {% endblock %}
