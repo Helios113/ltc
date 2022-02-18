@@ -41,12 +41,12 @@ http://127.0.0.1:8000/ltc/
 * Follow the links on that page to register and login.
 * Here are some pre-registered student accounts:
 ```
-Username:   Amelia      Emily       Jack        Mason
+Username:       Amelia      Emily       Jack        Mason
 Password: 	Amelia123   Emily123    Jack123     Mason123
 ```
-* and professor accounts:
+* Some professor accounts as well:
 ```
-Username:   Charlotte       Harry
+Username:       Charlotte       Harry
 Password: 	Charlotte123    Harry123
 ```
 * You can find these accounts in populate_ltc.py
@@ -81,4 +81,4 @@ All notable changes to this project will be documented in this file.
 * Timeslot page added.
 * More dummy data.
 ### Changed
-* Rename: Time_Period -> Time_Slot
+* Rename: TimePeriod -> TimeSlot
