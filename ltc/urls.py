@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
+from ltc_main import views
+
 
 urlpatterns = [
+    path('', views.index, name='index'),
+    path('ltc/', include('ltc_main.urls')),
+    # The above maps any URLs starting with ltc/ to be handled by ltc_main.
     path('admin/', admin.site.urls),
 ]
