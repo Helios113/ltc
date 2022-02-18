@@ -10,7 +10,7 @@ Here is how to populate some dummy data into the database for testing.
 * Run the following commands to create a database because \*.sqlite3 files will not be tracked by Git.
 
 ```
-python manage.py makemigrations ltc
+python manage.py makemigrations ltc_main
 python manage.py migrate
 ```
 
