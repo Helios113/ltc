@@ -9,4 +9,7 @@
     Day:{{ day }}
     <br />
     Time:{{ time }}
+    <br />
+    <a href="{% url 'ltc:edit_time_slot' time_slot.slug %}"><button>Edit Time Slot</button></a>
+    <a href="{% url 'ltc:delete_time_slot' time_slot.slug %}"><button>Delete Time Slot</button></a>
 {% endblock %}

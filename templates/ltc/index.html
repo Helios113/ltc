@@ -11,16 +11,8 @@
 {{ user.is_staff }}
 <br />
 {% endif%}
-    {% if professor %}
-    <strong><a href="{% url 'ltc:professor_page' professor.slug %}">Go to My Page</a></strong><hr />
-{% endif %}
-{% if student %}
-    <strong><a href="{% url 'ltc:student_page' student.slug %}">Go to My Page</a></strong><hr />
-{% endif %}
-{% if error_msg %}
-{{ error_msg }}
-<hr />
-{% endif %}
+
+
 <a href="{% url 'ltc:register' %}">Go to the Registration page.</a><br />
 <a href="{% url 'ltc:login' %}">Go to the login page.</a><br />
 <a href="{% url 'ltc:logout' %}">Log out.</a><br />
@@ -30,5 +22,56 @@
 <a href="{% url 'ltc:add_time_slot' %}">Add a new time slot.</a><br />
 
 <hr />
-<a href="/admin/">Go to the administration page.</a><br />
+    <strong><a href="/admin/">Go to the administration page.</a></strong>
+<hr />
+
+    All Students:
+    <ul>
+    {% for s in students %}
+        <li><a href="{% url 'ltc:student_page' s.slug %}">{{ s }}</a></li>
+    {% empty %}
+        No student.
+    {% endfor %}
+    </ul>
+    <hr />
+
+    All Professors:
+    <ul>
+    {% for p in professors %}
+        <li><a href="{% url 'ltc:professor_page' p.slug %}">{{ p }}</a></li>
+    {% empty %}
+        No professor.
+    {% endfor %}
+    </ul>
+    <hr />
+
+    All Courses:
+    <ul>
+    {% for c in courses %}
+        <li><a href="{% url 'ltc:course_page' c.slug %}">{{ c }}</a></li>
+    {% empty %}
+        No course.
+    {% endfor %}
+    </ul>
+    <hr />
+
+    All Assignments:
+    <ul>
+    {% for a in assignments %}
+        <li><a href="{% url 'ltc:assignment_page' a.slug %}">{{ a }}</a></li>
+    {% empty %}
+        No assignment.
+    {% endfor %}
+    </ul>
+    <hr />
+
+    All Time Slots:
+    <ul>
+    {% for t in time_slots %}
+        <li><a href="{% url 'ltc:time_slot_page' t.slug %}">{{ t }}</a></li>
+    {% empty %}
+        No time slot.
+    {% endfor %}
+    </ul>
+    <hr />
 {% endblock %}

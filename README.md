@@ -82,3 +82,9 @@ All notable changes to this project will be documented in this file.
 * More dummy data.
 ### Changed
 * Rename: TimePeriod -> TimeSlot
+## [1.0.4] - 2022-02-19
+### Added
+* Users can delete students, professors, courses, assignments and time slots now.
+* Users can edit courses, assignments and time slots now.
+### Changed
+* For convenience, all data can be directly accessed from the index page.

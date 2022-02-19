@@ -35,7 +35,7 @@ class TimeSlot(models.Model):
         unique_together = (("day", "time"),)
 
     def __str__(self):
-        return self.day + ' ' + str(self.time)
+        return self.day.title() + ' from ' + str(self.time)+' to '+str(self.time+1)
 
 
 class Professor(models.Model):
