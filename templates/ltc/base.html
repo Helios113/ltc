@@ -9,55 +9,78 @@
        Default title. 
       {% endblock %}
     </title>
-
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
     <link
-      href="https://getbootstrap.com/docs/5.1/dist/css/bootstrap.min.css"
+      href="https://getbootstrap.com/docs/4.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
 
     <meta name="theme-color" content="#7952b3" />
     <!-- Custom styles for this template -->
     <link
-      href="https://getbootstrap.com/docs/5.1/examples/product/product.css"
+      href="https://getbootstrap.com/docs/4.2/examples/product/product.css"
       rel="stylesheet"
     />
   </head>
   <body>
-    <header class="site-header sticky-top py-1">
-      <nav
-        class="container d-flex flex-column flex-md-row justify-content-between"
-      >
-        <a class="py-2 d-none d-md-inline-block" href={% url 'ltc:index' %}>LTC++</a>
-        
-        <a class="py-2 d-none d-md-inline-block" href="#">Tour</a>
-        <a class="py-2 d-none d-md-inline-block" href="#">Product</a>
-        <a class="py-2 d-none d-md-inline-block" href="#">Features</a>
-        <a class="py-2 d-none d-md-inline-block" href="#">Enterprise</a>
-        <a class="py-2 d-none d-md-inline-block" href="#">Support</a>
-        <a class="py-2 d-none d-md-inline-block" href="#">Pricing</a>
-        <a class="py-2 d-none d-md-inline-block" href="#">Cart</a>
+      <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <div class="container">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <a class="navbar-brand" href={% url 'ltc:index' %}>LTC++</a>
+          <div class="collapse navbar-collapse" id="mainNav">
+            <div class="navbar-nav">
+              <!-- These are our regular links -->
+              {% if user.is_authenticated %}
+              <a class="nav-item nav-link {% if nbar == 'course' %}active{% endif %}" href="#"><i class="fa fa-calendar fa-lg"></i> Time Table</a>
+              <a class="nav-item nav-link {% if nbar == 'course' %}active{% endif %}" href="#"><i class="fa fa-book fa-lg"></i> Courses</a>
+              {% if user.is_staff is False%}
+              <a class="nav-item nav-link {% if nbar == 'grades' %}active{% endif %}" href="#"><i class="fa fa-star-o fa-lg"></i> Grades</a>
+              {% endif %}
+              <a class="nav-item nav-link {% if nbar == 'meeting' %}active{% endif %}" href="#"><i class="fa fa-clock-o fa-lg"></i> Schedule a meeting</a>
+              {% endif %}
+            </div>
+            <!-- Right aligned field -->
+            <div class="navbar-nav ml-auto">
+                  <!-- This is where we can have a hello partner -->
+                  <!-- And a log in/out field -->
+                  {% if user.is_authenticated %}
+                  <a class="nav-item nav-link" href={% url 'ltc:logout' %}>Log out</a>
+                  {% else %}
+                  <a class="nav-item nav-link" href={% url 'ltc:login' %}>Log in</a>
+                  {% endif %}
+            </div>
+          </div>
+        </div>
       </nav>
-    </header>
-
     <main>
+    <div class="container">
       {% block body_block %}
         
       {% endblock %}
+    </div>
     </main>
 
-    <footer class="container py-5">
-      {% block footer_block %}
-        
-      {% endblock %}
-    </footer>
-
-    <script
-      src="https://getbootstrap.com/docs/5.1/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-      crossorigin="anonymous"
-    ></script>
+   <!-- Bootstrap core JavaScript -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.2/assets/js/vendor/jquery-slim.min.js"><\/script>')
+</script>
+<script src="https://getbootstrap.com/docs/4.2/dist/js/bootstrap.bundle.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js">
+</script>
+<script src="https://getbootstrap.com/docs/4.2/examples/dashboard/dashboard.js">
+</script>
   </body>
 </html>
+<style>
+  html { 
+  overflow-y: scroll; 
+  }
+</style>
