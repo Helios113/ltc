@@ -1,53 +1,51 @@
 {% extends 'ltc/base.html' %}
 {% load staticfiles %}
 {% block title_block %}
-Login
+    Login
 {% endblock %}
 {% block body_block %}
-<div class="container py-5 h-100">
-  <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-            <form id="user_form" method="post" action="{% url 'ltc:login' %}">
-                {% csrf_token %}
-                <div class="text-center">
-                <h1 class="mb-8">Login to LTC++</h1>
-                <p class="text-black-50">Please enter your login and password!</p>
-                </div>
-
-                <div class="form-outline mb-3"">
-                <label class="form-label">Username</label>
-                <input
-                    type="text"
-                    class="form-control form-control-lg"
-                    name="username"
-                    placeholder="John Dow"
-                />
-                </div>
-
-                <div class="form-outline mb-3"">
-                <label class="form-label" for="typePasswordX">Password</label>
-                <input
-                    type="password"
-                    class="form-control form-control-lg"
-                    name="password"
-                    placeholder="Password123"
-                />
-                </div>
+    <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <form id="user_form" method="post" action="{% url 'ltc:login' %}">
+                    {% csrf_token %}
                     <div class="text-center">
-                        <p class="mb-3">
-                            <!-- Add a password changer? -->
-                            <a class="text-black-50" href="#!">Forgot password?</a>
-                        </p>
-                        <button class="btn btn-primary mb-3" type="submit">Login</button>
-                        <p class="mb-3">
-                            Don't have an account?
-                            <a href="{% url 'ltc:register' %}" class="text-black-50">Register</a>
-                        </p>
+                    <h1 class="mb-8">Login to LTC++</h1>
+                    <p class="text-black-50">Please enter your login and password!</p>
                     </div>
-                </div>
-            </form>
-        </div>
+
+                    <div class="form-outline mb-3"">
+                    <label class="form-label">Username</label>
+                    <input
+                        type="text"
+                        class="form-control form-control-lg"
+                        name="username"
+                        placeholder="John Dow"
+                    />
+                    </div>
+
+                    <div class="form-outline mb-3"">
+                    <label class="form-label" for="typePasswordX">Password</label>
+                    <input
+                        type="password"
+                        class="form-control form-control-lg"
+                        name="password"
+                        placeholder="Password123"
+                    />
+                    </div>
+                        <div class="text-center">
+                            <p class="mb-3">
+                                <!-- Add a password changer? -->
+                                <a class="text-black-50" href="#!">Forgot password?</a>
+                            </p>
+                            <button class="btn btn-primary mb-3" type="submit">Login</button>
+                            <p class="mb-3">
+                                Don't have an account?
+                                <a href="{% url 'ltc:register' %}" class="text-black-50">Register</a>
+                            </p>
+                        </div>
+                    </div>
+                </form>
+            </div>
     </div>
-</div>
 
 {% endblock %}

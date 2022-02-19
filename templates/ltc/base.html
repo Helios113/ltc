@@ -9,7 +9,8 @@
        Default title. 
       {% endblock %}
     </title>
-
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Bootstrap core CSS -->
     <link
       href="https://getbootstrap.com/docs/4.2/dist/css/bootstrap.min.css"
@@ -30,26 +31,32 @@
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          <a class="navbar-brand" href="#">Navbar</a>
+          <a class="navbar-brand" href={% url 'ltc:index' %}>LTC++</a>
           <div class="collapse navbar-collapse" id="mainNav">
             <div class="navbar-nav">
               <!-- These are our regular links -->
-              <a class="nav-item nav-link active" href="#">Home</a>
-              <a class="nav-item nav-link" href="#">Home</a>
-              <a class="nav-item nav-link" href="#">Home</a>
-              <a class="nav-item nav-link" href="#">Home</a>
-              <a class="nav-right nav-link" href="#">Home</a>
+              {% if user.is_authenticated %}
+              <a class="nav-item nav-link {% if nbar == 'course' %}active{% endif %}" href="#"><i class="fa fa-calendar fa-lg"></i> Time Table</a>
+              <a class="nav-item nav-link {% if nbar == 'course' %}active{% endif %}" href="#"><i class="fa fa-book fa-lg"></i> Courses</a>
+              {% if user.is_staff is False%}
+              <a class="nav-item nav-link {% if nbar == 'grades' %}active{% endif %}" href="#"><i class="fa fa-star-o fa-lg"></i> Grades</a>
+              {% endif %}
+              <a class="nav-item nav-link {% if nbar == 'meeting' %}active{% endif %}" href="#"><i class="fa fa-clock-o fa-lg"></i> Schedule a meeting</a>
+              {% endif %}
             </div>
             <!-- Right aligned field -->
             <div class="navbar-nav ml-auto">
                   <!-- This is where we can have a hello partner -->
                   <!-- And a log in/out field -->
-                  <a class="nav-item nav-link" href="#">Log in</a>
+                  {% if user.is_authenticated %}
+                  <a class="nav-item nav-link" href={% url 'ltc:logout' %}>Log out</a>
+                  {% else %}
+                  <a class="nav-item nav-link" href={% url 'ltc:login' %}>Log in</a>
+                  {% endif %}
             </div>
           </div>
         </div>
       </nav>
-      
     <main>
     <div class="container">
       {% block body_block %}
@@ -72,3 +79,8 @@ window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.2/
 </script>
   </body>
 </html>
+<style>
+  html { 
+  overflow-y: scroll; 
+  }
+</style>
