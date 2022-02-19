@@ -10,7 +10,7 @@
     <hr />
     Course Description: {{ course.description }}
     <hr />
-    By Which Professor: <a href="{% url 'ltc:professor_page' course.professor.slug %}">{{ course.professor }}</a>
+    By Which Staff: <a href="{% url 'ltc:staff_page' course.staff.slug %}">{{ course.staff }}</a>
     <hr />
 
     Prerequisites:
@@ -23,25 +23,17 @@
     </ul>
     <hr />
 
-    Students On Course:
+    Events On Course:
     <ul>
-    {% for s in students %}
-        <li><a href="{% url 'ltc:student_page' s.slug %}">{{ s }}</a></li>
+    {% for e in events %}
+        <li><a href="{% url 'ltc:event_page' e.slug %}">{{ e }}</a></li>
     {% empty %}
-        No student.
+        No event.
     {% endfor %}
     </ul>
     <hr />
 
-    Time Slots:
-    <ul>
-    {% for t in time_slots %}
-        <li><a href="{% url 'ltc:time_slot_page' t.slug %}">{{ t }}</a></li>
-    {% empty %}
-        No time slot.
-    {% endfor %}
-    </ul>
-    <hr />
+
 
     Assignments:
     <ul>
