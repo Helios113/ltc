@@ -243,3 +243,12 @@ def edit_time_slot(request, slug):
         pass
     context = {'form': form, 'slug': slug}
     return render(request, 'ltc/edit_time_slot.html', context)
+
+
+def courses(request):
+    courses = Course.objects.all()
+    context = {
+        'nbar' : 'courses',
+        'courses': courses
+    }
+    return render(request, 'ltc/courses.html', context)

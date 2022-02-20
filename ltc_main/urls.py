@@ -19,6 +19,7 @@ urlpatterns = [
     path('student_page/<slug:slug>/', views.student_page, name='student_page'),
     path('professor_page/<slug:slug>/', views.professor_page, name='professor_page'),
     path('course_page/<slug:slug>/', views.course_page, name='course_page'),
+    path('courses', views.courses, name='courses'),
     path('assignment_page/<slug:slug>/', views.assignment_page, name='assignment_page'),
     path('time_slot_page/<slug:slug>/', views.time_slot_page, name='time_slot_page'),
 

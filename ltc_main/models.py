@@ -1,8 +1,8 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
-
-
+from django.core.files import File
+import ltc_main.image_generator as ig
 # Create your models here.
 class TimeSlot(models.Model):
     MON = 'MONDAY'
@@ -70,11 +70,13 @@ class Course(models.Model):
     prerequisite = models.ManyToManyField('self', symmetrical=False, blank=True)
     student = models.ManyToManyField(Student, blank=True)
     time_slot = models.ManyToManyField(TimeSlot, blank=True)
+    photo = models.TextField(null=True, blank=True)
 
     slug = models.SlugField(unique=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
+        self.photo = ig.generate_identicon(self.name)
         super(Course, self).save(*args, **kwargs)
 
     def __str__(self):
