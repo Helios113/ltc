@@ -121,9 +121,10 @@ class Course(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE, null=True)
     prerequisite = models.ManyToManyField('self', symmetrical=False, blank=True)
     slug = models.SlugField(unique=True, null=True, blank=True)
-
+    photo = models.TextField(null=True, blank=True)
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
+        self.photo = ig.generate_identicon(self.name)
         super(Course, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -137,24 +138,14 @@ class Event(models.Model):
     location = models.CharField(max_length=128)
     address = models.CharField(max_length=128)
     time_slot = models.ManyToManyField(TimeSlot, blank=True)
-<<<<<<< HEAD
-    photo = models.TextField(null=True, blank=True)
-
-=======
->>>>>>> master
     slug = models.SlugField(unique=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
-<<<<<<< HEAD
-        self.photo = ig.generate_identicon(self.name)
-        super(Course, self).save(*args, **kwargs)
-=======
         super(Event, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = (("course", "name"),)
->>>>>>> master
 
     def __str__(self):
         return str(self.course) + ' ' + str(self.name)
