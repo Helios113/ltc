@@ -3,7 +3,11 @@ from .models import *
 
 # Register your models here.
 admin.site.register(TimeSlot)
-admin.site.register(Professor)
+admin.site.register(Staff)
 admin.site.register(Course)
 admin.site.register(Student)
 admin.site.register(Assignment)
+admin.site.register(Event)
+admin.site.register(Grade)
+admin.site.register(Degree)
+

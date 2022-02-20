@@ -2,16 +2,16 @@
 {% load staticfiles %}
 
 {% block title_block %}
-	Student Page
+	Staff Page
 {% endblock %}
 
 {% block body_block %}
-    Student Name:{{ student }}
+    Staff Name:{{ staff }}
     <hr />
-    <a href="{% url 'ltc:delete_student' student.slug %}"><button>Delete Student</button></a>
+    Type: {{ staff.type }}
     <hr />
 
-    Courses Enrolled:
+    Courses Teaching:
     <ul>
     {% for course in courses %}
         <li><a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a></li>
@@ -19,18 +19,9 @@
         No course.
     {% endfor %}
     </ul>
-    <hr />
+    <a href="{% url 'ltc:delete_staff' staff.slug %}"><button>Delete Staff</button></a>
 
-    Events Enrolled:
-    <ul>
-    {% for e in events %}
-        <li><a href="{% url 'ltc:event_page' e.slug %}">{{ e }}</a></li>
-    {% empty %}
-        No event.
-    {% endfor %}
-    </ul>
     <hr />
-
     Available Time Slots:
     <ul>
     {% for t in available_time_slots %}
@@ -40,6 +31,4 @@
     {% endfor %}
     </ul>
     <hr />
-
-
 {% endblock %}

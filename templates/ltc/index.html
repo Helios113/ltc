@@ -22,6 +22,8 @@
 <a href="{% url 'ltc:add_course' %}">Add a new course.</a><br />
 <a href="{% url 'ltc:add_assignment' %}">Add a new assignment.</a><br />
 <a href="{% url 'ltc:add_time_slot' %}">Add a new time slot.</a><br />
+<a href="{% url 'ltc:add_grade' %}">Add a new grade.</a><br />
+<a href="{% url 'ltc:add_degree' %}">Add a new degree.</a><br />
 
 <hr />
     <strong><a href="/admin/">Go to the administration page.</a></strong>
@@ -37,12 +39,12 @@
     </ul>
     <hr />
 
-    All Professors:
+    All Staffs:
     <ul>
-    {% for p in professors %}
-        <li><a href="{% url 'ltc:professor_page' p.slug %}">{{ p }}</a></li>
+    {% for p in staffs %}
+        <li><a href="{% url 'ltc:staff_page' p.slug %}">{{ p }}</a></li>
     {% empty %}
-        No professor.
+        No staff.
     {% endfor %}
     </ul>
     <hr />
@@ -57,12 +59,43 @@
     </ul>
     <hr />
 
+    All Events:
+    <ul>
+    {% for e in events %}
+        <li><a href="{% url 'ltc:event_page' e.slug %}">{{ e }}</a></li>
+    {% empty %}
+        No event.
+    {% endfor %}
+    </ul>
+    <hr />
+
     All Assignments:
     <ul>
     {% for a in assignments %}
         <li><a href="{% url 'ltc:assignment_page' a.slug %}">{{ a }}</a></li>
     {% empty %}
         No assignment.
+    {% endfor %}
+    </ul>
+    <hr />
+
+
+    All Grades:
+    <ul>
+    {% for g in grades %}
+        <li><a href="{% url 'ltc:grade_page' g.slug %}">{{ g }}</a></li>
+    {% empty %}
+        No grade.
+    {% endfor %}
+    </ul>
+    <hr />
+
+    All Degrees:
+    <ul>
+    {% for d in degrees %}
+        <li><a href="{% url 'ltc:degree_page' d.slug %}">{{ d }}</a></li>
+    {% empty %}
+        No degree.
     {% endfor %}
     </ul>
     <hr />
@@ -76,4 +109,6 @@
     {% endfor %}
     </ul>
     <hr />
+
+
 {% endblock %}
