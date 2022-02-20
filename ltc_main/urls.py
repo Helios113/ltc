@@ -46,10 +46,13 @@ urlpatterns = [
     path('edit_degree/<slug:slug>/', views.edit_degree, name='edit_degree'),
 
 
-    # TODO:Event create, edit and delete
+    # Event create, edit and delete
     path('add_event/', views.add_event, name='add_event'),
     path('event_page/<slug:slug>/', views.event_page, name='event_page'),
     path('edit_event/<slug:slug>/', views.edit_event, name='edit_event'),
     path('delete_event/<slug:slug>/', views.delete_event, name='delete_event'),
+
+    # Find meeting time
+    path('find_meeting_time/', views.find_meeting_time, name='find_meeting_time'),
 
 ]

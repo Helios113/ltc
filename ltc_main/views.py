@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.forms.models import ModelMultipleChoiceField
 from .forms import *
 from .models import *
 
@@ -47,6 +48,20 @@ def register(request):
                 t.is_staff = True
                 t.save()
                 p = Staff.objects.create(user=t)
+                p.type = Staff.PROFESSOR
+                p.save()
+            elif form.cleaned_data['identity'] == UserForm.TEACHING_ASSISTANT:
+                t.is_staff = True
+                t.save()
+                p = Staff.objects.create(user=t)
+                p.type = Staff.TEACHING_ASSISTANT
+                p.save()
+            elif form.cleaned_data['identity'] == UserForm.ADMINISTRATOR:
+                t.is_staff = True
+                t.is_superuser = True
+                t.save()
+                p = Staff.objects.create(user=t)
+                p.type = Staff.ADMINISTRATOR
                 p.save()
             else:
                 raise RuntimeError('Unknown identity. Ask Xinyu for detail.')
@@ -175,15 +190,6 @@ def event_page(request, slug):
 
 
 @login_required
-def time_slot_page(request, slug):
-    t = get_object_or_404(TimeSlot, slug=slug)
-    day = t.day
-    time = t.time
-    context = {'time_slot': t, 'day': day, 'time': time}
-    return render(request, 'ltc/time_slot_page.html', context)
-
-
-@login_required
 def assignment_page(request, slug):
     a = get_object_or_404(Assignment, slug=slug)
     course = a.course
@@ -191,6 +197,15 @@ def assignment_page(request, slug):
     detail = a.detail
     context = {'assignment': a, 'course': course, 'title': title, 'detail': detail}
     return render(request, 'ltc/assignment_page.html', context)
+
+
+@login_required
+def time_slot_page(request, slug):
+    t = get_object_or_404(TimeSlot, slug=slug)
+    day = t.day
+    time = t.time
+    context = {'time_slot': t, 'day': day, 'time': time}
+    return render(request, 'ltc/time_slot_page.html', context)
 
 
 @login_required
@@ -354,8 +369,29 @@ def edit_degree(request, slug):
     return edit_anything(request, Degree, DegreeForm, 'ltc/edit_degree.html', slug, 'ltc:degree_page')
 
 
-
 @login_required
 def edit_event(request, slug):
     return edit_anything(request, Event, EventForm, 'ltc/edit_event.html', slug, 'ltc:event_page')
 
+
+@login_required
+def find_meeting_time(request):
+    # students = Student.objects.all()
+    time_slots = ''
+    form = MeetingForm()
+    # form.fields['student'] = ModelMultipleChoiceField(students)
+    if request.method == 'POST':
+        form = MeetingForm(request.POST)
+        if form.is_valid():
+            time_slots = TimeSlot.objects.all()
+            for s in form.cleaned_data['student']:
+                time_slots = time_slots & s.get_available_time_slots()
+        else:
+            print(form.errors)
+    else:
+        pass
+    context = {
+        'form': form,
+        'time_slots': time_slots,
+    }
+    return render(request, 'ltc/find_meeting_time.html', context)
