@@ -51,18 +51,19 @@ def populate_user(student_usernames, staff_usernames):
         t.save()
 
     for name in staff_usernames:
-        t = User.objects.get_or_create(username=name)[0]
-        t.email = name + '@student.gla.ac.uk'
-        t.is_staff = True
-        t.set_password(name + '123')
-        t.save()
+        s = User.objects.get_or_create(username=name)[0]
+        s.email = name + '@student.gla.ac.uk'
+        s.is_staff = True
+        s.set_password(name + '123')
+        s.save()
     return
 
 
-def populate_staff(staff_usernames):
-    for name in staff_usernames:
-        t = Staff.objects.get_or_create(user=User.objects.get(username=name))[0]
-        t.save()
+def populate_staff(staffs):
+    for info in staffs:
+        s = Staff.objects.get_or_create(user=User.objects.get(username=info['name']))[0]
+        s.type = info['type']
+        s.save()
     return
 
 
@@ -107,15 +108,15 @@ def populate_grade(grades):
         g = Grade.objects.create(student=Student.objects.get(user=User.objects.get(username=info['student'])),
                                  staff=Staff.objects.get(user=User.objects.get(username=info['staff'])),
                                  course=Course.objects.get(name=info['course']))
-        g.name=info['name']
-        g.result=info['result']
+        g.name = info['name']
+        g.result = info['result']
         g.save()
     return
 
 
 def populate_degree(degrees):
     for info in degrees:
-        d=Degree.objects.create(name=info['name'])
+        d = Degree.objects.create(name=info['name'])
         d.course.set(Course.objects.filter(name__in=info['courses']))
         d.save()
     return
@@ -127,6 +128,8 @@ def populate():
     # The default password is username plus '123'.
     student_usernames = ['Amelia', 'Emily', 'Jack', 'Mason', ]
     staff_usernames = ['Charlotte', 'Harry', ]
+    staffs = [{'name': 'Charlotte', 'type': Staff.PROF, },
+              {'name': 'Harry', 'type': Staff.TA, }]
 
     # Set courses info here.
     courses = [
@@ -219,7 +222,7 @@ def populate():
     populate_time_slot()
     populate_user(student_usernames, staff_usernames)
     # The Staff points to the User, so the User goes first.
-    populate_staff(staff_usernames)
+    populate_staff(staffs)
     # The Student points to the User.
     populate_student(student_usernames)
     # The Course points to the staff.
@@ -233,6 +236,6 @@ def populate():
 
 
 if __name__ == '__main__':
-    print('Starting MoodlePlus population script...')
+    print('Starting LTC++ population script...')
     populate()
     print('Done.')

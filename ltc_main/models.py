@@ -63,7 +63,6 @@ class Staff(models.Model):
         choices=TypeChoices,
         default=PROF,
     )
-    available_time_slots = models.ManyToManyField(TimeSlot, blank=True)
     slug = models.SlugField(unique=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
