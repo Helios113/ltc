@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.forms.models import ModelMultipleChoiceField
 from .forms import *
 from .models import *
 
@@ -10,16 +11,22 @@ from .models import *
 # Create your views here.
 def index(request):
     students = Student.objects.all()
-    professors = Professor.objects.all()
+    staffs = Staff.objects.all()
     courses = Course.objects.all()
+    events = Event.objects.all()
     assignments = Assignment.objects.all()
     time_slots = TimeSlot.objects.all()
+    grades = Grade.objects.all()
+    degrees = Degree.objects.all()
     context = {
         'students': students,
-        'professors': professors,
+        'staffs': staffs,
         'courses': courses,
+        'events': events,
         'assignments': assignments,
         'time_slots': time_slots,
+        'grades': grades,
+        'degrees': degrees,
     }
     return render(request, 'ltc/index.html', context)
 
@@ -40,7 +47,21 @@ def register(request):
             elif form.cleaned_data['identity'] == UserForm.PROFESSOR:
                 t.is_staff = True
                 t.save()
-                p = Professor.objects.create(user=t)
+                p = Staff.objects.create(user=t)
+                p.type = Staff.PROFESSOR
+                p.save()
+            elif form.cleaned_data['identity'] == UserForm.TEACHING_ASSISTANT:
+                t.is_staff = True
+                t.save()
+                p = Staff.objects.create(user=t)
+                p.type = Staff.TEACHING_ASSISTANT
+                p.save()
+            elif form.cleaned_data['identity'] == UserForm.ADMINISTRATOR:
+                t.is_staff = True
+                t.is_superuser = True
+                t.save()
+                p = Staff.objects.create(user=t)
+                p.type = Staff.ADMINISTRATOR
                 p.save()
             else:
                 raise RuntimeError('Unknown identity. Ask Xinyu for detail.')
@@ -99,6 +120,11 @@ def add_course(request):
 
 
 @login_required
+def add_event(request):
+    return add_anything(request, EventForm, 'ltc/add_event.html')
+
+
+@login_required
 def add_assignment(request):
     return add_anything(request, AssignmentForm, 'ltc/add_assignment.html')
 
@@ -109,40 +135,58 @@ def add_time_slot(request):
 
 
 @login_required
+def add_grade(request):
+    return add_anything(request, GradeForm, 'ltc/add_grade.html')
+
+
+@login_required
+def add_degree(request):
+    return add_anything(request, DegreeForm, 'ltc/add_degree.html')
+
+
+@login_required
 def student_page(request, slug):
     s = get_object_or_404(Student, slug=slug)
-    courses = s.course_set.all()
-    context = {'student': s, 'courses': courses}
+    events = s.event_set.all()
+    courses = s.get_courses()
+    available_time_slots = s.get_available_time_slots()
+    context = {'student': s, 'courses': courses, 'events': events, 'available_time_slots': available_time_slots}
     return render(request, 'ltc/student_page.html', context)
 
 
 @login_required
-def professor_page(request, slug):
-    p = get_object_or_404(Professor, slug=slug)
+def staff_page(request, slug):
+    p = get_object_or_404(Staff, slug=slug)
     courses = p.course_set.all()
-    context = {'professor': p, 'courses': courses}
-    return render(request, 'ltc/professor_page.html', context)
+    available_time_slots = p.get_available_time_slots()
+    context = {'staff': p, 'courses': courses, 'available_time_slots': available_time_slots}
+    return render(request, 'ltc/staff_page.html', context)
 
 
 @login_required
 def course_page(request, slug):
     c = get_object_or_404(Course, slug=slug)
     prerequisites = c.prerequisite.all()
-    students = c.student.all()
-    time_slots = c.time_slot.all()
     assignments = c.assignment_set.all()
-    context = {'course': c, 'prerequisites': prerequisites, 'students': students, 'time_slots': time_slots,
-               'assignments': assignments, }
+    events = c.event_set.all()
+    context = {'course': c, 'prerequisites': prerequisites,
+               'assignments': assignments, 'events': events, }
     return render(request, 'ltc/course_page.html', context)
 
 
 @login_required
-def time_slot_page(request, slug):
-    t = get_object_or_404(TimeSlot, slug=slug)
-    day = t.day
-    time = t.time
-    context = {'time_slot': t, 'day': day, 'time': time}
-    return render(request, 'ltc/time_slot_page.html', context)
+def event_page(request, slug):
+    e = get_object_or_404(Event, slug=slug)
+    course = e.course
+    students = e.student.all()
+    time_slots = e.time_slot.all()
+    context = {
+        'event': e,
+        'course': course,
+        'students': students,
+        'time_slots': time_slots,
+    }
+    return render(request, 'ltc/event_page.html', context)
 
 
 @login_required
@@ -156,6 +200,43 @@ def assignment_page(request, slug):
 
 
 @login_required
+def time_slot_page(request, slug):
+    t = get_object_or_404(TimeSlot, slug=slug)
+    day = t.day
+    time = t.time
+    context = {'time_slot': t, 'day': day, 'time': time}
+    return render(request, 'ltc/time_slot_page.html', context)
+
+
+@login_required
+def grade_page(request, slug):
+    g = get_object_or_404(Grade, slug=slug)
+    student = g.student
+    staff = g.staff
+    course = g.course
+
+    context = {
+        'grade': g,
+        'student': student,
+        'staff': staff,
+        'course': course,
+    }
+    return render(request, 'ltc/grade_page.html', context)
+
+
+@login_required
+def degree_page(request, slug):
+    d = get_object_or_404(Degree, slug=slug)
+    courses = d.course.all()
+
+    context = {
+        'degree': d,
+        'courses': courses,
+    }
+    return render(request, 'ltc/degree_page.html', context)
+
+
+@login_required
 def delete_student(request, slug):
     s = get_object_or_404(Student, slug=slug)
     if s.user == request.user:
@@ -165,8 +246,8 @@ def delete_student(request, slug):
 
 
 @login_required
-def delete_professor(request, slug):
-    p = get_object_or_404(Professor, slug=slug)
+def delete_staff(request, slug):
+    p = get_object_or_404(Staff, slug=slug)
     if p.user == request.user:
         user_logout(request)
     p.delete()
@@ -181,6 +262,13 @@ def delete_course(request, slug):
 
 
 @login_required
+def delete_event(request, slug):
+    e = get_object_or_404(Event, slug=slug)
+    e.delete()
+    return redirect('ltc:index')
+
+
+@login_required
 def delete_assignment(request, slug):
     a = get_object_or_404(Assignment, slug=slug)
     a.delete()
@@ -191,6 +279,20 @@ def delete_assignment(request, slug):
 def delete_time_slot(request, slug):
     t = get_object_or_404(TimeSlot, slug=slug)
     t.delete()
+    return redirect('ltc:index')
+
+
+@login_required
+def delete_grade(request, slug):
+    g = get_object_or_404(Grade, slug=slug)
+    g.delete()
+    return redirect('ltc:index')
+
+
+@login_required
+def delete_degree(request, slug):
+    d = get_object_or_404(Degree, slug=slug)
+    d.delete()
     return redirect('ltc:index')
 
 
@@ -216,7 +318,7 @@ def edit_assignment(request, slug):
     a = get_object_or_404(Assignment, slug=slug)
     form = AssignmentForm(instance=a)
     if request.method == 'POST':
-        form = Assignment(request.POST, instance=a)
+        form = AssignmentForm(request.POST, instance=a)
         if form.is_valid():
             form.save()
             return redirect('ltc:assignment_page', a.slug)
@@ -252,3 +354,51 @@ def courses(request):
         'courses': courses
     }
     return render(request, 'ltc/courses.html', context)
+def edit_anything(request, model_class, form_class, html, slug, url):
+    i = get_object_or_404(model_class, slug=slug)
+    form = form_class(instance=i)
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=i)
+        if form.is_valid():
+            form.save()
+            return redirect(url, i.slug)
+    context = {'form': form, 'slug': slug}
+    return render(request, html, context)
+
+
+@login_required
+def edit_grade(request, slug):
+    return edit_anything(request, Grade, GradeForm, 'ltc/edit_grade.html', slug, 'ltc:grade_page')
+
+
+@login_required
+def edit_degree(request, slug):
+    return edit_anything(request, Degree, DegreeForm, 'ltc/edit_degree.html', slug, 'ltc:degree_page')
+
+
+@login_required
+def edit_event(request, slug):
+    return edit_anything(request, Event, EventForm, 'ltc/edit_event.html', slug, 'ltc:event_page')
+
+
+@login_required
+def find_meeting_time(request):
+    # students = Student.objects.all()
+    time_slots = ''
+    form = MeetingForm()
+    # form.fields['student'] = ModelMultipleChoiceField(students)
+    if request.method == 'POST':
+        form = MeetingForm(request.POST)
+        if form.is_valid():
+            time_slots = TimeSlot.objects.all()
+            for s in form.cleaned_data['student']:
+                time_slots = time_slots & s.get_available_time_slots()
+        else:
+            print(form.errors)
+    else:
+        pass
+    context = {
+        'form': form,
+        'time_slots': time_slots,
+    }
+    return render(request, 'ltc/find_meeting_time.html', context)

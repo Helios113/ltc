@@ -1,0 +1,32 @@
+{% extends 'ltc/base_simple.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+	Grade Page
+{% endblock %}
+
+{% block body_block %}
+
+    Student:
+    <a href="{% url 'ltc:student_page' student.slug %}">{{ student }}</a>
+    <hr />
+
+    By Staff:
+    <a href="{% url 'ltc:staff_page' staff.slug %}">{{ staff }}</a>
+    <hr />
+
+    For Course:
+    <a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a>
+    <hr />
+
+    Name:{{ grade.name }}
+    <br />
+    Result:{{ grade.result }}
+    <br />
+
+    <a href="{% url 'ltc:edit_grade' grade.slug %}"><button>Edit Grade</button></a>
+    <a href="{% url 'ltc:delete_grade' grade.slug %}"><button>Delete Grade</button></a>
+
+
+
+{% endblock %}

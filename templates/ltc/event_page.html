@@ -1,0 +1,47 @@
+{% extends 'ltc/base_simple.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+	Event Page
+{% endblock %}
+
+{% block body_block %}
+
+    For Course:
+    <a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a>
+    <hr />
+
+    Event Name:{{ event.name }}
+    <br />
+
+    Students On Event:
+    <ul>
+    {% for s in students %}
+        <li><a href="{% url 'ltc:student_page' s.slug %}">{{ s }}</a></li>
+    {% empty %}
+        No student.
+    {% endfor %}
+    </ul>
+    <hr />
+
+    Location:{{ event.location }}
+    <br />
+    Address:{{ event.address }}
+    <br />
+
+    Time Slots:
+    <ul>
+    {% for t in time_slots %}
+        <li><a href="{% url 'ltc:time_slot_page' t.slug %}">{{ t }}</a></li>
+    {% empty %}
+        No time slot.
+    {% endfor %}
+    </ul>
+    <hr />
+
+    <a href="{% url 'ltc:edit_event' event.slug %}"><button>Edit Event</button></a>
+    <a href="{% url 'ltc:delete_event' event.slug %}"><button>Delete Event</button></a>
+
+
+
+{% endblock %}

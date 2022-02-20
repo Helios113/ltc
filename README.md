@@ -44,7 +44,7 @@ http://127.0.0.1:8000/ltc/
 Username:       Amelia      Emily       Jack        Mason
 Password: 	Amelia123   Emily123    Jack123     Mason123
 ```
-* Some professor accounts as well:
+* Some staff accounts as well:
 ```
 Username:       Charlotte       Harry
 Password: 	Charlotte123    Harry123
@@ -69,7 +69,7 @@ All notable changes to this project will be documented in this file.
 * Users can add assignments now.
 * Log out function added.
 * Student page added.
-* Professor page added.
+* Staff page added.
 * Course page added.
 ### Fixed
 * Typo:   Assigment -> Assignment
@@ -88,3 +88,15 @@ All notable changes to this project will be documented in this file.
 * Users can edit courses, assignments and time slots now.
 ### Changed
 * For convenience, all data can be directly accessed from the index page.
+* Rename: Professor ->  Staff
+## [1.0.5] - 2022-02-20
+### Added
+* Added Event, Grade and Degree.
+* More dummy data.
+* Courses now have codes.
+* New function: Find shared available time
+### Changed
+* Moved some fields of Course to Event.
+### Fixed
+* Fixed a bug in the registration page.
+

@@ -1,0 +1,21 @@
+{% extends 'ltc/base_simple.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+	Edit Event
+{% endblock %}
+
+{% block body_block %}
+    <form id="course_form" method="post" action="{% url 'ltc:edit_event' slug %}"
+    enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <!-- Display each form -->
+    {{ form.as_p }}
+    <!-- Provide a button to click to submit the form. -->
+
+    <input type="submit" name="submit" value="Edit event" />
+    </form>
+
+{% endblock %}
