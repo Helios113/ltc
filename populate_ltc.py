@@ -77,6 +77,7 @@ def populate_student(student_usernames):
 def populate_course(courses):
     for course in courses:
         t = Course.objects.get_or_create(name=course['name'])[0]
+        t.code = course['code']
         t.staff = Staff.objects.get_or_create(user=User.objects.get(username=course['staff']))[0]
         t.description = course['description']
         t.prerequisite.set([Course.objects.get(name=pre) for pre in course['prerequisite']])
@@ -128,16 +129,16 @@ def populate():
     # The default password is username plus '123'.
     student_usernames = ['Amelia', 'Emily', 'Jack', 'Mason', ]
     staff_usernames = ['Charlotte', 'Harry', ]
-    staffs = [{'name': 'Charlotte', 'type': Staff.PROF, },
-              {'name': 'Harry', 'type': Staff.TA, }]
+    staffs = [{'name': 'Charlotte', 'type': Staff.PROFESSOR, },
+              {'name': 'Harry', 'type': Staff.TEACHING_ASSISTANT, }]
 
     # Set courses info here.
     courses = [
-        {'name': 'course A', 'prerequisite': [], 'description': 'course A description', 'staff': 'Harry', },
-        {'name': 'course B', 'prerequisite': [], 'description': 'course B description', 'staff': 'Harry', },
-        {'name': 'course C', 'prerequisite': ['course B'], 'description': 'course C description',
+        {'code': 'COMPSCI2333', 'name': 'course A', 'prerequisite': [], 'description': 'course A description', 'staff': 'Harry', },
+        {'code': 'COMPSCI3467', 'name': 'course B', 'prerequisite': [], 'description': 'course B description', 'staff': 'Harry', },
+        {'code': 'COMPSCI4599', 'name': 'course C', 'prerequisite': ['course B'], 'description': 'course C description',
          'staff': 'Charlotte', },
-        {'name': 'course C Hard', 'prerequisite': ['course A', 'course C'], 'description': 'course C Hard description',
+        {'code': 'COMPSCI4653', 'name': 'course C Hard', 'prerequisite': ['course A', 'course C'], 'description': 'course C Hard description',
          'staff': 'Charlotte', },
     ]
 

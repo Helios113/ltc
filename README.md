@@ -93,6 +93,10 @@ All notable changes to this project will be documented in this file.
 ### Added
 * Added Event, Grade and Degree.
 * More dummy data.
+* Courses now have codes.
+* New function: Find shared available time
 ### Changed
 * Moved some fields of Course to Event.
+### Fixed
+* Fixed a bug in the registration page.
 

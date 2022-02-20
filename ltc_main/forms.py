@@ -3,11 +3,15 @@ from .models import *
 
 
 class UserForm(forms.ModelForm):
-    STUDENT = 'STU'
-    PROFESSOR = 'PRO'
+    STUDENT = 'Student'
+    PROFESSOR = Staff.PROFESSOR
+    TEACHING_ASSISTANT = Staff.TEACHING_ASSISTANT
+    ADMINISTRATOR = Staff.ADMINISTRATOR
     CHOICES = [
         (STUDENT, 'Student'),
-        (PROFESSOR, 'Staff'),
+        (PROFESSOR, 'Staff - Professor'),
+        (TEACHING_ASSISTANT, 'Staff - Teaching assistant'),
+        (ADMINISTRATOR, 'Staff - Administrator'),
     ]
     password = forms.CharField(widget=forms.PasswordInput())
     identity = forms.ChoiceField(choices=CHOICES, initial=STUDENT)
@@ -51,3 +55,7 @@ class DegreeForm(forms.ModelForm):
     class Meta:
         model = Degree
         exclude = ('slug',)
+
+
+class MeetingForm(forms.Form):
+    student = forms.ModelMultipleChoiceField(Student.objects.all())

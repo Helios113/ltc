@@ -8,11 +8,11 @@ import math
 
 
 class TimeSlot(models.Model):
-    MON = 'MONDAY'
-    TUE = 'TUESDAY'
-    WED = 'WEDNESDAY'
-    THU = 'THURSDAY'
-    FRI = 'FRIDAY'
+    MON = 'Monday'
+    TUE = 'Tuesday'
+    WED = 'Wednesday'
+    THU = 'Thursday'
+    FRI = 'Friday'
 
     DayInWeekChoices = (
         (MON, 'Monday'),
@@ -48,20 +48,20 @@ class TimeSlot(models.Model):
 
 
 class Staff(models.Model):
-    PROF = 'PROFESSOR'
-    TA = 'TA'
-    ADMIN = 'ADMIN'
+    PROFESSOR = 'Professor'
+    TEACHING_ASSISTANT = 'Teaching assistant'
+    ADMINISTRATOR = 'Administrator'
     TypeChoices = (
-        (PROF, 'Professor'),
-        (TA, 'Teaching assistant'),
-        (ADMIN, 'Administrator'),
+        (PROFESSOR, 'Professor'),
+        (TEACHING_ASSISTANT, 'Teaching assistant'),
+        (ADMINISTRATOR, 'Administrator'),
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     type = models.CharField(
         max_length=64,
         choices=TypeChoices,
-        default=PROF,
+        default=PROFESSOR,
     )
     slug = models.SlugField(unique=True, null=True, blank=True)
 
@@ -113,6 +113,7 @@ class Student(models.Model):
 
 
 class Course(models.Model):
+    code = models.CharField(max_length=128, unique=True)
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField(max_length=512, null=True)
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE, null=True)
@@ -124,7 +125,7 @@ class Course(models.Model):
         super(Course, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return self.code+' '+self.name
 
 
 class Event(models.Model):
