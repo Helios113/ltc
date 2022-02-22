@@ -1,0 +1,48 @@
+{% extends 'ltc/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+	Find Meeting Time
+{% endblock %}
+
+{% block body_block %}
+
+<div class="col-sm-12">
+
+    <h2>{{meeting.name}}</h2>
+    <ul>
+        {% for m in meeting.members.all %}
+            <li>{{ m }}</li>
+        {% endfor %}
+    </ul>
+    Make a new scheduler<br/>   
+    {# icon and search-box #}
+    <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'ltc:team_schedule_page' slug %}">
+    {% csrf_token %}
+    <input id="user-input" class="form-control mr-sm-2"  placeholder="Search">
+    {# artist-list section #}
+    <select id="replaceable-content" class="custom-select" name="user" id="id_user">
+        {% include "ltc/student_search_partial.html" %}
+    </select>
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
+    </form>
+</div>
+<div class="container">
+    <div class="row">
+        {% for m in times %}
+        <div class="col-sm">
+            {{m.0}}<br/>
+            {% for n in m.1 %}
+            <span class="badge badge-secondary">{{n.0}}-{{n.1}}</span><br/>
+            {% endfor %}
+        </div>    
+        {% endfor %}
+    </div>
+  </div>
+    
+
+{% endblock %}
+
+{% block footer_block %}
+  <script type="text/javascript" src="{% static "javascript/main.js" %}"></script>
+{% endblock %} 

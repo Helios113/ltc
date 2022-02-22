@@ -26,6 +26,6 @@ def generate_identicon(text):
             for z in range(den**2):
                 img.putpixel( (den*x+z//den,den*y+z%den), new_color)
         
-    savePath = Path(os.path.join(*[st.STATIC_DIR, 'identicons',text+'.jpg']))
+    savePath = Path(os.path.join(*[st.STATIC_DIR, 'identicons',text+'.png']))
     img.save(savePath)
-    return os.path.join(*['identicons',text+'.jpg'])
+    return os.path.join(*['identicons',text+'.png'])

@@ -1,4 +1,4 @@
-{% extends 'ltc/base_simple.html' %}
+{% extends 'ltc/base.html' %}
 {% load staticfiles %}
 
 {% block title_block %}
@@ -6,27 +6,38 @@
 {% endblock %}
 
 {% block body_block %}
-    <strong>Select Multiple Students and Click the Button to See the Result.</strong>
-    <form id="course_form" method="post" action="{% url 'ltc:find_meeting_time' %}"
-    enctype="multipart/form-data">
+    
+<div class="row">
+    <div class="col-sm-6">
+        My Schedulers
+        <div class="panel panel-primary" id="result_panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">Result List</h3>
+            </div>
+            <div class="overflow-auto">
+                <div class="panel-body" style="height: 120px;">
+                    <ul class="list-group">
+                        {% for m in meetings %}
+                        <a class="list-group-item" href="{% url 'ltc:team_schedule_page' m.slug %}"><strong>
+                        {{m.name}}
+                        </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        Make a new scheduler<br/>
+        <form id="course_form" method="post" action="{% url 'ltc:find_meeting_time' %}"
+        enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form }}
+        <input type="submit" name="submit" value="Create a new meeting" />
+    </div>
+</div>
 
-    {% csrf_token %}
 
-    <!-- Display each form -->
-    {{ form.as_p }}
-    <!-- Provide a button to click to submit the form. -->
 
-    <input type="submit" name="submit" value="Find meeting time" />
-    </form>
-
-    All Shared Available Time Slots:
-    <ul>
-    {% for t in time_slots %}
-        <li><a href="{% url 'ltc:time_slot_page' t.slug %}">{{ t }}</a></li>
-    {% empty %}
-        No time slot.
-    {% endfor %}
-    </ul>
-    <hr />
-
+    
 {% endblock %}

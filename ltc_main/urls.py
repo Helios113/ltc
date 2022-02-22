@@ -55,5 +55,7 @@ urlpatterns = [
 
     # Find meeting time
     path('find_meeting_time/', views.find_meeting_time, name='find_meeting_time'),
+    path('find_meeting_time/<slug:category_slug>/team_schedule_page/', views.team_schedule_page, name='team_schedule_page')
 
+    
 ]
