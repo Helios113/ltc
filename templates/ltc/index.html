@@ -13,47 +13,21 @@ Username: {{ user.username }}<br />
 Staff?: {{ user.is_staff }}<br />
 Admin?: {{ user.is_superuser }}<br />
 {% endif%}
-<hr />
-<a href="{% url 'ltc:find_meeting_time' %}">Find shared available time slots.</a><br />
-<hr />
+
 
 <a href="{% url 'ltc:register' %}">Go to the Registration page.</a><br />
 <a href="{% url 'ltc:login' %}">Go to the login page.</a><br />
 <a href="{% url 'ltc:logout' %}">Log out.</a><br />
 
-<a href="{% url 'ltc:add_course' %}">Add a new course.</a><br />
-<a href="{% url 'ltc:add_assignment' %}">Add a new assignment.</a><br />
-<a href="{% url 'ltc:add_time_slot' %}">Add a new time slot.</a><br />
-<a href="{% url 'ltc:add_grade' %}">Add a new grade.</a><br />
-<a href="{% url 'ltc:add_degree' %}">Add a new degree.</a><br />
-
 <hr />
     <strong><a href="/admin/">Go to the administration page.</a></strong>
 <hr />
 
-    All Students:
-    <ul>
-    {% for s in students %}
-        <li><a href="{% url 'ltc:student_page' s.slug %}">{{ s }}</a></li>
-    {% empty %}
-        No student.
-    {% endfor %}
-    </ul>
-    <hr />
-
-    All Staffs:
-    <ul>
-    {% for p in staffs %}
-        <li><a href="{% url 'ltc:staff_page' p.slug %}">{{ p }}</a></li>
-    {% empty %}
-        No staff.
-    {% endfor %}
-    </ul>
-    <hr />
+ 
 
     All Courses:
     <ul>
-    {% for c in courses %}
+    {% for c in courses_taken %}
         <li><a href="{% url 'ltc:course_page' c.slug %}">{{ c }}</a></li>
     {% empty %}
         No course.
@@ -61,33 +35,24 @@ Admin?: {{ user.is_superuser }}<br />
     </ul>
     <hr />
 
-    All Events:
+    All Other today:
     <ul>
-    {% for e in events %}
-        <li><a href="{% url 'ltc:event_page' e.slug %}">{{ e }}</a></li>
+    {% for e in time %}
+        <li><a href="#">{{ e.text }}</a></li>
+        <!-- The above needs to be reverse link to event page -->
     {% empty %}
         No event.
     {% endfor %}
     </ul>
     <hr />
 
+
     All Assignments:
     <ul>
     {% for a in assignments %}
-        <li><a href="{% url 'ltc:assignment_page' a.slug %}">{{ a }}</a></li>
+        <li>{{ a }}</li>
     {% empty %}
         No assignment.
-    {% endfor %}
-    </ul>
-    <hr />
-
-
-    All Grades:
-    <ul>
-    {% for g in grades %}
-        <li><a href="{% url 'ltc:grade_page' g.slug %}">{{ g }}</a></li>
-    {% empty %}
-        No grade.
     {% endfor %}
     </ul>
     <hr />
@@ -98,16 +63,6 @@ Admin?: {{ user.is_superuser }}<br />
         <li><a href="{% url 'ltc:degree_page' d.slug %}">{{ d }}</a></li>
     {% empty %}
         No degree.
-    {% endfor %}
-    </ul>
-    <hr />
-
-    All Time Slots:
-    <ul>
-    {% for t in time_slots %}
-        <li><a href="{% url 'ltc:time_slot_page' t.slug %}">{{ t }}</a></li>
-    {% empty %}
-        No time slot.
     {% endfor %}
     </ul>
     <hr />

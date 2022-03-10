@@ -32,12 +32,12 @@ class AssignmentForm(forms.ModelForm):
         model = Assignment
         exclude = ('slug',)
 
-
+"""
 class TimeSlotForm(forms.ModelForm):
     class Meta:
         model = TimeSlot
         exclude = ('slug',)
-
+"""
 
 class EventForm(forms.ModelForm):
     class Meta:
@@ -56,6 +56,19 @@ class DegreeForm(forms.ModelForm):
         model = Degree
         exclude = ('slug',)
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
 
-class MeetingForm(forms.Form):
-    student = forms.ModelMultipleChoiceField(Student.objects.all())
+class MeetingForm(forms.ModelForm):
+    #name = forms.CharField()
+    #members = forms.MultipleChoiceField(widget = forms.HiddenInput, required=False)
+    #slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+    #id = forms.IntegerField(widget=forms.HiddenInput())
+    class Meta:
+        model = TeamMeeting
+        fields = ['name', 'weekNumber']
+        widgets = {
+            'made_on': DateInput(),
+        }
+
+

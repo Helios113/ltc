@@ -21,14 +21,7 @@ django.setup()
 from ltc_main.models import *
 
 
-def populate_time_slot():
-    # 5 days a week. Each day from 9:00 to 18:00. Assume each period lasts 1 hour.
-    days = [TimeSlot.MON, TimeSlot.TUE, TimeSlot.WED, TimeSlot.THU, TimeSlot.FRI]
-    for day in days:
-        for time in range(9 * 4, 18 * 4):
-            t = TimeSlot.objects.get_or_create(day=day, time=time / 4)[0]
-            t.save()
-    return
+
 
 
 def populate_user(student_usernames, staff_usernames):
@@ -85,42 +78,42 @@ def populate_course(courses):
     return
 
 
-def populate_event(events):
-    for info in events:
-        e = Event.objects.get_or_create(course=Course.objects.get(name=info['course']), name=info['name'])[0]
-        e.location = info['location']
-        e.address = info['address']
-        e.student.set([Student.objects.get(user=User.objects.get(username=student)) for student in info['student']])
-        e.time_slot.set([TimeSlot.objects.get(day=day, time=time) for day, time in info['time_slot']])
-        e.save()
-    return
+# def populate_event(events):
+#     for info in events:
+#         e = Event.objects.get_or_create(course=Course.objects.get(name=info['course']), name=info['name'])[0]
+#         e.location = info['location']
+#         e.address = info['address']
+#         e.student.set([Student.objects.get(user=User.objects.get(username=student)) for student in info['student']])
+#         #e.time_slot.set([TimeSlot.objects.get(day=day, time=time) for day, time in info['time_slot']])
+#         e.save()
+#     return
 
 
-def populate_assignment(assignments):
-    for info in assignments:
-        t = Assignment.objects.create(course=Course.objects.get(name=info['course']), title=info['title'])
-        t.detail = info['detail']
-        t.save()
-    return
+# def populate_assignment(assignments):
+#     for info in assignments:
+#         t = Assignment.objects.create(course=Course.objects.get(name=info['course']), title=info['title'])
+#         t.detail = info['detail']
+#         t.save()
+#     return
 
 
-def populate_grade(grades):
-    for info in grades:
-        g = Grade.objects.create(student=Student.objects.get(user=User.objects.get(username=info['student'])),
-                                 staff=Staff.objects.get(user=User.objects.get(username=info['staff'])),
-                                 course=Course.objects.get(name=info['course']))
-        g.name = info['name']
-        g.result = info['result']
-        g.save()
-    return
+# def populate_grade(grades):
+#     for info in grades:
+#         g = Grade.objects.create(student=Student.objects.get(user=User.objects.get(username=info['student'])),
+#                                  staff=Staff.objects.get(user=User.objects.get(username=info['staff'])),
+#                                  course=Course.objects.get(name=info['course']))
+#         g.name = info['name']
+#         g.result = info['result']
+#         g.save()
+#     return
 
 
-def populate_degree(degrees):
-    for info in degrees:
-        d = Degree.objects.create(name=info['name'])
-        d.course.set(Course.objects.filter(name__in=info['courses']))
-        d.save()
-    return
+# def populate_degree(degrees):
+#     for info in degrees:
+#         d = Degree.objects.create(name=info['name'])
+#         d.course.set(Course.objects.filter(name__in=info['courses']))
+#         d.save()
+#     return
 
 
 def populate():
@@ -150,7 +143,7 @@ def populate():
             'student': ['Amelia', 'Jack', ],
             'location': '123.45,234,56',
             'address': 'The classroom 1001',
-            'time_slot': [(TimeSlot.MON, 9), (TimeSlot.MON, 9.25), (TimeSlot.MON, 9.5), (TimeSlot.MON, 9.75), ]
+            #'time_slot': [(TimeSlot.MON, 9), (TimeSlot.MON, 9.25), (TimeSlot.MON, 9.5), (TimeSlot.MON, 9.75), ]
         },
         {
             'course': 'course A',
@@ -158,7 +151,7 @@ def populate():
             'student': ['Amelia', 'Jack', ],
             'location': '123.45,234,56',
             'address': 'The classroom 1001',
-            'time_slot': [(TimeSlot.MON, 10), (TimeSlot.MON, 10.25), (TimeSlot.MON, 10.5), (TimeSlot.MON, 10.75), ]
+            #'time_slot': [(TimeSlot.MON, 10), (TimeSlot.MON, 10.25), (TimeSlot.MON, 10.5), (TimeSlot.MON, 10.75), ]
         },
         {
             'course': 'course B',
@@ -166,7 +159,7 @@ def populate():
             'student': ['Amelia', 'Emily', 'Mason', ],
             'location': '123.45,234,56',
             'address': 'The classroom 1001',
-            'time_slot': [(TimeSlot.MON, 10), (TimeSlot.MON, 10.25), (TimeSlot.MON, 10.5), (TimeSlot.MON, 10.75), ]
+            #'time_slot': [(TimeSlot.MON, 10), (TimeSlot.MON, 10.25), (TimeSlot.MON, 10.5), (TimeSlot.MON, 10.75), ]
         },
         {
             'course': 'course B',
@@ -174,7 +167,7 @@ def populate():
             'student': ['Amelia', 'Emily', 'Mason', ],
             'location': '123.45,234,56',
             'address': 'The classroom 1001',
-            'time_slot': [(TimeSlot.TUE, 10), (TimeSlot.TUE, 10.25), ]
+            #'time_slot': [(TimeSlot.TUE, 10), (TimeSlot.TUE, 10.25), ]
         },
         {
             'course': 'course C',
@@ -182,7 +175,7 @@ def populate():
             'student': ['Amelia', 'Emily', ],
             'location': '123.45,234,56',
             'address': 'The classroom 1001',
-            'time_slot': [(TimeSlot.MON, 11), (TimeSlot.MON, 11.25), (TimeSlot.MON, 11.5), (TimeSlot.MON, 11.75), ]
+            #'time_slot': [(TimeSlot.MON, 11), (TimeSlot.MON, 11.25), (TimeSlot.MON, 11.5), (TimeSlot.MON, 11.75), ]
         },
         {
             'course': 'course C Hard',
@@ -190,7 +183,7 @@ def populate():
             'student': ['Amelia', ],
             'location': '123.45,234,56',
             'address': 'The classroom 1001',
-            'time_slot': [(TimeSlot.MON, 12), (TimeSlot.MON, 12.25), (TimeSlot.MON, 12.5), (TimeSlot.MON, 12.75), ]
+            #'time_slot': [(TimeSlot.MON, 12), (TimeSlot.MON, 12.25), (TimeSlot.MON, 12.5), (TimeSlot.MON, 12.75), ]
         },
     ]
 
@@ -220,20 +213,20 @@ def populate():
 
     ]
 
-    populate_time_slot()
+    #populate_time_slot()
     populate_user(student_usernames, staff_usernames)
     # The Staff points to the User, so the User goes first.
     populate_staff(staffs)
     # The Student points to the User.
     populate_student(student_usernames)
     # The Course points to the staff.
-    populate_course(courses)
+    # populate_course(courses)
     # The Assignment points to the Course
-    populate_assignment(assignments)
+    #populate_assignment(assignments)
     # The Event points to the Course
-    populate_event(events)
-    populate_grade(grades)
-    populate_degree(degrees)
+    #populate_event(events)
+    #populate_grade(grades)
+    #populate_degree(degrees)
 
 
 if __name__ == '__main__':

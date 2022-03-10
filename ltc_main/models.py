@@ -1,55 +1,22 @@
+import imp
+from statistics import mode
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django.core.files import File
+from django import forms
 import ltc_main.image_generator as ig
 import math
+import uuid
+import datetime
+from eventtools.models import BaseEvent, BaseOccurrence
+
 
 
 # Create your models here.
 
-
-class TimeSlot(models.Model):
-    MON = 'Monday'
-    TUE = 'Tuesday'
-    WED = 'Wednesday'
-    THU = 'Thursday'
-    FRI = 'Friday'
-
-    DayInWeekChoices = (
-        (MON, 'Monday'),
-        (TUE, 'Tuesday'),
-        (WED, 'Wednesday'),
-        (THU, 'Thursday'),
-        (FRI, 'Friday'),
-    )
-
-    day = models.CharField(
-        max_length=9,
-        choices=DayInWeekChoices,
-        default=MON,
-    )
-    time = models.FloatField(default=9)
-    slug = models.SlugField(unique=True, null=True, blank=True)
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(str(self))
-        super(TimeSlot, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (("day", "time"),)
-
-    def __str__(self):
-        # Make time look good.
-        minute = int(round(math.modf(self.time)[0] * 60))
-        hour = int(math.modf(self.time)[1])
-        minute_str = str(minute)
-        if minute_str == '0':
-            minute_str = '00'
-        return self.day.title() + str(hour) + ":" + minute_str
-
-
 class Staff(models.Model):
+
     PROFESSOR = 'Professor'
     TEACHING_ASSISTANT = 'Teaching assistant'
     ADMINISTRATOR = 'Administrator'
@@ -60,65 +27,28 @@ class Staff(models.Model):
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    slug = models.SlugField(unique=True, blank=True)
+    timeSlots = models.ManyToManyField('TimeSlot')
+    courses = models.ManyToManyField('Course')
+    #assignment = models.ManyToManyField('Assignment',null=True)
     type = models.CharField(
         max_length=64,
         choices=TypeChoices,
         default=PROFESSOR,
     )
-    slug = models.SlugField(unique=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
         super(Staff, self).save(*args, **kwargs)
 
-    def get_available_time_slots(self):
-        unavailable_time_slots_pks = []
-        for course in self.course_set.all():
-            for event in course.event_set.all():
-                for time_slot in event.time_slot.all():
-                    if time_slot.pk not in unavailable_time_slots_pks:
-                        unavailable_time_slots_pks.append(time_slot.pk)
-        available_time_slots = TimeSlot.objects.exclude(pk__in=unavailable_time_slots_pks)
-        return available_time_slots
-
     def __str__(self):
         return str(self.user)
-
-
-class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    slug = models.SlugField(unique=True, null=True, blank=True)
-
-    def get_courses(self):
-        courses_pks=[]
-        for event in self.event_set.all():
-            if event.course.pk not in courses_pks:
-                courses_pks.append(event.course.pk)
-        courses = Course.objects.filter(pk__in=courses_pks)
-        return courses
-
-    def get_available_time_slots(self):
-        unavailable_time_slots_pks = []
-        for event in self.event_set.all():
-            for time_slot in event.time_slot.all():
-                if time_slot.pk not in unavailable_time_slots_pks:
-                    unavailable_time_slots_pks.append(time_slot.pk)
-        available_time_slots = TimeSlot.objects.exclude(pk__in=unavailable_time_slots_pks)
-        return available_time_slots
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(str(self))
-        super(Student, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return str(self.user)
-
 
 class Course(models.Model):
+    id = models.IntegerField(primary_key=True)
     code = models.CharField(max_length=128, unique=True)
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField(max_length=512, null=True)
-    staff = models.ForeignKey(Staff, on_delete=models.CASCADE, null=True)
     prerequisite = models.ManyToManyField('self', symmetrical=False, blank=True)
     slug = models.SlugField(unique=True, null=True, blank=True)
     photo = models.TextField(null=True, blank=True)
@@ -131,49 +61,28 @@ class Course(models.Model):
         return self.code+' '+self.name
 
 
-class Event(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128)
-    student = models.ManyToManyField(Student, blank=True)
-    location = models.CharField(max_length=128)
-    address = models.CharField(max_length=128)
-    time_slot = models.ManyToManyField(TimeSlot, blank=True)
-    slug = models.SlugField(unique=True, null=True, blank=True)
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(str(self))
-        super(Event, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (("course", "name"),)
-
-    def __str__(self):
-        return str(self.course) + ' ' + str(self.name)
-
 
 class Assignment(models.Model):
+    id = models.IntegerField(primary_key=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     title = models.CharField(max_length=128)
     detail = models.TextField(max_length=512, null=True, blank=True)
-    slug = models.SlugField(unique=True, null=True, blank=True)
-
+    slug = models.SlugField(null=True, blank=True)
+    deadline = models.OneToOneField('TimeSlot', null=True, on_delete=models.CASCADE)
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
         super(Assignment, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = (("course", "title"),)
 
     def __str__(self):
         return str(self.course) + ' ' + self.title
 
 
 class Grade(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    student = models.ForeignKey('Student', on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128)
+    assignment = models.ForeignKey(Assignment,null=True, on_delete=models.CASCADE)
     result = models.CharField(max_length=128)
+    
     slug = models.SlugField(unique=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
@@ -195,3 +104,52 @@ class Degree(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+class Event(BaseEvent):
+    id = models.IntegerField(primary_key=True)
+    course = models.ForeignKey(Course,null=True, on_delete=models.CASCADE)
+    name = models.CharField(max_length=128)
+    description = models.TextField(max_length=512, null=True)
+    location = models.CharField(max_length=128)
+    slug = models.SlugField(unique=True, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(str(self))
+        super(Event, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.name)
+
+class TimeSlot(BaseOccurrence):
+    event = models.ForeignKey(Event,null=True, on_delete=models.CASCADE)
+
+class Student(models.Model):
+    #id = models.IntegerField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    slug = models.SlugField(unique=True, null=True, blank=True)
+    timeSlots = models.ManyToManyField(TimeSlot,null=True,blank=True)
+    courses = models.ManyToManyField(Course,null=True,blank=True)
+    assignment = models.ManyToManyField(Assignment,null=True,blank=True)
+    degree = models.ForeignKey(Degree,null=True, on_delete=models.CASCADE)
+    def save(self, *args, **kwargs):
+        self.slug = slugify(str(self))
+        super(Student, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.user)
+
+class TeamMeeting(models.Model):
+    thisWeek = datetime.date.today().isocalendar()[1]
+    members = models.ManyToManyField(User, blank=True)
+    name = models.CharField(max_length=128, blank=False)
+    slug = models.SlugField(unique=True,editable=False, null=True, blank=True)
+    choices = zip(range(thisWeek,53),[str(e) for e in range(thisWeek,53)])
+    weekNumber = models.IntegerField('Week Number',choices=choices, default=thisWeek)
+
+
+    def saveSlug(self, *args, **kwargs):
+        self.slug = slugify(str(self))
+        super(TeamMeeting, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.id)+self.name

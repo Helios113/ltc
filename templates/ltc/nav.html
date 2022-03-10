@@ -1,0 +1,27 @@
+<div class="row">
+    <div class="col-sm-6">
+        My Schedulers
+        <div class="panel panel-primary" id="result_panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">Result List</h3>
+            </div>
+            <div class="overflow-auto">
+                <div class="panel-body" style="height: 120px;">
+                    <ul class="list-group">
+                        {% for m in meetings %}
+                        <li class="list-group-item"><strong>
+                        {{m.name}}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        Make a new scheduler<br/>
+        
+    </div>
+</div>
+
+

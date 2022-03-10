@@ -1,0 +1,11 @@
+    {% if fresh %}
+      <option>Result</option>
+    {% elif students %}
+    {% for student in students %}
+      <option value="{{ student.username }}">
+        {{ student.first_name }} {{ student.last_name }}
+      </option>
+    {% endfor %}
+    {% else %}
+      <option>No matches</option>
+    {% endif %}
