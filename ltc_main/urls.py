@@ -59,6 +59,8 @@ urlpatterns = [
 
     #Grades
     path('grade/', views.grades, name='grades'),
+    path('time_table/', views.timetable, name='timetable'),
+
 
     
 ]

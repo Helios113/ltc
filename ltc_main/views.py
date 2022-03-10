@@ -506,11 +506,9 @@ def TimeHelper(meeting, calTimes):
         d = str(datetime.date.today().year)+"-W"+str(meeting.weekNumber)
         startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
         endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")
-        print("DATE: ", startDate, endDate)
         meeting_times.extend(list(u.timeSlots.all().all_occurrences(
             from_date=startDate, to_date=endDate)))
     t = [1]*7200
-    print("Meeting Times", meeting_times)
     for m in meeting_times:
         a = m[0].weekday()*1440+m[0].hour*60+m[0].minute
         b = m[1].weekday()*1440+m[1].hour*60+m[1].minute
@@ -560,3 +558,45 @@ def grades(request):
     context={"data" : courseList,
              "nbar" : "grades"}
     return render(request, 'ltc/grades.html', context)
+
+
+@login_required
+def timetable(request):
+    user = request.user
+    u = Student.objects.filter(user=user).first()
+
+
+    # This week logic based on whatever
+    if request.method == 'GET':
+        thisWeek = datetime.date.today().isocalendar()[1]
+        print(thisWeek)
+        d = str(datetime.date.today().year)+"-W"+str(thisWeek)
+        startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
+        endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")
+    else:
+        thisWeek = datetime.date.today().isocalendar()[1]
+        d = str(datetime.date.today().year)+"-W"+str(thisWeek)
+        startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
+        endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")
+    
+    allEventsThisWeek = u.timeSlots.all_occurrences(from_date=startDate, to_date=endDate)
+    calTimes = [["Monday", []], ["Tuesday", []], [
+        "Wedensday", []], ["Thursday", []], ["Friday", []]]
+    for event in allEventsThisWeek:
+        data = {"text" : "{:02d}:{:02d} - {:02d}:{:02d}".format(event[0].hour, event[0].minute, event[1].hour,event[1].minute),
+        "event":event[2].event }
+        calTimes[event[0].day-startDate.day][1].append(data)
+    # HOW TO HANDLE EVENTS WHICH SPAN MULTIPLE DAYS
+    context={"nbar" : "timetable",
+            "week" : thisWeek,
+            "weekDir" : 0,
+            "data":calTimes}
+    return render(request, 'ltc/time_table.html', context)
+
+# def appendTimes2(calTimes, sd, ed):
+#     while sd//1440 != ed//1440:
+#         calTimes[sd//1440][1].append(('{:02d}:{:02d}'.format(*divmod(sd % 1440, 60)),
+#                                       '{:02d}:{:02d}'.format(*divmod(1439, 60))))
+#         sd = (1+sd//1440)*1440
+#     calTimes[sd//1440][1].append(('{:02d}:{:02d}'.format(*divmod(sd % 1440, 60)),
+#                                   '{:02d}:{:02d}'.format(*divmod(ed % 1440, 60))))

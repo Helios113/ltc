@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ltc_main'
 ]
+INSTALLED_APPS += ('mathfilters', )
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

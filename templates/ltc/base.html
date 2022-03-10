@@ -36,7 +36,7 @@
             <div class="navbar-nav">
               <!-- These are our regular links -->
               {% if user.is_authenticated %}
-              <a class="nav-item nav-link {% if nbar == 'course' %}active{% endif %}" href="#"><i class="fa fa-calendar fa-lg"></i> Time Table</a>
+              <a class="nav-item nav-link {% if nbar == 'timetable' %}active{% endif %}" href={% url 'ltc:timetable' %}><i class="fa fa-calendar fa-lg"></i> Time Table</a>
               <a class="nav-item nav-link {% if nbar == 'courses' %}active{% endif %}" href={% url 'ltc:courses' %}><i class="fa fa-book fa-lg"></i> Courses</a>
               {% if user.is_staff is False%}
               <a class="nav-item nav-link {% if nbar == 'grades' %}active{% endif %}" href={% url 'ltc:grades' %}><i class="fa fa-star-o fa-lg"></i> Grades</a>
