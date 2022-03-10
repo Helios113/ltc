@@ -39,7 +39,7 @@
               <a class="nav-item nav-link {% if nbar == 'course' %}active{% endif %}" href="#"><i class="fa fa-calendar fa-lg"></i> Time Table</a>
               <a class="nav-item nav-link {% if nbar == 'courses' %}active{% endif %}" href={% url 'ltc:courses' %}><i class="fa fa-book fa-lg"></i> Courses</a>
               {% if user.is_staff is False%}
-              <a class="nav-item nav-link {% if nbar == 'grades' %}active{% endif %}" href="#"><i class="fa fa-star-o fa-lg"></i> Grades</a>
+              <a class="nav-item nav-link {% if nbar == 'grades' %}active{% endif %}" href={% url 'ltc:grades' %}><i class="fa fa-star-o fa-lg"></i> Grades</a>
               {% endif %}
               <a class="nav-item nav-link {% if nbar == 'meeting' %}active{% endif %}" href={% url 'ltc:find_meeting_time' %}><i class="fa fa-clock-o fa-lg"></i> Schedule a meeting</a>
               {% endif %}
