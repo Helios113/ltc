@@ -6,26 +6,33 @@
 {% endblock %}
 
 {% block body_block %}
-
-<div class="col-sm-12">
-
-    <h2>{{meeting.name}}</h2>
+<div class="row">
+<div class="col-sm-6 border-right">
+    <h3>{{meeting.name}}</h3>
     <ul>
         {% for m in meeting.members.all %}
             <li>{{ m }}</li>
         {% endfor %}
     </ul>
-    Make a new scheduler<br/>   
+</div>
+<div class="col-sm-6">
+    <div class="container">
+    <h5>Add members to meeting</h5>
     {# icon and search-box #}
     <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'ltc:team_schedule_page' slug %}">
     {% csrf_token %}
+    <div class="row">
     <input id="user-input" class="form-control mr-sm-2"  placeholder="Search">
+    </div>
     {# artist-list section #}
-    <select id="replaceable-content" class="custom-select" name="user" id="id_user">
+    <div class="row">
+    <select id="replaceable-content" class="w-100 custom-select" name="user" id="id_user">
         {% include "ltc/student_search_partial.html" %}
     </select>
     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
+    </div>
     </form>
+</div>
 </div>
 <div class="container">
     <div class="row">
@@ -39,7 +46,7 @@
         {% endfor %}
     </div>
   </div>
-    
+</div>
 
 {% endblock %}
 

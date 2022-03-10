@@ -27,16 +27,15 @@ class Staff(models.Model):
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    slug = models.SlugField(unique=True, null=True, blank=True)
-    timeSlots = models.ManyToManyField('TimeSlot',null=True)
-    courses = models.ManyToManyField('Course',null=True)
+    slug = models.SlugField(unique=True, blank=True)
+    timeSlots = models.ManyToManyField('TimeSlot')
+    courses = models.ManyToManyField('Course')
     #assignment = models.ManyToManyField('Assignment',null=True)
     type = models.CharField(
         max_length=64,
         choices=TypeChoices,
         default=PROFESSOR,
     )
-    slug = models.SlugField(unique=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
@@ -125,7 +124,7 @@ class TimeSlot(BaseOccurrence):
     event = models.ForeignKey(Event,null=True, on_delete=models.CASCADE)
 
 class Student(models.Model):
-    id = models.IntegerField(primary_key=True)
+    #id = models.IntegerField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, null=True, blank=True)
     timeSlots = models.ManyToManyField(TimeSlot,null=True,blank=True)
@@ -140,11 +139,12 @@ class Student(models.Model):
         return str(self.user)
 
 class TeamMeeting(models.Model):
+    thisWeek = datetime.date.today().isocalendar()[1]
     members = models.ManyToManyField(User, blank=True)
-    name = models.CharField(max_length=128, blank=True)
+    name = models.CharField(max_length=128, blank=False)
     slug = models.SlugField(unique=True,editable=False, null=True, blank=True)
-    choices = zip(range(1,53),[str(e) for e in range(1,53)])
-    weekNumber = models.IntegerField('Week Number',choices=choices, default=datetime.date.today().isocalendar()[1])
+    choices = zip(range(thisWeek,53),[str(e) for e in range(thisWeek,53)])
+    weekNumber = models.IntegerField('Week Number',choices=choices, default=thisWeek)
 
 
     def saveSlug(self, *args, **kwargs):

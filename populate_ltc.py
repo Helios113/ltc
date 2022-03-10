@@ -78,42 +78,42 @@ def populate_course(courses):
     return
 
 
-def populate_event(events):
-    for info in events:
-        e = Event.objects.get_or_create(course=Course.objects.get(name=info['course']), name=info['name'])[0]
-        e.location = info['location']
-        e.address = info['address']
-        e.student.set([Student.objects.get(user=User.objects.get(username=student)) for student in info['student']])
-        #e.time_slot.set([TimeSlot.objects.get(day=day, time=time) for day, time in info['time_slot']])
-        e.save()
-    return
+# def populate_event(events):
+#     for info in events:
+#         e = Event.objects.get_or_create(course=Course.objects.get(name=info['course']), name=info['name'])[0]
+#         e.location = info['location']
+#         e.address = info['address']
+#         e.student.set([Student.objects.get(user=User.objects.get(username=student)) for student in info['student']])
+#         #e.time_slot.set([TimeSlot.objects.get(day=day, time=time) for day, time in info['time_slot']])
+#         e.save()
+#     return
 
 
-def populate_assignment(assignments):
-    for info in assignments:
-        t = Assignment.objects.create(course=Course.objects.get(name=info['course']), title=info['title'])
-        t.detail = info['detail']
-        t.save()
-    return
+# def populate_assignment(assignments):
+#     for info in assignments:
+#         t = Assignment.objects.create(course=Course.objects.get(name=info['course']), title=info['title'])
+#         t.detail = info['detail']
+#         t.save()
+#     return
 
 
-def populate_grade(grades):
-    for info in grades:
-        g = Grade.objects.create(student=Student.objects.get(user=User.objects.get(username=info['student'])),
-                                 staff=Staff.objects.get(user=User.objects.get(username=info['staff'])),
-                                 course=Course.objects.get(name=info['course']))
-        g.name = info['name']
-        g.result = info['result']
-        g.save()
-    return
+# def populate_grade(grades):
+#     for info in grades:
+#         g = Grade.objects.create(student=Student.objects.get(user=User.objects.get(username=info['student'])),
+#                                  staff=Staff.objects.get(user=User.objects.get(username=info['staff'])),
+#                                  course=Course.objects.get(name=info['course']))
+#         g.name = info['name']
+#         g.result = info['result']
+#         g.save()
+#     return
 
 
-def populate_degree(degrees):
-    for info in degrees:
-        d = Degree.objects.create(name=info['name'])
-        d.course.set(Course.objects.filter(name__in=info['courses']))
-        d.save()
-    return
+# def populate_degree(degrees):
+#     for info in degrees:
+#         d = Degree.objects.create(name=info['name'])
+#         d.course.set(Course.objects.filter(name__in=info['courses']))
+#         d.save()
+#     return
 
 
 def populate():
@@ -220,13 +220,13 @@ def populate():
     # The Student points to the User.
     populate_student(student_usernames)
     # The Course points to the staff.
-    populate_course(courses)
+    # populate_course(courses)
     # The Assignment points to the Course
-    populate_assignment(assignments)
+    #populate_assignment(assignments)
     # The Event points to the Course
-    populate_event(events)
-    populate_grade(grades)
-    populate_degree(degrees)
+    #populate_event(events)
+    #populate_grade(grades)
+    #populate_degree(degrees)
 
 
 if __name__ == '__main__':

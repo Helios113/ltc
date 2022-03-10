@@ -17,17 +17,18 @@ from datetime import date
 @login_required
 def index(request):
     user = User.objects.filter(username = request.user).first()
+    
+    # get the relevant user based on their status
+    # for each user type extract needed info
     if user.is_staff:
         u = Staff.objects.filter(user= user).first()
+        deadlines=""
     else:
         u = Student.objects.filter(user= user).first()
-        assignments = u.assignment.all()
+        assignments = u.assignment.all() # check if this is true
         deadlines = [list(i.deadline.all_occurrences(from_date=date.today())) for i in assignments]
-        
-        print(deadlines)
-
     
-    u.timeSlots
+    # u.timeSlots
     
     context = {
         'person': u,
@@ -80,7 +81,7 @@ def register(request):
     context = {'form': form, 'registered': registered}
     return render(request, 'ltc/register.html', context)
 
-
+# Base login view
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -98,13 +99,13 @@ def user_login(request):
     else:
         return render(request, 'ltc/login.html')
 
-
+# Base logout form
 @login_required
 def user_logout(request):
     logout(request)
     return redirect(reverse('ltc:index'))
 
-
+# Add base view
 def add_anything(request, form_class, html):
     form = form_class()
     added = False
@@ -151,6 +152,8 @@ def add_degree(request):
     return add_anything(request, DegreeForm, 'ltc/add_degree.html')
 
 
+# Student page view
+# TODO: make it use the not simple template
 @login_required
 def student_page(request, slug):
     s = get_object_or_404(Student, slug=slug)
@@ -160,7 +163,7 @@ def student_page(request, slug):
     context = {'student': s, 'courses': courses, 'events': events, 'available_time_slots': available_time_slots}
     return render(request, 'ltc/student_page.html', context)
 
-
+# Staff page view
 @login_required
 def staff_page(request, slug):
     p = get_object_or_404(Staff, slug=slug)
@@ -169,7 +172,7 @@ def staff_page(request, slug):
     context = {'staff': p, 'courses': courses, 'available_time_slots': available_time_slots}
     return render(request, 'ltc/staff_page.html', context)
 
-
+# Course page view
 @login_required
 def course_page(request, slug):
     c = get_object_or_404(Course, slug=slug)
@@ -205,7 +208,7 @@ def assignment_page(request, slug):
     context = {'assignment': a, 'course': course, 'title': title, 'detail': detail}
     return render(request, 'ltc/assignment_page.html', context)
 
-
+# Maybe not needed
 @login_required
 def time_slot_page(request, slug):
     t = get_object_or_404(TimeSlot, slug=slug)
@@ -353,7 +356,8 @@ def edit_time_slot(request, slug):
     context = {'form': form, 'slug': slug}
     return render(request, 'ltc/edit_time_slot.html', context)
 
-
+# Base course view
+# Aggregate page for courses
 def courses(request):
     courses = Course.objects.all()
     context = {
@@ -361,6 +365,7 @@ def courses(request):
         'courses': courses
     }
     return render(request, 'ltc/courses.html', context)
+
 def edit_anything(request, model_class, form_class, html, slug, url):
     i = get_object_or_404(model_class, slug=slug)
     form = form_class(instance=i)
@@ -387,7 +392,8 @@ def edit_degree(request, slug):
 def edit_event(request, slug):
     return edit_anything(request, Event, EventForm, 'ltc/edit_event.html', slug, 'ltc:event_page')
 
-
+# Find meeting page
+@login_required
 def find_meeting_time(request):
     meetings = TeamMeeting.objects.filter(members=request.user)
     context={   'nbar' : "meeting",
@@ -408,16 +414,16 @@ def find_meeting_time(request):
                                                 meeting.slug}))
     return render(request, 'ltc/find_meeting_time.html', context)
 
-
+@login_required
 def team_schedule_page(request, category_slug):
 
     meeting = get_object_or_404(TeamMeeting, slug=category_slug, members = request.user)
-    #meeting = TeamMeeting.objects.filter(slug=category_slug)
     url_parameter = request.GET.get("q")
     fresh = True
     if url_parameter:
         fresh = False
         students = User.objects.filter(Q(username__icontains=url_parameter) | Q(first_name__icontains=url_parameter) | Q(last_name__icontains=url_parameter) )[:10]
+        students = [item for item in students.all() if item not in meeting.members.all()]
     else:
         students = None
         fresh = True
@@ -450,7 +456,6 @@ def team_schedule_page(request, category_slug):
     
     return render(request, 'ltc/team_schedule_page.html',context)
 
-
 def TimeHelper(meeting, calTimes):
     meeting_times = []
     for m in meeting.members.all():
@@ -482,7 +487,6 @@ def TimeHelper(meeting, calTimes):
             appendTimes(calTimes,sd,i)
     if start:
         appendTimes(calTimes,sd,7199)
-    print("CAL times", calTimes)
     
 
 def appendTimes(calTimes, sd,ed):

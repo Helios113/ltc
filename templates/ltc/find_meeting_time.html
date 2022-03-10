@@ -8,18 +8,35 @@
 {% block body_block %}
     
 <div class="row">
-    <div class="col-sm-6">
-        My Schedulers
+    <div class="col-sm">
+        <h3 class="panel-title">Schedule a new Meeting</h3>
+        <form id="course_form" method="post" action="{% url 'ltc:find_meeting_time' %}"
+        enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="fieldWrapper">
+                {{ form.name.errors }}
+                <label class="h6" for="{{ form.name.id_for_label }}">Name:</label>
+                {{ form.name }}
+            </div>
+            <div class="fieldWrapper">
+                {{ form.weekNumber.errors }}
+                <label class="h6" for="{{ form.weekNumber.id_for_label }}">Week Number:</label>
+                {{ form.weekNumber }}
+            </div>
+        <input class="btn btn-dark" type="submit" name="submit" value="Create a new meeting" />
+    </div>
+    <div class="col-sm">
         <div class="panel panel-primary" id="result_panel">
             <div class="panel-heading">
-                <h3 class="panel-title">Result List</h3>
+                <h3 class="panel-title">Current Meetings</h3>
             </div>
             <div class="overflow-auto">
                 <div class="panel-body" style="height: 120px;">
                     <ul class="list-group">
                         {% for m in meetings %}
                         <a class="list-group-item" href="{% url 'ltc:team_schedule_page' m.slug %}"><strong>
-                        {{m.name}}
+                        {{m.name}} in week #{{m.weekNumber}}
                         </a>
                         {% endfor %}
                     </ul>
@@ -27,14 +44,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-12">
-        Make a new scheduler<br/>
-        <form id="course_form" method="post" action="{% url 'ltc:find_meeting_time' %}"
-        enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form }}
-        <input type="submit" name="submit" value="Create a new meeting" />
-    </div>
+    
 </div>
 
 
