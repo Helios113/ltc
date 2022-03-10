@@ -536,3 +536,27 @@ def appendTimes(calTimes, sd, ed):
         sd = (1+sd//1440)*1440
     calTimes[sd//1440][1].append(('{:02d}:{:02d}'.format(*divmod(sd % 1440, 60)),
                                   '{:02d}:{:02d}'.format(*divmod(ed % 1440, 60))))
+
+
+
+@login_required
+def grades(request):
+    user = request.user
+    u = Student.objects.filter(user=user).first()
+
+
+    #All grades belonging to a student
+    allGrades = Grade.objects.filter(student=u)
+    
+    # Courses wth grades
+    courses = allGrades.values_list('course').distinct()
+
+    courseList = []
+    for c in courses:
+        grade_query = allGrades.filter(course = c[0]);
+        courseList.append({"id":c[0],"name":grade_query[0].course,"grades":grade_query})
+        
+
+    context={"data" : courseList,
+             "nbar" : "grades"}
+    return render(request, 'ltc/grades.html', context)
