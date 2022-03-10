@@ -38,7 +38,8 @@ Admin?: {{ user.is_superuser }}<br />
     All Other today:
     <ul>
     {% for e in time %}
-        <li>{{ e }}</li>
+        <li><a href="#">{{ e.text }}</a></li>
+        <!-- The above needs to be reverse link to event page -->
     {% empty %}
         No event.
     {% endfor %}
@@ -52,17 +53,6 @@ Admin?: {{ user.is_superuser }}<br />
         <li>{{ a }}</li>
     {% empty %}
         No assignment.
-    {% endfor %}
-    </ul>
-    <hr />
-
-
-    All Grades:
-    <ul>
-    {% for g in grades %}
-        <li><a href="{% url 'ltc:grade_page' g.slug %}">{{ g }}</a></li>
-    {% empty %}
-        No grade.
     {% endfor %}
     </ul>
     <hr />

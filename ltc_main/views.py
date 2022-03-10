@@ -14,29 +14,44 @@ from django.db.models import Q
 from datetime import date
 
 # Create your views here.
+
+
 @login_required
 def index(request):
-    user = User.objects.filter(username = request.user).first()
-    
+    user = request.user
+    clean_meetings(user)
     # get the relevant user based on their status
     # for each user type extract needed info
     if user.is_staff:
-        u = Staff.objects.filter(user= user).first()
-        deadlines=""
+        u = Staff.objects.filter(user=user).first()
+        deadlines = ""
     else:
-        u = Student.objects.filter(user= user).first()
-        assignments = u.assignment.all() # check if this is true
-        deadlines = [list(i.deadline.all_occurrences(from_date=date.today())) for i in assignments]
-    
-    # u.timeSlots
-    
+        u = Student.objects.filter(user=user).first()
+        assignments = u.assignment.all()  # check if this is true
+        deadlines = [list(i.deadline.all_occurrences(
+            from_date=date.today())) for i in assignments]
+
+    todaysAgenda = [{"text":"{sTime}-{eTime}\t{cName}:{eName}".format(sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour,minute=i[0].minute),
+                                                             eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour,minute=i[1].minute),
+                                                             cName=i[2].event.course.name,
+                                                             eName=i[2].event.name),
+                    "link":i[2].event.slug}
+                    for i in u.timeSlots.all_occurrences(from_date=date.today(), to_date=date.today())]
+
     context = {
         'person': u,
         'courses_taken': u.courses.all(),
-        'time': u.timeSlots.all_occurrences(from_date=date.today()),
-        'assignments' : deadlines
+        'time': todaysAgenda,
+        'assignments': deadlines
     }
     return render(request, 'ltc/index.html', context)
+
+def clean_meetings(user):
+    thisWeek = datetime.date.today().isocalendar()[1]
+    meetings = TeamMeeting.objects.filter(members=user)
+    for m in meetings:
+        if m.weekNumber<thisWeek:
+            TeamMeeting.delete(m)
 
 
 def register(request):
@@ -82,6 +97,8 @@ def register(request):
     return render(request, 'ltc/register.html', context)
 
 # Base login view
+
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -100,12 +117,16 @@ def user_login(request):
         return render(request, 'ltc/login.html')
 
 # Base logout form
+
+
 @login_required
 def user_logout(request):
     logout(request)
     return redirect(reverse('ltc:index'))
 
 # Add base view
+
+
 def add_anything(request, form_class, html):
     form = form_class()
     added = False
@@ -160,19 +181,25 @@ def student_page(request, slug):
     events = s.event_set.all()
     courses = s.get_courses()
     available_time_slots = s.get_available_time_slots()
-    context = {'student': s, 'courses': courses, 'events': events, 'available_time_slots': available_time_slots}
+    context = {'student': s, 'courses': courses, 'events': events,
+               'available_time_slots': available_time_slots}
     return render(request, 'ltc/student_page.html', context)
 
 # Staff page view
+
+
 @login_required
 def staff_page(request, slug):
     p = get_object_or_404(Staff, slug=slug)
     courses = p.course_set.all()
     available_time_slots = p.get_available_time_slots()
-    context = {'staff': p, 'courses': courses, 'available_time_slots': available_time_slots}
+    context = {'staff': p, 'courses': courses,
+               'available_time_slots': available_time_slots}
     return render(request, 'ltc/staff_page.html', context)
 
 # Course page view
+
+
 @login_required
 def course_page(request, slug):
     c = get_object_or_404(Course, slug=slug)
@@ -205,10 +232,13 @@ def assignment_page(request, slug):
     course = a.course
     title = a.title
     detail = a.detail
-    context = {'assignment': a, 'course': course, 'title': title, 'detail': detail}
+    context = {'assignment': a, 'course': course,
+               'title': title, 'detail': detail}
     return render(request, 'ltc/assignment_page.html', context)
 
 # Maybe not needed
+
+
 @login_required
 def time_slot_page(request, slug):
     t = get_object_or_404(TimeSlot, slug=slug)
@@ -358,13 +388,16 @@ def edit_time_slot(request, slug):
 
 # Base course view
 # Aggregate page for courses
+
+
 def courses(request):
     courses = Course.objects.all()
     context = {
-        'nbar' : 'courses',
+        'nbar': 'courses',
         'courses': courses
     }
     return render(request, 'ltc/courses.html', context)
+
 
 def edit_anything(request, model_class, form_class, html, slug, url):
     i = get_object_or_404(model_class, slug=slug)
@@ -393,59 +426,65 @@ def edit_event(request, slug):
     return edit_anything(request, Event, EventForm, 'ltc/edit_event.html', slug, 'ltc:event_page')
 
 # Find meeting page
+
+
 @login_required
 def find_meeting_time(request):
     meetings = TeamMeeting.objects.filter(members=request.user)
-    context={   'nbar' : "meeting",
-                'form' : MeetingForm,
-                'meetings': meetings,}
+    context = {'nbar': "meeting",
+               'form': MeetingForm,
+               'meetings': meetings, }
     if request.method == 'POST':
-        
+
         form = MeetingForm(request.POST)
         if form.is_valid():
-            #Check that name is unique for this user before save
+            # Check that name is unique for this user before save
             #print("This is the meeting id:", form.id)
             meeting = form.save(commit=True)
             meeting.members.add(User.objects.get(username=request.user))
             meeting.saveSlug()
             meeting.save()
             return redirect(reverse('ltc:team_schedule_page',
-                                        kwargs={'category_slug':
-                                                meeting.slug}))
+                                    kwargs={'category_slug':
+                                            meeting.slug}))
     return render(request, 'ltc/find_meeting_time.html', context)
+
 
 @login_required
 def team_schedule_page(request, category_slug):
 
-    meeting = get_object_or_404(TeamMeeting, slug=category_slug, members = request.user)
+    meeting = get_object_or_404(
+        TeamMeeting, slug=category_slug, members=request.user)
     url_parameter = request.GET.get("q")
     fresh = True
     if url_parameter:
         fresh = False
-        students = User.objects.filter(Q(username__icontains=url_parameter) | Q(first_name__icontains=url_parameter) | Q(last_name__icontains=url_parameter) )[:10]
-        students = [item for item in students.all() if item not in meeting.members.all()]
+        students = User.objects.filter(Q(username__icontains=url_parameter) | Q(
+            first_name__icontains=url_parameter) | Q(last_name__icontains=url_parameter))[:10]
+        students = [item for item in students.all(
+        ) if item not in meeting.members.all()]
     else:
         students = None
         fresh = True
 
-    context = { 'nbar' : "meeting",
-                'students': students,
-                'meeting': meeting,
-                'fresh': fresh,
-                'slug':category_slug,
-    }
-    
-    calTimes = [["Monday",[]], ["Tuesday",[]], ["Wedensday",[]], ["Thursday",[]], ["Friday",[]]]
+    context = {'nbar': "meeting",
+               'students': students,
+               'meeting': meeting,
+               'fresh': fresh,
+               'slug': category_slug,
+               }
+
+    calTimes = [["Monday", []], ["Tuesday", []], [
+        "Wedensday", []], ["Thursday", []], ["Friday", []]]
     TimeHelper(meeting, calTimes)
     context['times'] = calTimes
-    
 
     if request.method == 'POST':
         print(request.POST['user'])
         meeting.members.add(User.objects.get(username=request.POST['user']))
-    if request.is_ajax():        
+    if request.is_ajax():
         html = render_to_string(
-            template_name="ltc/student_search_partial.html", 
+            template_name="ltc/student_search_partial.html",
             context={'students': students}
         )
         print(html)
@@ -453,28 +492,29 @@ def team_schedule_page(request, category_slug):
 
         return JsonResponse(data=data_dict, safe=False)
 
-    
-    return render(request, 'ltc/team_schedule_page.html',context)
+    return render(request, 'ltc/team_schedule_page.html', context)
+
 
 def TimeHelper(meeting, calTimes):
     meeting_times = []
     for m in meeting.members.all():
         if m.is_staff:
-            u = Staff.objects.filter(user = m).first()
+            u = Staff.objects.filter(user=m).first()
         else:
-            u = Student.objects.filter(user = m).first()
+            u = Student.objects.filter(user=m).first()
 
         d = str(datetime.date.today().year)+"-W"+str(meeting.weekNumber)
         startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
         endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")
-        print("DATE: ", startDate,endDate)
-        meeting_times.extend(list(u.timeSlots.all().all_occurrences(from_date =startDate,to_date=endDate)))
+        print("DATE: ", startDate, endDate)
+        meeting_times.extend(list(u.timeSlots.all().all_occurrences(
+            from_date=startDate, to_date=endDate)))
     t = [1]*7200
     print("Meeting Times", meeting_times)
     for m in meeting_times:
         a = m[0].weekday()*1440+m[0].hour*60+m[0].minute
         b = m[1].weekday()*1440+m[1].hour*60+m[1].minute
-        print(a,b)
+        print(a, b)
         t[a:b] = [0]*(b-a)
     start = False
     sd = 0
@@ -484,15 +524,15 @@ def TimeHelper(meeting, calTimes):
             sd = i
         if t[i] == 0 and start == True:
             start = False
-            appendTimes(calTimes,sd,i)
+            appendTimes(calTimes, sd, i)
     if start:
-        appendTimes(calTimes,sd,7199)
-    
+        appendTimes(calTimes, sd, 7199)
 
-def appendTimes(calTimes, sd,ed):
+
+def appendTimes(calTimes, sd, ed):
     while sd//1440 != ed//1440:
-        calTimes[sd//1440][1].append(('{:02d}:{:02d}'.format(*divmod(sd%1440, 60)),
-                                   '{:02d}:{:02d}'.format(*divmod(1439, 60))))
+        calTimes[sd//1440][1].append(('{:02d}:{:02d}'.format(*divmod(sd % 1440, 60)),
+                                      '{:02d}:{:02d}'.format(*divmod(1439, 60))))
         sd = (1+sd//1440)*1440
-    calTimes[sd//1440][1].append(('{:02d}:{:02d}'.format(*divmod(sd%1440, 60)),
-                                '{:02d}:{:02d}'.format(*divmod(ed%1440, 60))))    
+    calTimes[sd//1440][1].append(('{:02d}:{:02d}'.format(*divmod(sd % 1440, 60)),
+                                  '{:02d}:{:02d}'.format(*divmod(ed % 1440, 60))))
