@@ -1,9 +1,9 @@
     {% if fresh %}
-      <option>Input student name into the search field</option>
+      <option>Result</option>
     {% elif students %}
     {% for student in students %}
       <option value="{{ student.username }}">
-        {{ student.username }}: {{ student.first_name }} {{ student.last_name }}
+        {{ student.first_name }} {{ student.last_name }}
       </option>
     {% endfor %}
     {% else %}

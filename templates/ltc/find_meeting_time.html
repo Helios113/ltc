@@ -14,15 +14,17 @@
         enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.non_field_errors }}
-            <div class="fieldWrapper">
+            <div class="form-group fieldWrapper">
                 {{ form.name.errors }}
                 <label class="h6" for="{{ form.name.id_for_label }}">Name:</label>
                 {{ form.name }}
+                <small id="nameHelp" class="form-text text-muted">A recognizable name for your meeting</small>
             </div>
-            <div class="fieldWrapper">
+            <div class="form-group fieldWrapper">
                 {{ form.weekNumber.errors }}
                 <label class="h6" for="{{ form.weekNumber.id_for_label }}">Week Number:</label>
                 {{ form.weekNumber }}
+                <small id="nameHelp" class="form-text text-muted">The week of the year in which your meeting is to be held</small>
             </div>
         <input class="btn btn-dark" type="submit" name="submit" value="Create a new meeting" />
     </div>

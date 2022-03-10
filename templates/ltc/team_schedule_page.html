@@ -19,14 +19,15 @@
     <div class="container">
     <h5>Add members to meeting</h5>
     {# icon and search-box #}
-    <form class="form-inline my-2 my-lg-0" method="post" action="{% url 'ltc:team_schedule_page' slug %}">
+    <form class="my-2 my-lg-0" method="post" action="{% url 'ltc:team_schedule_page' slug %}">
+    
     {% csrf_token %}
     <div class="row">
-    <input id="user-input" class="form-control mr-sm-2"  placeholder="Search">
+    <input id="user-input" class="form-control mr-sm-2"  placeholder="Student Name">
     </div>
     {# artist-list section #}
     <div class="row">
-    <select id="replaceable-content" class="w-100 custom-select" name="user" id="id_user">
+    <select id="replaceable-content" class="mr-sm-2 custom-select" name="user" id="id_user">
         {% include "ltc/student_search_partial.html" %}
     </select>
     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
@@ -40,7 +41,7 @@
         <div class="col-sm">
             {{m.0}}<br/>
             {% for n in m.1 %}
-            <span class="badge badge-secondary">{{n.0}}-{{n.1}}</span><br/>
+            <span class="badge badge-success">{{n.0}}-{{n.1}}</span><br/>
             {% endfor %}
         </div>    
         {% endfor %}
