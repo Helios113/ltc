@@ -487,7 +487,6 @@ def team_schedule_page(request, category_slug):
             template_name="ltc/student_search_partial.html",
             context={'students': students}
         )
-        print(html)
         data_dict = {"html_from_view": html}
 
         return JsonResponse(data=data_dict, safe=False)
@@ -506,11 +505,9 @@ def TimeHelper(meeting, calTimes):
         d = str(datetime.date.today().year)+"-W"+str(meeting.weekNumber)
         startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
         endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")
-        print("DATE: ", startDate, endDate)
         meeting_times.extend(list(u.timeSlots.all().all_occurrences(
             from_date=startDate, to_date=endDate)))
     t = [1]*7200
-    print("Meeting Times", meeting_times)
     for m in meeting_times:
         a = m[0].weekday()*1440+m[0].hour*60+m[0].minute
         b = m[1].weekday()*1440+m[1].hour*60+m[1].minute
@@ -560,3 +557,5 @@ def grades(request):
     context={"data" : courseList,
              "nbar" : "grades"}
     return render(request, 'ltc/grades.html', context)
+
+

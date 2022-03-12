@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-
+from . import timetable_views
 app_name = 'ltc'
 
 urlpatterns = [
@@ -59,6 +59,10 @@ urlpatterns = [
 
     #Grades
     path('grade/', views.grades, name='grades'),
+
+    #TimeTable
+    path('timetable/time_table/', timetable_views.timetable, name='timetable'),
+
 
     
 ]

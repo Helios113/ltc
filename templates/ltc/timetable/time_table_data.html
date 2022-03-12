@@ -1,0 +1,12 @@
+<div class="row">
+{% for m in data %}
+<div class="col-sm {% if forloop.last == False %}border-right{%endif%}">
+  <ul class="list-group">
+    {{m.0}}<br />
+    {% for n in m.1 %}
+    <li class="list-group-item">{{n.text}}<br />{{n.event.name}}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endfor %}
+</div>
