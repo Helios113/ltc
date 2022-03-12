@@ -1,6 +1,7 @@
 from django.urls import path
-from . import views
-from . import timetable_views
+from .views import views
+from .views import timetable_views
+from .views import scheduler_view
 app_name = 'ltc'
 
 urlpatterns = [
@@ -54,8 +55,8 @@ urlpatterns = [
     path('delete_event/<slug:slug>/', views.delete_event, name='delete_event'),
 
     # Find meeting time
-    path('find_meeting_time/', views.find_meeting_time, name='find_meeting_time'),
-    path('find_meeting_time/<slug:category_slug>/team_schedule_page/', views.team_schedule_page, name='team_schedule_page'),
+    path('find_meeting_time/', scheduler_view.find_meeting_time, name='find_meeting_time'),
+    path('find_meeting_time/<slug:category_slug>/team_schedule_page/', scheduler_view.team_schedule_page, name='team_schedule_page'),
 
     #Grades
     path('grade/', views.grades, name='grades'),
