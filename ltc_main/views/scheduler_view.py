@@ -93,6 +93,8 @@ def TimeHelper(meeting, calTimes):
         endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")
         meeting_times.extend(list(u.timeSlots.all().all_occurrences(
             from_date=startDate, to_date=endDate)))
+    for i in range(5):
+        calTimes[i][0]=calTimes[i][0] + " ({date})".format(date=(startDate.date()+ datetime.timedelta(days=i)).strftime("%d, %b"))
     t = [1]*7200
     for m in meeting_times:
         a = m[0].weekday()*1440+m[0].hour*60+m[0].minute

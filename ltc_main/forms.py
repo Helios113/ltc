@@ -60,10 +60,11 @@ class DateInput(forms.DateInput):
     input_type = 'date'
 
 class MeetingForm(forms.ModelForm):
-    #name = forms.CharField()
-    #members = forms.MultipleChoiceField(widget = forms.HiddenInput, required=False)
-    #slug = forms.CharField(widget=forms.HiddenInput(), required=False)
-    #id = forms.IntegerField(widget=forms.HiddenInput())
+    
+    def __init__(self, *args, **kwargs):
+        super(forms.ModelForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
     class Meta:
         model = TeamMeeting
         fields = ['name', 'weekNumber']
