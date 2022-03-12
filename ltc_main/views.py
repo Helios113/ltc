@@ -487,7 +487,6 @@ def team_schedule_page(request, category_slug):
             template_name="ltc/student_search_partial.html",
             context={'students': students}
         )
-        print(html)
         data_dict = {"html_from_view": html}
 
         return JsonResponse(data=data_dict, safe=False)
@@ -564,21 +563,32 @@ def grades(request):
 def timetable(request):
     user = request.user
     u = Student.objects.filter(user=user).first()
+    if request.is_ajax():
+        thisWeek = int(request.GET.get('week', None))
+        direction = int(request.GET.get('direction', None))
+        html = render_to_string(
+            template_name="ltc/timetable/time_table_content.html",
+            context=timetable_helper(u,thisWeek,direction=direction)
+        )
+        html1 = render_to_string(
+            template_name="ltc/timetable/time_table_data.html",
+            context=timetable_helper(u,thisWeek)
+        )
+        data_dict = {"html_from_view": html,
+                     "html_from_view1": html1}
+        return JsonResponse(data=data_dict, safe=False)
+
 
 
     # This week logic based on whatever
-    if request.method == 'GET':
+    elif request.method == 'GET':
         thisWeek = datetime.date.today().isocalendar()[1]
-        print(thisWeek)
-        d = str(datetime.date.today().year)+"-W"+str(thisWeek)
-        startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
-        endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")
-    else:
-        thisWeek = datetime.date.today().isocalendar()[1]
-        d = str(datetime.date.today().year)+"-W"+str(thisWeek)
-        startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
-        endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")
-    
+        return render(request, 'ltc/timetable/time_table.html', timetable_helper(u, thisWeek))
+
+def timetable_helper(u,week,direction=0):
+    d = str(datetime.date.today().year)+"-W"+str(week)
+    startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
+    endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")
     allEventsThisWeek = u.timeSlots.all_occurrences(from_date=startDate, to_date=endDate)
     calTimes = [["Monday", []], ["Tuesday", []], [
         "Wedensday", []], ["Thursday", []], ["Friday", []]]
@@ -588,15 +598,7 @@ def timetable(request):
         calTimes[event[0].day-startDate.day][1].append(data)
     # HOW TO HANDLE EVENTS WHICH SPAN MULTIPLE DAYS
     context={"nbar" : "timetable",
-            "week" : thisWeek,
-            "weekDir" : 0,
-            "data":calTimes}
-    return render(request, 'ltc/time_table.html', context)
-
-# def appendTimes2(calTimes, sd, ed):
-#     while sd//1440 != ed//1440:
-#         calTimes[sd//1440][1].append(('{:02d}:{:02d}'.format(*divmod(sd % 1440, 60)),
-#                                       '{:02d}:{:02d}'.format(*divmod(1439, 60))))
-#         sd = (1+sd//1440)*1440
-#     calTimes[sd//1440][1].append(('{:02d}:{:02d}'.format(*divmod(sd % 1440, 60)),
-#                                   '{:02d}:{:02d}'.format(*divmod(ed % 1440, 60))))
+            "week" : week,
+            "data":calTimes,
+            "direction":direction}
+    return context
