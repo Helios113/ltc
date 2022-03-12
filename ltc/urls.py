@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from ltc_main import views
+from ltc_main.views import views
 
 
 urlpatterns = [
