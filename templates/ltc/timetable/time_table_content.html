@@ -14,8 +14,8 @@
     {% if direction == 0 %}
     Current week
     {% elif direction > 0 %}
-    {{direction}} weeks ahead    
+    {{direction}} week{% if direction > 1 %}s{%endif%} ahead    
     {% else %}
-    {{direction|abs}} weeks behind
+    {{direction|abs}} week{% if direction < -1 %}s{%endif%} behind
     {%endif%}
 </div>

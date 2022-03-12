@@ -1,8 +1,8 @@
 const prev_button = $("#previous");
 const next_button = $("#next");
 const weekNumber = $("#week");
-const artist_div = $("#replaceable-week");
-const artist_div1 = $("#replaceable-data");
+const week_div = $("#replaceable-week");
+const data_div = $("#replaceable-data");
 let currentWeek = 0;
 let workingWeek;
 const endpoint = "";
@@ -18,8 +18,8 @@ $(document).ready(function () {
       week: workingWeek,
       direction: workingWeek - currentWeek,
     }).done((response) => {
-      artist_div.html(response["html_from_view"]);
-      artist_div1.html(response["html_from_view1"]);
+        week_div.html(response["html_week"]);
+        data_div.html(response["html_data"]);
     });
     
   });
@@ -29,8 +29,8 @@ $(document).ready(function () {
       week: workingWeek,
       direction: workingWeek - currentWeek,
     }).done((response) => {
-      artist_div.html(response["html_from_view"]);
-      artist_div1.html(response["html_from_view1"]);
+        week_div.html(response["html_week"]);
+        data_div.html(response["html_data"]);
     });
     
   });
