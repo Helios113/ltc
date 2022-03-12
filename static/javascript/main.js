@@ -4,21 +4,24 @@ const endpoint = "";
 const delay_by_in_ms = 700;
 let scheduled_function = false;
 
+$("#my-select").selectpicker("refresh");
+
 let ajax_call = function (endpoint, request_parameters) {
   $.getJSON(endpoint, request_parameters).done((response) => {
-    artists_div.html(response["html_from_view"]);
+    $("#my-select").html(response["html_from_view"]);
+    
+    
+    $("#my-select").selectpicker("refresh");
+    $("#my-select").selectpicker("refresh");
   });
 };
-
-user_input.on("keyup", function () {
+$(document).on('keyup', '#userDropdown .bs-searchbox input', function() {
+  //here you listen to the change of the input corresponding to your select
+  //and now you can populate your select element
   const request_parameters = {
     q: $(this).val(), // value of user_input: the HTML element with ID user-input
   };
 
-  // start animating the search icon with the CSS class
-  //search_icon.addClass('blink')
-
-  // if scheduled_function is NOT false, cancel the execution of the function
   if (scheduled_function) {
     clearTimeout(scheduled_function);
   }
@@ -30,5 +33,4 @@ user_input.on("keyup", function () {
     endpoint,
     request_parameters
   );
-  console.log(scheduled_function);
 });

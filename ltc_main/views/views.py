@@ -31,7 +31,7 @@ def index(request):
         deadlines = [list(i.deadline.all_occurrences(
             from_date=date.today())) for i in assignments]
 
-    todaysAgenda = [{"text":"{sTime}-{eTime}\t{cName}:{eName}".format(sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour,minute=i[0].minute),
+    todaysAgenda = [{"text":"{sTime}-{eTime}\t{cName}: {eName}".format(sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour,minute=i[0].minute),
                                                              eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour,minute=i[1].minute),
                                                              cName=i[2].event.course.name,
                                                              eName=i[2].event.name),
