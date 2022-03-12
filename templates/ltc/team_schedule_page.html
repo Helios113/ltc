@@ -21,15 +21,18 @@
     
     <form class="my-2 my-lg-0" method="post" action="{% url 'ltc:team_schedule_page' slug %}">
     {% csrf_token %}
-    <div id="my-div" class="row">
-        <select id="my-select" class="selectpicker" name="user" data-live-search="true"></select>
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
+    <div id="userDropdown" class="form-group">
+        <select id="my-select" class="selectpicker form-control" name="user" data-live-search="true"></select>
     </div>
+    <button class="btn btn-primary my-2 my-sm-0" type="submit">Add</button>
     </form>
 </div>
 </div>
 
 <div class="container">
+    <hr class="my-12" style="height: 2px;
+    background: black;" />
+    <h5>Available times</h5>
     <hr class="my-12" />
     <div class="row justify-content-center">
         {% for m in times %}

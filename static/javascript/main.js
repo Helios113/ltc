@@ -15,8 +15,7 @@ let ajax_call = function (endpoint, request_parameters) {
     $("#my-select").selectpicker("refresh");
   });
 };
-
-$("#my-div .form-control").on("keyup", function () {
+$(document).on('keyup', '#userDropdown .bs-searchbox input', function() {
   //here you listen to the change of the input corresponding to your select
   //and now you can populate your select element
   const request_parameters = {
