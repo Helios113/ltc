@@ -26,7 +26,10 @@
       rel="stylesheet"
     />
   </head>
-  <body>
+  <body data-spy="scroll" class="scrollspy-body">
+        <!-- data-target="#scroll-list"
+        data-offset="100" -->
+        
       <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container">
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-label="Toggle navigation">
@@ -77,7 +80,7 @@
       {% block footer_block %}
         
       {% endblock %}
-    </body>
+  </body>
   </html>
 <style>
   html { 

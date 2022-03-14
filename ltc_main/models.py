@@ -29,7 +29,6 @@ class Staff(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     timeSlots = models.ManyToManyField('TimeSlot')
     courses = models.ManyToManyField('Course')
-    #assignment = models.ManyToManyField('Assignment',null=True)
     type = models.CharField(
         max_length=64,
         choices=TypeChoices,
@@ -102,11 +101,26 @@ class Degree(models.Model):
 
 
 class Event(BaseEvent):
+    
     id = models.IntegerField(primary_key=True)
+    #add type to the event
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=512, null=True)
     location = models.CharField(max_length=128)
+    lecture = 'Lecture'
+    tutorial = 'Tutorial'
+    lab = 'Lab'
+    TypeChoices = (
+        (lecture, 'Lecture'),
+        (tutorial, 'Tutorial'),
+        (lab, 'Lab'),
+    )
+    type = models.CharField(
+        max_length=64,
+        choices=TypeChoices,
+        default=lecture,
+    )
     slug = models.SlugField(unique=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):

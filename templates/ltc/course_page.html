@@ -1,51 +1,91 @@
 {% extends 'ltc/base.html' %}
 {% load staticfiles %}
-
 {% block title_block %}
-	Course Page
+Course Page
 {% endblock %}
-
 {% block body_block %}
-    Course Code: {{ course.code }}
-    <hr />
-    Course Name: {{ course.name }}
-    <hr />
-    Course Description: {{ course.description }}
-    <hr />
-    By Which Staff: <a href="{% url 'ltc:staff_page' course.staff.slug %}">{{ course.staff }}</a>
-    <hr />
-
-    Prerequisites:
-    <ul>
-    {% for pre in prerequisites %}
-       <li><a href="{% url 'ltc:course_page' pre.slug %}">{{ pre }}</a></li>
-    {% empty %}
-        No prerequisite.
-    {% endfor %}
-    </ul>
-    <hr />
-
-    Events On Course:
-    <ul>
-    {% for e in events %}
-        <li><a href="{% url 'ltc:event_page' e.slug %}">{{ e }}</a></li>
-    {% empty %}
-        No event.
-    {% endfor %}
-    </ul>
-    <hr />
-
-
-
-    Assignments:
-    <ul>
-    {% for a in assignments %}
-        <li><a href="{% url 'ltc:assignment_page' a.slug %}">{{ a }}</a></li>
-    {% empty %}
-        No assignment.
-    {% endfor %}
-    </ul>
-    <hr />
-    <a href="{% url 'ltc:edit_course' course.slug %}"><button>Edit Course</button></a>
-    <a href="{% url 'ltc:delete_course' course.slug %}"><button>Delete Course</button></a>
+<div class="row">
+    <div class="col-sm-3">
+        <div id="scroll-list" class="mt-3 list-group sticky-top" style="top: 1em;">
+            <a class="list-group-item list-group-item-action" href="#list-item-1"
+                >Lectures</a
+            >
+            <a class="list-group-item list-group-item-action" href="#list-item-2"
+                >Tutorials</a
+            >
+            <a class="list-group-item list-group-item-action" href="#list-item-3"
+                >Labs</a
+            >
+            <a class="list-group-item list-group-item-action" href="#list-item-4"
+                >Assignments</a
+            >
+        </div>
+    </div>
+    <div class="col-sm-9">
+        <div id = "course-info">
+            <h1>{{ course.code }}: {{ course.name }}</h2>
+            <p>{{ course.description }}</p>
+            By Which Staff: <a href="#">{{ course.staff }}</a>
+        </div>
+        <div>
+            <h4 id="list-item-1">Lectures</h4>
+            <div class="list-group">
+                {% for l in events.0 %}
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{l.name}}</h5>
+                      <small>3 days ago</small>
+                    </div>
+                    <p class="mb-1">{{l.description}}</p>
+                    <small>And some small print.</small>
+                  </a> 
+                {% endfor %}
+            </div>
+            <h4 id="list-item-2">Tutorials</h4>
+            <div class="list-group">
+                {% for t in events.1%}
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{t.name}}</h5>
+                      <small>3 days ago</small>
+                    </div>
+                    <p class="mb-1">{{t.description}}</p>
+                    <small>And some small print.</small>
+                </a> 
+                {% endfor %}
+            </div>
+            <h4 id="list-item-3">Labs</h4>
+            <div class="list-group">
+                {% for l in events.2%}
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1"> {{l.name}}</h5>
+                      <small>3 days ago</small>
+                    </div>
+                    <p class="mb-1">{{l.description}}</p>
+                    <small>And some small print.</small>
+                </a> 
+                {% endfor %}
+            </div>
+            <h4 id="list-item-4">Assignments</h4>
+            <div class="list-group">
+                {% for a in assignments%}
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{a.title}}</h5>
+                      <small>3 days ago</small>
+                    </div>
+                    <p class="mb-1">Some placeholder content in a paragraph.</p>
+                    <small>And some small print.</small>
+                </a> 
+                    
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
+{% block footer_block%}
+<script type="text/javascript" src="{% static "javascript/scroll.js" %}"></script>
+{% endblock%}

@@ -206,8 +206,11 @@ def course_page(request, slug):
     prerequisites = c.prerequisite.all()
     assignments = c.assignment_set.all()
     events = c.event_set.all()
+    lec = [i for i in events if i.type == 'Lecture']
+    tut = [i for i in events if i.type == 'Tutorial']
+    lab = [i for i in events if i.type == 'Lab']
     context = {'course': c, 'prerequisites': prerequisites,
-               'assignments': assignments, 'events': events, }
+               'assignments': assignments, 'events': [lec,tut,lab], }
     return render(request, 'ltc/course_page.html', context)
 
 

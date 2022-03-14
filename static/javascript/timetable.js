@@ -6,7 +6,7 @@ const data_div = $("#replaceable-data");
 let currentWeek = 0;
 let workingWeek;
 const endpoint = "";
-const delay_by_in_ms = 700;
+const delay_by_in_ms = 100;
 let scheduled_function = false;
 
 $(document).ready(function () {
