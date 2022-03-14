@@ -12,7 +12,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.db.models import Q
 from datetime import date
-
+from datetime import datetime
 # Create your views here.
 
 
@@ -29,14 +29,14 @@ def index(request):
         u = Student.objects.filter(user=user).first()
         assignments = u.assignment.all()  # check if this is true
         deadlines = [list(i.deadline.all_occurrences(
-            from_date=date.today())) for i in assignments]
+            from_date=datetime.now())) for i in assignments]
 
     todaysAgenda = [{"text":"{sTime}-{eTime}\t{cName}: {eName}".format(sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour,minute=i[0].minute),
                                                              eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour,minute=i[1].minute),
                                                              cName=i[2].event.course.name,
                                                              eName=i[2].event.name),
                     "link":i[2].event.slug}
-                    for i in u.timeSlots.all_occurrences(from_date=date.today(), to_date=date.today())]
+                    for i in u.timeSlots.all_occurrences(from_date=datetime.now(), to_date=date.today())]
 
     context = {
         'person': u,
@@ -47,8 +47,8 @@ def index(request):
     return render(request, 'ltc/index.html', context)
 
 def clean_meetings(user):
-    thisWeek = datetime.date.today().isocalendar()[1]
-    meetings = TeamMeeting.objects.filter(members=user)
+    thisWeek = date.today().isocalendar()[1]
+    meetings = TeamMeeting.objects.filter(owner=user)
     for m in meetings:
         if m.weekNumber<thisWeek:
             TeamMeeting.delete(m)

@@ -46,6 +46,7 @@ class Staff(models.Model):
 class Course(models.Model):
     id = models.IntegerField(primary_key=True)
     code = models.CharField(max_length=128, unique=True)
+    #Course needs some end date so we can see if the course is current
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField(max_length=512, null=True)
     prerequisite = models.ManyToManyField(
@@ -154,6 +155,7 @@ class Student(models.Model):
 
 class TeamMeeting(models.Model):
     thisWeek = datetime.date.today().isocalendar()[1]
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owner", null=True)
     members = models.ManyToManyField(User, blank=True)
     name = models.CharField(max_length=128, blank=False)
     slug = models.SlugField(unique=True, editable=False, null=True, blank=True)
