@@ -15,7 +15,6 @@ from eventtools.models import BaseEvent, BaseOccurrence
 # Create your models here.
 
 class Staff(models.Model):
-
     PROFESSOR = 'Professor'
     TEACHING_ASSISTANT = 'Teaching assistant'
     ADMINISTRATOR = 'Administrator'
@@ -27,7 +26,21 @@ class Staff(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, blank=True)
-    timeSlots = models.ManyToManyField('TimeSlot')
+
+    # TODO: timeslots not recommended --Xinyu
+    # Time slots should be calculated.
+    # If you want to get someone's time slots, calculate them dynamically by function rather than storing them AGAIN.
+    # Or it would be hard to maintain the time slots when the time of an event changes.
+    def get_time_slots(self):
+        t = []
+        for course in self.courses.all():
+            for event in course.event_set.all():
+                for timeSlot in event.timeslot_set.all():
+                    t.append(timeSlot)
+        pks = [i.pk for i in t]
+        return TimeSlot.objects.filter(pk__in=pks)
+    # timeSlots = models.ManyToManyField('TimeSlot')
+
     courses = models.ManyToManyField('Course')
     type = models.CharField(
         max_length=64,
@@ -44,15 +57,14 @@ class Staff(models.Model):
 
 
 class Course(models.Model):
-    id = models.IntegerField(primary_key=True)
     code = models.CharField(max_length=128, unique=True)
-    #Course needs some end date so we can see if the course is current
-    name = models.CharField(max_length=128, unique=True)
-    description = models.TextField(max_length=512, null=True)
+    # Course needs some end date so we can see if the course is current
+    name = models.CharField(max_length=128, default='default')
+    description = models.TextField(max_length=512, default='default')
     prerequisite = models.ManyToManyField(
         'self', symmetrical=False, blank=True)
     slug = models.SlugField(unique=True, null=True, blank=True)
-    photo = models.TextField(null=True, blank=True)
+    photo = models.TextField()
 
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
@@ -60,11 +72,10 @@ class Course(models.Model):
         super(Course, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.code+' '+self.name
+        return self.code + ' ' + self.name
 
 
 class Assignment(models.Model):
-    id = models.IntegerField(primary_key=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     title = models.CharField(max_length=128)
     detail = models.TextField(max_length=512, null=True, blank=True)
@@ -85,7 +96,7 @@ class Grade(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     assignment = models.ForeignKey(
         Assignment, on_delete=models.CASCADE)
-    result = models.IntegerField(max_length=3)
+    result = models.IntegerField(default=0)
 
 
 class Degree(models.Model):
@@ -102,9 +113,8 @@ class Degree(models.Model):
 
 
 class Event(BaseEvent):
-    
     id = models.IntegerField(primary_key=True)
-    #add type to the event
+    # add type to the event
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=512, null=True)
@@ -137,12 +147,35 @@ class TimeSlot(BaseOccurrence):
 
 
 class Student(models.Model):
-    #id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, null=True, blank=True)
-    timeSlots = models.ManyToManyField(TimeSlot, null=True, blank=True)
-    courses = models.ManyToManyField(Course, null=True, blank=True)
-    assignment = models.ManyToManyField(Assignment, null=True, blank=True)
+
+    # TODO: timeslots not recommended --Xinyu
+    # Students attend courses, courses have events with time slots, so students' time slots can be calculated.
+    # If you want to get someone's time slots, calculate them dynamically by function rather than storing them AGAIN.
+    # Or it would be hard to maintain the time slots when the time of an event changes.
+    def get_time_slots(self):
+        t = []
+        for course in self.courses.all():
+            for event in course.event_set.all():
+                for timeSlot in event.timeslot_set.all():
+                    t.append(timeSlot)
+        pks = [i.pk for i in t]
+        return TimeSlot.objects.filter(pk__in=pks)
+    # timeSlots = models.ManyToManyField(TimeSlot, blank=True)
+
+    courses = models.ManyToManyField(Course, blank=True)
+
+    # TODO: Assignment has the same issue as Time Slots.
+    def get_assignments(self):
+        a = []
+        for course in self.courses.all():
+            for assignment in course.assignment_set.all():
+                a.append(assignment)
+        return a
+    # assignment = models.ManyToManyField(Assignment, blank=True)
+
     degree = models.ForeignKey(Degree, null=True, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
@@ -163,9 +196,10 @@ class TeamMeeting(models.Model):
     weekNumber = models.IntegerField(
         'Week Number', choices=choices, default=thisWeek)
 
-    def saveSlug(self, *args, **kwargs):
+    # The name of this function must be 'save' rather than 'saveSlug'. Because it should be an overwritten function.
+    def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
         super(TeamMeeting, self).save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.id)+self.name
+        return str(self.id) + self.name
