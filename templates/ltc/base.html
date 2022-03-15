@@ -1,93 +1,131 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="" />
-    <title>LTC++ 
-      {% block title_block %}
-       Default title. 
-      {% endblock %}
-    </title>
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- Bootstrap core CSS -->
-    <link
-      href="https://getbootstrap.com/docs/4.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      crossorigin="anonymous"
-    />
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="" />
+        <title>
+            LTC++ {% block title_block %} Default title. {% endblock %}
+        </title>
+        <!-- FontAwesome -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        />
+        <!-- Bootstrap core CSS -->
+        <link
+            href="https://getbootstrap.com/docs/4.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            crossorigin="anonymous"
+        />
 
-    <meta name="theme-color" content="#7952b3" />
-    <!-- Custom styles for this template -->
-    <link
-      href="https://getbootstrap.com/docs/4.2/examples/product/product.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body data-spy="scroll" class="scrollspy-body">
+        <meta name="theme-color" content="#7952b3" />
+        <!-- Custom styles for this template -->
+        <link
+            href="https://getbootstrap.com/docs/4.2/examples/product/product.css"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.13.0/css/ol.css"
+            type="text/css"
+        />
+    </head>
+    <body class="scrollspy-body">
         <!-- data-target="#scroll-list"
         data-offset="100" -->
-        
-      <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-        <div class="container">
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <a class="navbar-brand " href={% url 'ltc:index' %}>LTC++</a>
-          <div class="collapse navbar-collapse" id="mainNav">
-            <div class="navbar-nav">
-              <!-- These are our regular links -->
-              {% if user.is_authenticated %}
-              <a class="nav-item nav-link {% if nbar == 'timetable' %}active{% endif %}" href={% url 'ltc:timetable' %}><i class="fa fa-calendar fa-lg"></i> Time Table</a>
-              <a class="nav-item nav-link {% if nbar == 'courses' %}active{% endif %}" href={% url 'ltc:courses' %}><i class="fa fa-book fa-lg"></i> Courses</a>
-              {% if user.is_staff is False%}
-              <a class="nav-item nav-link {% if nbar == 'grades' %}active{% endif %}" href={% url 'ltc:grades' %}><i class="fa fa-star-o fa-lg"></i> Grades</a>
-              {% endif %}
-              <a class="nav-item nav-link {% if nbar == 'meeting' %}active{% endif %}" href={% url 'ltc:find_meeting_time' %}><i class="fa fa-clock-o fa-lg"></i> Schedule a meeting</a>
-              {% endif %}
+
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+            <div class="container">
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#mainNav"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'ltc:index' %}">LTC++</a>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <div class="navbar-nav">
+                        <!-- These are our regular links -->
+                        {% if user.is_authenticated %}
+                        <a
+                            class="nav-item nav-link {% if nbar == 'timetable' %}active{% endif %}"
+                            href="{% url 'ltc:timetable' %}"
+                            ><i class="fa fa-calendar fa-lg"></i> Time Table</a
+                        >
+                        <a
+                            class="nav-item nav-link {% if nbar == 'courses' %}active{% endif %}"
+                            href="{% url 'ltc:courses' %}"
+                            ><i class="fa fa-book fa-lg"></i> Courses</a
+                        >
+                        {% if user.is_staff is False%}
+                        <a
+                            class="nav-item nav-link {% if nbar == 'grades' %}active{% endif %}"
+                            href="{% url 'ltc:grades' %}"
+                            ><i class="fa fa-star-o fa-lg"></i> Grades</a
+                        >
+                        {% endif %}
+                        <a
+                            class="nav-item nav-link {% if nbar == 'meeting' %}active{% endif %}"
+                            href="{% url 'ltc:find_meeting_time' %}"
+                            ><i class="fa fa-clock-o fa-lg"></i> Schedule a
+                            meeting</a
+                        >
+                        {% endif %}
+                    </div>
+                    <!-- Right aligned field -->
+                    <div class="navbar-nav ml-auto">
+                        <!-- This is where we can have a hello partner -->
+                        <!-- And a log in/out field -->
+                        {% if user.is_authenticated %}
+                        <a
+                            class="nav-item nav-link"
+                            href="{% url 'ltc:logout' %}"
+                            >Log out</a
+                        >
+                        {% else %}
+                        <a
+                            class="nav-item nav-link"
+                            href="{% url 'ltc:login' %}"
+                            >Log in</a
+                        >
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <!-- Right aligned field -->
-            <div class="navbar-nav ml-auto">
-                  <!-- This is where we can have a hello partner -->
-                  <!-- And a log in/out field -->
-                  {% if user.is_authenticated %}
-                  <a class="nav-item nav-link" href={% url 'ltc:logout' %}>Log out</a>
-                  {% else %}
-                  <a class="nav-item nav-link" href={% url 'ltc:login' %}>Log in</a>
-                  {% endif %}
+        </nav>
+        <main>
+            <div class="container py-5 h-100">
+                {% block body_block %} {% endblock %}
             </div>
-          </div>
-        </div>
-      </nav>
-    <main>
-    <div class="container py-5 h-100">
-      {% block body_block %}
-        
-      {% endblock %}
-    </div>
-    </main>
-    
-   <!-- Bootstrap core JavaScript -->
-   <!-- Placed at the end of the document so the pages load faster -->
-      <script src="{% static "javascript/jquery-3.3.1.min.js" %}" crossorigin="anonymous"></script>
-      <script>window.jQuery || document.write('<script src="https://getbootstrap.com/docs/4.2/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-      <script src="https://getbootstrap.com/docs/4.2/dist/js/bootstrap.bundle.min.js">
-      </script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js">
-      </script>
-      {% block footer_block %}
-        
-      {% endblock %}
-  </body>
-  </html>
+        </main>
+
+        <!-- Bootstrap core JavaScript -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script
+            src="{% static 'javascript/jquery-3.3.1.min.js' %}"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            window.jQuery ||
+                document.write(
+                    '<script src="https://getbootstrap.com/docs/4.2/assets/js/vendor/jquery-slim.min.js"><\/script>'
+                );
+        </script>
+        <script src="https://getbootstrap.com/docs/4.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+        {% block footer_block %} {% endblock %}
+    </body>
+</html>
 <style>
-  html { 
-    overflow-y: scroll; 
-  }
-  .navbar-brand
-  {
-    font-size: 2rem;
-  }
+    html {
+        overflow-y: scroll;
+    }
+    .navbar-brand {
+        font-size: 2rem;
+    }
 </style>

@@ -117,6 +117,7 @@ class Event(BaseEvent):
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=512, null=True)
     location = models.CharField(max_length=128)
+    geoUri = models.CharField(max_length=128, default="geo:55.8726,-4.2896?z=16")
     lecture = 'Lecture'
     tutorial = 'Tutorial'
     lab = 'Lab'

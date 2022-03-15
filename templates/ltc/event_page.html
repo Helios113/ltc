@@ -1,37 +1,31 @@
-{% extends 'ltc/base.html' %}
-{% load staticfiles %}
+{% extends 'ltc/base.html' %} {% load staticfiles %} {% block title_block %}
+Event Page {% endblock %} {% block body_block %} For Course:
+<a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a>
+<hr />
 
-{% block title_block %}
-	Event Page
-{% endblock %}
+Event Name:{{ event.name }}
+<br />
 
-{% block body_block %}
+Location:{{ event.location }}
+<br />
 
-    For Course:
-    <a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a>
-    <hr />
+<div id="map" class="z-depth-1-half map-container" style="height: 20em;
+width: 100%;"></div>
 
-    Event Name:{{ event.name }}
-    <br />
-
-    Location:{{ event.location }}
-    <br />
-    Address:{{ event.address }}
-    <br />
-
-    <!-- Time Slots:
-    <ul>
-    {% for t in time_slots %}
-        <li><a href="{% url 'ltc:time_slot_page' t.slug %}">{{ t }}</a></li>
-    {% empty %}
-        No time slot.
-    {% endfor %}
-    </ul>
-    <hr /> -->
-
-    <a href="{% url 'ltc:edit_event' event.slug %}"><button>Edit Event</button></a>
-    <a href="{% url 'ltc:delete_event' event.slug %}"><button>Delete Event</button></a>
-
-
-
+<a href="{% url 'ltc:edit_event' event.slug %}"><button>Edit Event</button></a>
+<a href="{% url 'ltc:delete_event' event.slug %}"
+    ><button>Delete Event</button></a
+>
+<i id="latlon" hidden>{{event.geoUri}}</i>
+  <style>
+    .map {
+      
+    }
+  </style>
+{% endblock %} {% block footer_block %}
+<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.13.0/build/ol.js"></script>
+<script
+    type="text/javascript"
+    src="{% static 'javascript/map/location.js' %}"
+></script>
 {% endblock %}
