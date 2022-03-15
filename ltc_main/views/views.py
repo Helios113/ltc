@@ -27,16 +27,20 @@ def index(request):
         deadlines = ""
     else:
         u = Student.objects.filter(user=user).first()
-        assignments = u.assignment.all()  # check if this is true
-        deadlines = [list(i.deadline.all_occurrences(
-            from_date=datetime.now())) for i in assignments]
+        assignments = u.get_assignments()  # check if this is true
+
+        # TODO: Kind of confused with deadlines. Are they a period of time? Or just a specific time point? --Xinyu
+        # deadlines = [list(i.deadline.all_occurrences(
+        #     from_date=datetime.now())) for i in assignments]
+        deadlines = ""
+        # TODO: I haven't populated any deadlines so far. So I set them to an empty list.
 
     todaysAgenda = [{"text":"{sTime}-{eTime}\t{cName}: {eName}".format(sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour,minute=i[0].minute),
                                                              eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour,minute=i[1].minute),
                                                              cName=i[2].event.course.name,
                                                              eName=i[2].event.name),
                     "link":i[2].event.slug}
-                    for i in u.timeSlots.all_occurrences(from_date=datetime.now(), to_date=date.today())]
+                    for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
 
     context = {
         'person': u,

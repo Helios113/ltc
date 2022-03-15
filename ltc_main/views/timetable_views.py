@@ -43,7 +43,7 @@ def timetable_helper(u,week,direction=0):
     d = str(datetime.date.today().year)+"-W"+str(week)
     startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
     endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")
-    allEventsThisWeek = u.timeSlots.all_occurrences(from_date=startDate, to_date=endDate)
+    allEventsThisWeek = u.get_time_slots().all_occurrences(from_date=startDate, to_date=endDate)
     
     calTimes = [["Monday", []], ["Tuesday", []], [
         "Wedensday", []], ["Thursday", []], ["Friday", []]]
