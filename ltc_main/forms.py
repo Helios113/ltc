@@ -24,7 +24,7 @@ class UserForm(forms.ModelForm):
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        exclude = ('slug',)
+        exclude = ('slug', 'photo')
 
 
 class AssignmentForm(forms.ModelForm):
@@ -32,12 +32,14 @@ class AssignmentForm(forms.ModelForm):
         model = Assignment
         exclude = ('slug',)
 
+
 """
 class TimeSlotForm(forms.ModelForm):
     class Meta:
         model = TimeSlot
         exclude = ('slug',)
 """
+
 
 class EventForm(forms.ModelForm):
     class Meta:
@@ -56,20 +58,21 @@ class DegreeForm(forms.ModelForm):
         model = Degree
         exclude = ('slug',)
 
+
 class DateInput(forms.DateInput):
     input_type = 'date'
 
+
 class MeetingForm(forms.ModelForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
+
     class Meta:
         model = TeamMeeting
         fields = ['name', 'weekNumber']
         widgets = {
             'made_on': DateInput(),
         }
-
-

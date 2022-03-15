@@ -26,11 +26,17 @@ class Staff(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, blank=True)
-
     # TODO: timeslots not recommended --Xinyu
     # Time slots should be calculated.
     # If you want to get someone's time slots, calculate them dynamically by function rather than storing them AGAIN.
     # Or it would be hard to maintain the time slots when the time of an event changes.
+    courses = models.ManyToManyField('Course')
+    type = models.CharField(
+        max_length=64,
+        choices=TypeChoices,
+        default=PROFESSOR,
+    )
+
     def get_time_slots(self):
         t = []
         for course in self.courses.all():
@@ -39,13 +45,6 @@ class Staff(models.Model):
                     t.append(timeSlot)
         pks = [i.pk for i in t]
         return TimeSlot.objects.filter(pk__in=pks)
-
-    courses = models.ManyToManyField('Course')
-    type = models.CharField(
-        max_length=64,
-        choices=TypeChoices,
-        default=PROFESSOR,
-    )
 
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
@@ -112,7 +111,7 @@ class Degree(models.Model):
 
 
 class Event(BaseEvent):
-    id = models.IntegerField(primary_key=True)
+    # id = models.IntegerField(primary_key=True)
     # add type to the event
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
