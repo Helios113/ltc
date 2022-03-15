@@ -458,4 +458,11 @@ def grades(request):
              "nbar" : "grades"}
     return render(request, 'ltc/grades.html', context)
 
+@login_required
+def staff_grades(request):
+    user = request.user
+    u = Staff.objects.filter(user=user).first()
 
+    context={"data" : u.get_assignments(),
+             "nbar" : "grades"}
+    return render(request, 'ltc/staff_grades.html', context)

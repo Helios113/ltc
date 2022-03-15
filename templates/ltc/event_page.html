@@ -1,27 +1,26 @@
-{% extends 'ltc/base.html' %} {% load staticfiles %} {% block title_block %}
-Event Page {% endblock %} {% block body_block %} For Course:
-<a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a>
-<hr />
+{% extends 'ltc/base.html' %} {% load staticfiles %} {% block title_block %} {{
+event.name }} {% endblock %} {% block body_block %}
 
-Event Name:{{ event.name }}
-<br />
-
-Location:{{ event.location }}
-<br />
-
-<div id="map" class="z-depth-1-half map-container" style="height: 20em;
-width: 100%;"></div>
+<div class="row">
+    <div class="card" style="width: 100%">
+        <div class="card-body">
+            <h5 class="card-title">{{ event.name }}</h5>
+            <p class="card-text">{{ event.description }}</p>
+            <a id="link">{{ event.location }}</a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="card" style="width: 100%">
+        <div id="map" style="height: 20em; width: 100%"></div>
+    </div>
+</div>
 
 <a href="{% url 'ltc:edit_event' event.slug %}"><button>Edit Event</button></a>
 <a href="{% url 'ltc:delete_event' event.slug %}"
     ><button>Delete Event</button></a
 >
 <i id="latlon" hidden>{{event.geoUri}}</i>
-  <style>
-    .map {
-      
-    }
-  </style>
 {% endblock %} {% block footer_block %}
 <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.13.0/build/ol.js"></script>
 <script

@@ -73,6 +73,7 @@ urlpatterns = [
     # TimeTable
     path('timetable/time_table/', timetable_views.timetable, name='timetable'),
 
+     path('staff_grades/', views.staff_grades, name='staff_grades'),
 
 
 ]

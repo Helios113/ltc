@@ -45,7 +45,12 @@ class Staff(models.Model):
                     t.append(timeSlot)
         pks = [i.pk for i in t]
         return TimeSlot.objects.filter(pk__in=pks)
-
+    def get_assignments(self):
+        a = []
+        for course in self.courses.all():
+            for assignment in course.assignment_set.all():
+                a.append(assignment)
+        return a
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
         super(Staff, self).save(*args, **kwargs)
