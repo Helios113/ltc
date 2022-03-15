@@ -27,7 +27,7 @@ def find_meeting_time(request):
             # Check that name is unique for this user before save
             #print("This is the meeting id:", form.id)
             meeting = form.save(commit=True)
-            meeting.owner.add(User.objects.get(username=request.user))
+            meeting.owner=User.objects.get(username=request.user)
             meeting.members.add(User.objects.get(username=request.user))
             meeting.saveSlug()
             meeting.save()
