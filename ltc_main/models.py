@@ -39,7 +39,6 @@ class Staff(models.Model):
                     t.append(timeSlot)
         pks = [i.pk for i in t]
         return TimeSlot.objects.filter(pk__in=pks)
-    # timeSlots = models.ManyToManyField('TimeSlot')
 
     courses = models.ManyToManyField('Course')
     type = models.CharField(

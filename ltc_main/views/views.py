@@ -37,11 +37,12 @@ def index(request):
 
     todaysAgenda = [{"text":"{sTime}-{eTime}\t{cName}: {eName}".format(sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour,minute=i[0].minute),
                                                              eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour,minute=i[1].minute),
-                                                             cName=i[2].event.course.name,
+                                                             cName=i[2].event.course.code,
                                                              eName=i[2].event.name),
                     "link":i[2].event.slug}
                     for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
 
+    print([i for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())])
     context = {
         'person': u,
         'courses_taken': u.courses.all(),
@@ -222,13 +223,9 @@ def course_page(request, slug):
 def event_page(request, slug):
     e = get_object_or_404(Event, slug=slug)
     course = e.course
-    students = e.student.all()
-    time_slots = e.time_slot.all()
     context = {
         'event': e,
         'course': course,
-        'students': students,
-        'time_slots': time_slots,
     }
     return render(request, 'ltc/event_page.html', context)
 
