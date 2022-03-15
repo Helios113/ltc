@@ -2,77 +2,95 @@
 Find Meeting Time {% endblock %} {% block body_block %}
 
 <div class="row">
-  <div  class="col-sm-6">
-    <div class="card">
-      <div class="card-body">
-        <h3 class="panel-title">Schedule a new Meeting</h3>
-        <div id="left_pane">
-        <form
-          id="course_form"
-          method="post"
-          action="{% url 'ltc:find_meeting_time' %}"
-          enctype="multipart/form-data"
-        >
-          <div  class="form-group">
-            {% csrf_token %} {{ form.non_field_errors }}
-            <div class="fieldWrapper">
-              {{ form.name.errors }}
-              <label class="h6" for="{{ form.name.id_for_label }}">Name</label>
-              {{ form.name }}
-              <small id="nameHelp" class="form-text text-muted"
-                >A recognizable name for your meeting</small
-              >
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="panel-title">Schedule a new Meeting</h3>
+                <div id="left_pane">
+                    <form
+                        id="course_form"
+                        method="post"
+                        action="{% url 'ltc:find_meeting_time' %}"
+                        enctype="multipart/form-data"
+                    >
+                        <div class="form-group">
+                            {% csrf_token %} {{ form.non_field_errors }}
+                            <div class="fieldWrapper">
+                                {{ form.name.errors }}
+                                <label
+                                    class="h6"
+                                    for="{{ form.name.id_for_label }}"
+                                    >Name</label
+                                >
+                                {{ form.name }}
+                                <small
+                                    id="nameHelp"
+                                    class="form-text text-muted"
+                                    >A recognizable name for your meeting</small
+                                >
+                            </div>
+                        </div>
+                        <div class="form-group fieldWrapper">
+                            {{ form.weekNumber.errors }}
+                            <label
+                                class="h6"
+                                for="{{ form.weekNumber.id_for_label }}"
+                                >Week Number:</label
+                            >
+                            {{ form.weekNumber }}
+                            <small id="nameHelp" class="form-text text-muted"
+                                >The week of the year in which your meeting is
+                                to be held</small
+                            >
+                        </div>
+                        <input
+                            class="btn btn-dark"
+                            type="submit"
+                            name="submit"
+                            value="Create a new meeting"
+                        />
+                    </form>
+                </div>
             </div>
-          </div>
-          <div class="form-group fieldWrapper">
-            {{ form.weekNumber.errors }}
-            <label class="h6" for="{{ form.weekNumber.id_for_label }}"
-              >Week Number:</label
-            >
-            {{ form.weekNumber }}
-            <small id="nameHelp" class="form-text text-muted"
-              >The week of the year in which your meeting is to be held</small
-            >
-          </div>
-          <input
-            class="btn btn-dark"
-            type="submit"
-            name="submit"
-            value="Create a new meeting"
-          />
-        </form>
         </div>
-      </div>
     </div>
-  </div>
-  <!-- Needs to be reviewed -->
-  <div class="col-sm-6 flex-equal">
-    <div class="card">
-      <div class="card-body">
-        <div class="panel panel-primary" id="result_panel">
-          <div class="panel-heading">
-            <h3 class="panel-title">Current Meetings</h3>
-          </div>
-          <div class="overflow-auto">
-            <div class="panel-body">
-              <ul id="right_pane" class="list-group">
-                {% for m in meetings %}
-                <a
-                  class="list-group-item"
-                  href="{% url 'ltc:team_schedule_page' m.slug %}"
-                  ><strong> {{m.name}} in week #{{m.weekNumber}}</strong>
-                </a>
-                {% endfor %}
-              </ul>
+    <!-- Needs to be reviewed -->
+    <div class="col-sm-6 flex-equal">
+        <div class="card">
+            <div class="card-body">
+                <div class="panel panel-primary" id="result_panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Current Meetings</h3>
+                    </div>
+                    <div class="overflow-auto">
+                        <div class="panel-body">
+                            <ul id="right_pane" class="list-group">
+                                {% if m %} {% for m in meetings %}
+                                <a
+                                    class="list-group-item"
+                                    href="{% url 'ltc:team_schedule_page' m.slug %}"
+                                    ><strong>
+                                        {{m.name}} in week
+                                        #{{m.weekNumber}}</strong
+                                    >
+                                </a>
+                                {% endfor %} {% else %}
+                                <a class="list-group-item"
+                                    ><strong> No meetings</strong>
+                                </a>
+                                {%endif%}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
+{% endblock %} {% block footer_block %}
+<script
+    type="text/javascript"
+    src="{% static 'javascript/height.js' %}"
+></script>
 {% endblock %}
-{% block footer_block %}
-  <script type="text/javascript" src="{% static "javascript/height.js" %}"></script>
-{% endblock %} 

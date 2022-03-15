@@ -34,14 +34,14 @@ def index(request):
         #     from_date=datetime.now())) for i in assignments]
         deadlines = ""
         # TODO: I haven't populated any deadlines so far. So I set them to an empty list.
-
     todaysAgenda = [{"text":"{sTime}-{eTime}\t{cName}: {eName}".format(sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour,minute=i[0].minute),
                                                              eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour,minute=i[1].minute),
-                                                             cName=i[2].event.course.name,
+                                                             cName=i[2].event.course.code,
                                                              eName=i[2].event.name),
                     "link":i[2].event.slug}
                     for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
 
+    print([i for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())])
     context = {
         'person': u,
         'courses_taken': u.courses.all(),
@@ -132,7 +132,7 @@ def user_logout(request):
 
 
 def add_anything(request, form_class, html):
-    form = form_class()
+    form = form_class
     added = False
     if request.method == 'POST':
         form = form_class(request.POST)
@@ -149,17 +149,18 @@ def add_anything(request, form_class, html):
 
 @login_required
 def add_course(request):
-    return add_anything(request, CourseForm, 'ltc/add_course.html')
+    return add_anything(request, CourseForm, 'ltc/add_menus/add_course.html')
 
 
 @login_required
 def add_event(request):
-    return add_anything(request, EventForm, 'ltc/add_event.html')
+    form = EventForm()#initial={'course': Course.objects.filter(code=course_id)})
+    return add_anything(request, form, 'ltc/add_menus/add_event.html')
 
 
 @login_required
 def add_assignment(request):
-    return add_anything(request, AssignmentForm, 'ltc/add_assignment.html')
+    return add_anything(request, AssignmentForm, 'ltc/add_menus/add_assignment.html')
 
 
 @login_required
@@ -210,11 +211,12 @@ def course_page(request, slug):
     prerequisites = c.prerequisite.all()
     assignments = c.assignment_set.all()
     events = c.event_set.all()
-    lec = [i for i in events if i.type == 'Lecture']
-    tut = [i for i in events if i.type == 'Tutorial']
-    lab = [i for i in events if i.type == 'Lab']
+    data = [["Lectures",[]],["Tutorials",[]],["Labs",[]]]
+    data[0][1] = [i for i in events if i.type == 'Lecture']
+    data[1][1] = [i for i in events if i.type == 'Tutorial']
+    data[2][1] = [i for i in events if i.type == 'Lab']
     context = {'course': c, 'prerequisites': prerequisites,
-               'assignments': assignments, 'events': [lec,tut,lab], }
+               'assignments': assignments, 'events': data, 'user': request.user}
     return render(request, 'ltc/course_page.html', context)
 
 
@@ -222,13 +224,9 @@ def course_page(request, slug):
 def event_page(request, slug):
     e = get_object_or_404(Event, slug=slug)
     course = e.course
-    students = e.student.all()
-    time_slots = e.time_slot.all()
     context = {
         'event': e,
         'course': course,
-        'students': students,
-        'time_slots': time_slots,
     }
     return render(request, 'ltc/event_page.html', context)
 
@@ -430,7 +428,7 @@ def edit_degree(request, slug):
 
 @login_required
 def edit_event(request, slug):
-    return edit_anything(request, Event, EventForm, 'ltc/edit_event.html', slug, 'ltc:event_page')
+    return edit_anything(request, Event, EventForm, 'ltc/edit_menus/edit_event.html', slug, 'ltc:event_page')
 
 # Find meeting page
 

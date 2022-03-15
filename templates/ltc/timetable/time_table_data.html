@@ -4,11 +4,11 @@
   <div class="row justify-content-center">
     <h6 class="card-title">{{m.0}}</h6> 
     </div>
-    <ul class="list-group list-group-flush text-center ">
+    <div class="list-group list-group-flush text-center ">
     {% for n in m.1 %}
-    <li class="list-group-item">{{n.text}}<br />{{n.event.name}}</li>
+      <a href={% url 'ltc:event_page' n.event.slug %} class="list-group-item" style="color: black;">{{n.text}}<br />{{n.event.name}}</a>
     {% endfor %}
-  </ul>
+    </div>
 </div>
 {% endfor %}
 </div>

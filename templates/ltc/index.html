@@ -14,10 +14,9 @@ Admin?: {{ user.is_superuser }}<br />
     <h4>Next today</h4>
     <div class="list-group">
       {% for e in time %}
-      <a href="#" class="list-group-item list-group-item-action"
+      <a href={% url 'ltc:event_page' e.link %} class="list-group-item list-group-item-action"
         >{{ e.text }}</a
       >
-      <!-- The above needs to be reverse link to event page -->
       {% empty %}<a class="list-group-item list-group-item-action">
         Great job! Nothing left today.</a
       >
@@ -28,7 +27,7 @@ Admin?: {{ user.is_superuser }}<br />
     <h4>Deliverables</h4>
     <div class="list-group">
       {% for a in assignments %}
-      <a href="#" class="list-group-item list-group-item-action">{{ a }}</a>
+      <a href={% url 'ltc:assignment_page' a.slug %} class="list-group-item list-group-item-action">{{ a }}</a>
       {% empty %}<a class="list-group-item list-group-item-action">
         Great job! Nothing left to submit.</a
       >

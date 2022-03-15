@@ -16,7 +16,11 @@ from datetime import date
 @login_required
 def timetable(request):
     user = request.user
-    u = Student.objects.filter(user=user).first()
+    if user.is_staff:
+        u = Staff.objects.filter(user=user).first()
+    else:
+        u = Student.objects.filter(user=user).first()
+        
     if request.is_ajax():
         thisWeek = int(request.GET.get('week', None))
         direction = int(request.GET.get('direction', None))
