@@ -4,6 +4,7 @@
   <div class="row justify-content-center">
     <h6 class="card-title">{{m.0}}</h6> 
     </div>
+     <!-- Display the event of this week  -->
     <div class="list-group list-group-flush text-center ">
     {% for n in m.1 %}
       <a href={% url 'ltc:event_page' n.event.slug %} class="list-group-item" style="color: black;">{{n.text}}<br />{{n.event.name}}</a>

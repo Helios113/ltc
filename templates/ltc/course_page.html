@@ -1,5 +1,6 @@
 {% extends 'ltc/base.html' %} {% load staticfiles %} {% block title_block %}
 Course Page {% endblock %} {% block body_block %}
+<!-- Navigation bar -->
 <div class="row">
     <div class="col-sm-3">
         <div
@@ -35,6 +36,7 @@ Course Page {% endblock %} {% block body_block %}
             <p>{{ course.description }}</p>
             By Which Staff:{{ course.staff }}
         </div>
+        <!-- List the current events of the course -->
         <div>
             {% for e in events%}
             <div class="pb-4">
@@ -42,6 +44,7 @@ Course Page {% endblock %} {% block body_block %}
                 <h4 id="list-item-{{forloop.counter}}">{{e.0}}</h4>
                 <div class="list-group">
                     {% if e.1 %} {% for l in e.1 %}
+                     <!-- Staff can jump to the events page and can edit or delete -->
                     <a
                         href="{% url 'ltc:event_page' l.slug %}"
                         class="list-group-item list-group-item-action"
@@ -81,6 +84,7 @@ Course Page {% endblock %} {% block body_block %}
                 <hr class="my-12" />
                 <h4 id="list-item-4">Assignments</h4>
                 <div class="list-group">
+                     <!-- List the assignment and staff can jump to the events page and can edit or delete -->
                     {% for a in assignments%}
                     <a
                         href="{% url 'ltc:assignment_page' a.slug %}"
@@ -96,6 +100,7 @@ Course Page {% endblock %} {% block body_block %}
                         <small>And some small print.</small>
                     </a>
                     {% endfor %} {% if user.is_staff %}
+                     <!-- Staff can add assignment -->
                     <a
                         href="{% url 'ltc:add_assignment' %}"
                         class="list-group-item list-group-item-action"
@@ -110,6 +115,7 @@ Course Page {% endblock %} {% block body_block %}
 
             <div class="pb-4">
                 {% if user.is_staff %}
+                 <!-- Staff can delete the course -->
                 <hr class="my-12" />
                 <h4 id="list-item-5">Delete this course</h4>
                 <div class="list-group">

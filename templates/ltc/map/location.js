@@ -64,6 +64,7 @@ function codeAddress(allAddress) {
             });
     }
 
+    // add marker
     var beachMarker = new google.maps.Marker({map: map});
     var find_lat, find_lng;
 
@@ -94,13 +95,14 @@ function showWay(longitude1, longitude2, latitude1, latitude2) {
     var destinationB = new GLatLng(longitude2, latitude2);
     var line1 = new GPolyline([destinationA, destinationB], "#C00080", 5, 0.7);
     map.setCenter(destinationB, 14);
-    // 画线
+    // drawline
     map.addOverlay(line1);
 
-    showIcon(destinationA, " 起点! ");
-    showIcon(destinationB, " 终点! ");
+    showIcon(destinationA, " Starting Point! ");
+    showIcon(destinationB, " Destination! ");
 }
 
+// Points out the starting points and destination icons 
 function showIcon(point, contentInfo) {
     var truckIcon = new GIcon(G_DEFAULT_ICON);
     truckIcon.shadow = null;
