@@ -82,6 +82,7 @@ def populate_assignment(assignments_info):
     for info in assignments_info:
         t = Assignment.objects.get_or_create(course=Course.objects.get(name=info['course']), title=info['title'])[0]
         t.detail = info['detail']
+        t.deadline = datetime(*info['deadline'])
         t.save()
     return
 
@@ -127,17 +128,19 @@ def populate_time_slot(time_slots_info):
         t.save()
     return
 
+
 def populate():
     # Set usernames here.
     # The default email is username plus '@student.gla.ac.uk'
     # The default password is username plus '123'.
     student_usernames = ['Amelia', 'Emily', 'Jack', 'Mason', ]
     staff_usernames = ['Charlotte', 'Harry', ]
-    staffs_info = [{'name': 'Charlotte', 'type': Staff.PROFESSOR, 'courses':['course A','course B']},
-                   {'name': 'Harry', 'type': Staff.TEACHING_ASSISTANT, 'courses':['course C','course C Hard']}]
+    staffs_info = [{'name': 'Charlotte', 'type': Staff.PROFESSOR, 'courses': ['course A', 'course B']},
+                   {'name': 'Harry', 'type': Staff.TEACHING_ASSISTANT, 'courses': ['course C', 'course C Hard']}]
     students_info = [
         {
-            'name': 'Amelia', 'courses': ['course A', 'course B','course C', 'course C Hard'], 'degree': 'Business Administration and Management',
+            'name': 'Amelia', 'courses': ['course A', 'course B', 'course C', 'course C Hard'],
+            'degree': 'Business Administration and Management',
         },
         {
             'name': 'Emily', 'courses': ['course A', 'course B'], 'degree': 'Electrical, Electronics & Communication '
@@ -222,12 +225,18 @@ def populate():
 
     # Set assignments here.
     assignments_info = [
-        {'course': 'course A', 'title': 'Assignment 01', 'detail': 'Assignment 01 detail.'},
-        {'course': 'course A', 'title': 'Assignment 02', 'detail': 'Assignment 02 detail.'},
-        {'course': 'course B', 'title': 'Assignment 03', 'detail': 'Assignment 03 detail.'},
-        {'course': 'course C', 'title': 'Assignment 04', 'detail': 'Assignment 04 detail.'},
-        {'course': 'course C Hard', 'title': 'Assignment 05', 'detail': 'Assignment 05 detail.'},
-        {'course': 'course C Hard', 'title': 'Assignment 06', 'detail': 'Assignment 06 detail.'},
+        {'course': 'course A', 'title': 'Assignment 01', 'detail': 'Assignment 01 detail.',
+         'deadline': [2022, 3, 21, 12, 0]},
+        {'course': 'course A', 'title': 'Assignment 02', 'detail': 'Assignment 02 detail.',
+         'deadline': [2022, 3, 22, 12, 0]},
+        {'course': 'course B', 'title': 'Assignment 03', 'detail': 'Assignment 03 detail.',
+         'deadline': [2022, 3, 21, 9, 0]},
+        {'course': 'course C', 'title': 'Assignment 04', 'detail': 'Assignment 04 detail.',
+         'deadline': [2022, 4, 1, 12, 0]},
+        {'course': 'course C Hard', 'title': 'Assignment 05', 'detail': 'Assignment 05 detail.',
+         'deadline': [2022, 4, 1, 18, 0]},
+        {'course': 'course C Hard', 'title': 'Assignment 06', 'detail': 'Assignment 06 detail.',
+         'deadline': [2022, 4, 2, 19, 0]},
     ]
     # Set grades here.
     grades_info = [
