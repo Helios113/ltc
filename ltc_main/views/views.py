@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from django.forms.models import ModelMultipleChoiceField
 from ..forms import *
 from ..models import *
@@ -13,12 +14,17 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from datetime import date
 from datetime import datetime
+
+
 # Create your views here.
 
 
 @login_required
 def index(request):
     user = request.user
+    # logout admin to avoid bugs.
+    if user.is_superuser:
+        return user_logout(request)
     clean_meetings(user)
     # get the relevant user based on their status
     # for each user type extract needed info
@@ -29,19 +35,16 @@ def index(request):
         u = Student.objects.filter(user=user).first()
         assignments = u.get_assignments()  # check if this is true
 
-        # TODO: Kind of confused with deadlines. Are they a period of time? Or just a specific time point? --Xinyu
-        # deadlines = [list(i.deadline.all_occurrences(
-        #     from_date=datetime.now())) for i in assignments]
-        deadlines = ""
-        # TODO: I haven't populated any deadlines so far. So I set them to an empty list.
-    todaysAgenda = [{"text":"{sTime}-{eTime}\t{cName}: {eName}".format(sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour,minute=i[0].minute),
-                                                             eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour,minute=i[1].minute),
-                                                             cName=i[2].event.course.code,
-                                                             eName=i[2].event.name),
-                    "link":i[2].event.slug}
+        deadlines = [i for i in assignments if i.deadline > timezone.now()]
+
+    todaysAgenda = [{"text": "{sTime}-{eTime}\t{cName}: {eName}".format(
+        sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour, minute=i[0].minute),
+        eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour, minute=i[1].minute),
+        cName=i[2].event.course.name,
+        eName=i[2].event.name),
+                     "link": i[2].event.slug}
                     for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
 
-    print([i for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())])
     context = {
         'person': u,
         'courses_taken': u.courses.all(),
@@ -54,7 +57,7 @@ def clean_meetings(user):
     thisWeek = date.today().isocalendar()[1]
     meetings = TeamMeeting.objects.filter(owner=user)
     for m in meetings:
-        if m.weekNumber<thisWeek:
+        if m.weekNumber < thisWeek:
             TeamMeeting.delete(m)
 
 
@@ -100,6 +103,7 @@ def register(request):
     context = {'form': form, 'registered': registered}
     return render(request, 'ltc/register.html', context)
 
+
 # Base login view
 
 
@@ -120,6 +124,7 @@ def user_login(request):
     else:
         return render(request, 'ltc/login.html')
 
+
 # Base logout form
 
 
@@ -128,11 +133,12 @@ def user_logout(request):
     logout(request)
     return redirect(reverse('ltc:index'))
 
+
 # Add base view
 
 
 def add_anything(request, form_class, html):
-    form = form_class
+    form = form_class()
     added = False
     if request.method == 'POST':
         form = form_class(request.POST)
@@ -190,6 +196,7 @@ def student_page(request, slug):
                'available_time_slots': available_time_slots}
     return render(request, 'ltc/student_page.html', context)
 
+
 # Staff page view
 
 
@@ -201,6 +208,7 @@ def staff_page(request, slug):
     context = {'staff': p, 'courses': courses,
                'available_time_slots': available_time_slots}
     return render(request, 'ltc/staff_page.html', context)
+
 
 # Course page view
 
@@ -240,6 +248,7 @@ def assignment_page(request, slug):
     context = {'assignment': a, 'course': course,
                'title': title, 'detail': detail}
     return render(request, 'ltc/assignment_page.html', context)
+
 
 # Maybe not needed
 
@@ -391,6 +400,7 @@ def edit_time_slot(request, slug):
     context = {'form': form, 'slug': slug}
     return render(request, 'ltc/edit_time_slot.html', context)
 
+
 # Base course view
 # Aggregate page for courses
 
@@ -430,10 +440,8 @@ def edit_degree(request, slug):
 def edit_event(request, slug):
     return edit_anything(request, Event, EventForm, 'ltc/edit_menus/edit_event.html', slug, 'ltc:event_page')
 
+
 # Find meeting page
-
-
-
 
 
 @login_required
