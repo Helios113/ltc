@@ -22,6 +22,7 @@ def index(request):
     clean_meetings(user)
     # get the relevant user based on their status
     # for each user type extract needed info
+    # student will     and staff will
     if user.is_staff:
         u = Staff.objects.filter(user=user).first()
         deadlines = ""
@@ -51,6 +52,7 @@ def index(request):
     return render(request, 'ltc/index.html', context)
 
 def clean_meetings(user):
+    # Delete the out-dated meeting for user
     thisWeek = date.today().isocalendar()[1]
     meetings = TeamMeeting.objects.filter(owner=user)
     for m in meetings:
@@ -59,6 +61,7 @@ def clean_meetings(user):
 
 
 def register(request):
+    # Register a new account and save in database
     form = UserForm()
     registered = False
     if request.method == 'POST':
@@ -66,23 +69,27 @@ def register(request):
         if form.is_valid():
             t = form.save()
             t.set_password(t.password)
+            # Student
             if form.cleaned_data['identity'] == UserForm.STUDENT:
                 t.is_staff = False
                 t.save()
                 s = Student.objects.create(user=t)
                 s.save()
+            # Professor  
             elif form.cleaned_data['identity'] == UserForm.PROFESSOR:
                 t.is_staff = True
                 t.save()
                 p = Staff.objects.create(user=t)
                 p.type = Staff.PROFESSOR
                 p.save()
+            # TA      
             elif form.cleaned_data['identity'] == UserForm.TEACHING_ASSISTANT:
                 t.is_staff = True
                 t.save()
                 p = Staff.objects.create(user=t)
                 p.type = Staff.TEACHING_ASSISTANT
                 p.save()
+            # Administrator   
             elif form.cleaned_data['identity'] == UserForm.ADMINISTRATOR:
                 t.is_staff = True
                 t.is_superuser = True

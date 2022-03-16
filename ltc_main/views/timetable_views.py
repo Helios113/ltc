@@ -15,6 +15,7 @@ from datetime import date
 
 @login_required
 def timetable(request):
+# Get user's this week timetable    
     user = request.user
     if user.is_staff:
         u = Staff.objects.filter(user=user).first()
@@ -44,6 +45,7 @@ def timetable(request):
         return render(request, 'ltc/timetable/time_table.html', timetable_helper(u, thisWeek))
 
 def timetable_helper(u,week,direction=0):
+    # 
     d = str(datetime.date.today().year)+"-W"+str(week)
     startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
     endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")

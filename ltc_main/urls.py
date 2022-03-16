@@ -55,22 +55,22 @@ urlpatterns = [
     path('edit_degree/<slug:slug>/', views.edit_degree, name='edit_degree'),
 
 
-    # Event create, edit and delete
+    # Pages for event create, edit and delete
     path('add_event/', views.add_event, name='add_event'),
     path('event_page/<slug:slug>/', views.event_page, name='event_page'),
     path('edit_event/<slug:slug>/', views.edit_event, name='edit_event'),
     path('delete_event/<slug:slug>/', views.delete_event, name='delete_event'),
 
-    # Find meeting time
+    # Pages for find meeting time
     path('find_meeting_time/', scheduler_view.find_meeting_time,
          name='find_meeting_time'),
     path('find_meeting_time/<slug:category_slug>/team_schedule_page/',
          scheduler_view.team_schedule_page, name='team_schedule_page'),
 
-    # Grades
+    # Pages for displaying grades
     path('grade/', views.grades, name='grades'),
 
-    # TimeTable
+    # Page for displaying the TimeTable
     path('timetable/time_table/', timetable_views.timetable, name='timetable'),
 
 

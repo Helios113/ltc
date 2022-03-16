@@ -16,6 +16,7 @@ from datetime import date
 
 @login_required
 def find_meeting_time(request):
+    # Find out the timeslot both user and member are free 
     meetings = TeamMeeting.objects.filter(members=request.user)
     context = {'nbar': "meeting",
                'form': MeetingForm,

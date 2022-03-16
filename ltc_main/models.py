@@ -15,6 +15,7 @@ from eventtools.models import BaseEvent, BaseOccurrence
 # Create your models here.
 
 class Staff(models.Model):
+    # Staff has 3 types, Professor, TA and Administrator
     PROFESSOR = 'Professor'
     TEACHING_ASSISTANT = 'Teaching assistant'
     ADMINISTRATOR = 'Administrator'
@@ -38,6 +39,7 @@ class Staff(models.Model):
     )
 
     def get_time_slots(self):
+        # get the time slots of current courses and events.
         t = []
         for course in self.courses.all():
             for event in course.event_set.all():
