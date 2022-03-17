@@ -6,6 +6,10 @@
 {% endblock %}
 
 {% block body_block %}
+    <!-- Jump with the different identity -->
+    Student:
+    <a href="{% url 'ltc:student_page' student.slug %}">{{ student }}</a>
+    <hr />
 
     By Staff:
     <a href="{% url 'ltc:staff_page' staff.slug %}">{{ staff }}</a>

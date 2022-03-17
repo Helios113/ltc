@@ -14,12 +14,13 @@
         {% if user.is_staff %}
         <a href={% url 'ltc:add_course' %} type="button" class="btn btn-primary">Add a new course</a>
         {%endif%}
-        <!-- add course functionality -->
+        <!-- staff can have add course functionality -->
     </div>
 </div>
 <div class="row">
     <div class="col-sm-12">
     <div class="list-group">
+        <!-- display all the current course -->
         {% for c in courses %}
         <a href={% url 'ltc:course_page' c.slug %} class="list-group-item list-group-item-action flex-column align-items-start">
             <div class="row">

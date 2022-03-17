@@ -5,6 +5,7 @@ from pathlib import Path
 from ltc import settings as st
 import os
 
+# Generate an avatar for a course
 def generate_identicon(text):
     block = 8;
     width = 64
