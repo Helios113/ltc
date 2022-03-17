@@ -6,18 +6,20 @@
 {% endblock %}
 
 {% block body_block %}
-    {% if added %}
-    <strong>New event added!</strong>
-    <a href="{% url 'ltc:index' %}">Back to homepage.</a><br />
-    {% endif %}
+    <form
+    id="event_form"
+    method="post"
+    action="{% url 'ltc:add_event' data.course.slug data.type  %}"
+    enctype="multipart/form-data"
+    >
 
     {% csrf_token %}
-
-    <!-- Display each form -->
-    {{ form.as_p }}
-    <!-- Provide a button to click to submit the form. -->
-
-    <input type="submit" name="submit" value="Add new event" />
+    <div class="form-group">
+        
+        {{form.as_p}}
+        
+    </div>
+    <button type="submit" class="btn btn-primary">Add new event</button>
     </form>
 
 {% endblock %}

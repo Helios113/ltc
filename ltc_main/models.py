@@ -38,14 +38,12 @@ class Staff(models.Model):
     )
 
     def get_time_slots(self):
-        # get all the timeslots with the current course and events
         t = []
         for course in self.courses.all():
             for event in course.event_set.all():
-                for timeSlot in event.timeslot_set.all():
-                    t.append(timeSlot)
+                    t.append(event)
         pks = [i.pk for i in t]
-        return TimeSlot.objects.filter(pk__in=pks)
+        return Event.objects.filter(pk__in=pks)
     def get_assignments(self):
         a = []
         for course in self.courses.all():
@@ -87,7 +85,7 @@ class Assignment(models.Model):
     title = models.CharField(max_length=128)
     detail = models.TextField(max_length=512, null=True, blank=True)
     slug = models.SlugField(null=True, blank=True)
-    deadline = models.DateTimeField(null=True)
+    deadline = models.DateTimeField()
 
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
@@ -118,7 +116,7 @@ class Degree(models.Model):
         return str(self.name)
 
 
-class Event(BaseEvent):
+class Event(BaseOccurrence):
     # A course can have many events, and there are 3 types of events: lab, tutorials and lectures, a map or a zoom links 
     # will be auto-generated when clicked the concreate event page
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
@@ -146,12 +144,7 @@ class Event(BaseEvent):
         super(Event, self).save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.name)
-
-
-class TimeSlot(BaseOccurrence):
-    event = models.ForeignKey(Event, null=True, on_delete=models.CASCADE)
-
+        return str(self.course.name+"-"+self.name)
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -164,10 +157,9 @@ class Student(models.Model):
         t = []
         for course in self.courses.all():
             for event in course.event_set.all():
-                for timeSlot in event.timeslot_set.all():
-                    t.append(timeSlot)
+                    t.append(event)
         pks = [i.pk for i in t]
-        return TimeSlot.objects.filter(pk__in=pks)
+        return Event.objects.filter(pk__in=pks)
 
     courses = models.ManyToManyField(Course, blank=True)
 

@@ -21,8 +21,8 @@ def find_meeting_time(request):
     context = {'nbar': "meeting",
                'form': MeetingForm,
                'meetings': meetings, }
+    print(meetings)
     if request.method == 'POST':
-
         form = MeetingForm(request.POST)
         if form.is_valid():
             # Check that name is unique for this user before save

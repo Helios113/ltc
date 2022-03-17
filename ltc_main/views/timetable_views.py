@@ -59,7 +59,7 @@ def timetable_helper(u,week,direction=0):
 
     for event in allEventsThisWeek:
         data = {"text" : "{:02d}:{:02d} - {:02d}:{:02d}".format(event[0].hour, event[0].minute, event[1].hour,event[1].minute),
-        "event":event[2].event }
+        "event":event[2] }
         calTimes[event[0].day-startDate.day][1].append(data)
     # HOW TO HANDLE EVENTS WHICH SPAN MULTIPLE DAYS
     context={"nbar" : "timetable",
