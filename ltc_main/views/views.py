@@ -42,15 +42,9 @@ def index(request):
         eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour, minute=i[1].minute),
         cName=i[2].event.course.name,
         eName=i[2].event.name),
-<<<<<<< HEAD
                      "link": i[2].event.slug}
                     for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
     current_courses = [i for i in u.courses.all() if i.endDate>date.today()]
-=======
-        "link": i[2].event.slug}
-        for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
-    current_courses = [i for i in u.courses.all() if i.ednDate > date.today()]
->>>>>>> f82afe9e01fd885803b3467542cc3c98d3ae1137
     context = {
         'person': u,
         'courses_taken': current_courses,
@@ -169,9 +163,10 @@ def add_course(request):
 
 
 @login_required
-def add_event(request, slug):
+def add_event(request, slug, type):
     a = get_object_or_404(Course, slug=slug)
-    data = {'course': a}
+    type = type[0:-1]
+    data = {'course': a,'type':type}
     return add_anything(request, EventForm, 'ltc/add_menus/add_event.html', data)
 
 
