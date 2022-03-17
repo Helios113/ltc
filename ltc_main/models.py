@@ -15,7 +15,6 @@ from eventtools.models import BaseEvent, BaseOccurrence
 # Create your models here.
 
 class Staff(models.Model):
-    # Staff has 3 types, Professor, TA and Administrator
     PROFESSOR = 'Professor'
     TEACHING_ASSISTANT = 'Teaching assistant'
     ADMINISTRATOR = 'Administrator'
@@ -27,7 +26,6 @@ class Staff(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, blank=True)
-    # TODO: timeslots not recommended --Xinyu
     # Time slots should be calculated.
     # If you want to get someone's time slots, calculate them dynamically by function rather than storing them AGAIN.
     # Or it would be hard to maintain the time slots when the time of an event changes.
@@ -39,7 +37,6 @@ class Staff(models.Model):
     )
 
     def get_time_slots(self):
-        # get the time slots of current courses and events.
         t = []
         for course in self.courses.all():
             for event in course.event_set.all():
@@ -47,7 +44,12 @@ class Staff(models.Model):
                     t.append(timeSlot)
         pks = [i.pk for i in t]
         return TimeSlot.objects.filter(pk__in=pks)
-
+    def get_assignments(self):
+        a = []
+        for course in self.courses.all():
+            for assignment in course.assignment_set.all():
+                a.append(assignment)
+        return a
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
         super(Staff, self).save(*args, **kwargs)
@@ -58,7 +60,7 @@ class Staff(models.Model):
 
 class Course(models.Model):
     code = models.CharField(max_length=128, unique=True)
-    # Course needs some end date so we can see if the course is current
+    endDate = models.DateField(default=datetime.date.today())
     name = models.CharField(max_length=128, default='default')
     description = models.TextField(max_length=512, default='default')
     prerequisite = models.ManyToManyField(
@@ -80,8 +82,7 @@ class Assignment(models.Model):
     title = models.CharField(max_length=128)
     detail = models.TextField(max_length=512, null=True, blank=True)
     slug = models.SlugField(null=True, blank=True)
-    deadline = models.OneToOneField(
-        'TimeSlot', null=True, on_delete=models.CASCADE)
+    deadline = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
@@ -113,12 +114,11 @@ class Degree(models.Model):
 
 
 class Event(BaseEvent):
-    # id = models.IntegerField(primary_key=True)
-    # add type to the event
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=512, null=True)
     location = models.CharField(max_length=128)
+    geoUri = models.CharField(max_length=128, default="geo:55.8726,-4.2896?z=16")
     lecture = 'Lecture'
     tutorial = 'Tutorial'
     lab = 'Lab'
@@ -147,11 +147,9 @@ class TimeSlot(BaseOccurrence):
 
 
 class Student(models.Model):
-    # id = models.IntegerField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, null=True, blank=True)
 
-    # TODO: timeslots not recommended --Xinyu
     # Students attend courses, courses have events with time slots, so students' time slots can be calculated.
     # If you want to get someone's time slots, calculate them dynamically by function rather than storing them AGAIN.
     # Or it would be hard to maintain the time slots when the time of an event changes.
@@ -163,7 +161,6 @@ class Student(models.Model):
                     t.append(timeSlot)
         pks = [i.pk for i in t]
         return TimeSlot.objects.filter(pk__in=pks)
-    # timeSlots = models.ManyToManyField(TimeSlot, blank=True)
 
     courses = models.ManyToManyField(Course, blank=True)
 
@@ -174,7 +171,6 @@ class Student(models.Model):
             for assignment in course.assignment_set.all():
                 a.append(assignment)
         return a
-    # assignment = models.ManyToManyField(Assignment, blank=True)
 
     degree = models.ForeignKey(Degree, null=True, on_delete=models.CASCADE)
 
