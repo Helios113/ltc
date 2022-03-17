@@ -60,7 +60,7 @@ class Staff(models.Model):
 
 class Course(models.Model):
     code = models.CharField(max_length=128, unique=True)
-    ednDate = models.DateField(default=datetime.date.today())
+    endDate = models.DateField(default=datetime.date.today())
     name = models.CharField(max_length=128, default='default')
     description = models.TextField(max_length=512, default='default')
     prerequisite = models.ManyToManyField(

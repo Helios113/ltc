@@ -44,7 +44,7 @@ def index(request):
         eName=i[2].event.name),
                      "link": i[2].event.slug}
                     for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
-    current_courses = [i for i in u.courses.all() if i.ednDate>date.today()]
+    current_courses = [i for i in u.courses.all() if i.endDate>date.today()]
     context = {
         'person': u,
         'courses_taken':current_courses,
