@@ -19,44 +19,49 @@ import django
 
 django.setup()
 from ltc_main.models import *
-from datetime import datetime
-
+from datetime import datetime, timedelta
+from datetime import date
 
 def populate_user(student_usernames, staff_usernames):
     # Set up superuser account.
     admin = User.objects.get_or_create(username='admin')[0]
     admin.set_password('123456')
-    # The default email is user's name + '@student.gla.ac.uk'
     admin.email = "admin@student.gla.ac.uk"
-    # Superuser has staff permission
     admin.is_staff = True
     admin.is_superuser = True
     admin.save()
 
     for name in student_usernames:
-        # Create student account.
-        t = User.objects.get_or_create(username=name)[0]
-        t.email = name + '@student.gla.ac.uk'
+        f_name = name.split(" ")[0]
+        s_name = name.split(" ")[1]
+        t = User.objects.get_or_create(username=f_name)[0]
+        t.first_name = f_name
+        t.last_name = s_name
+        # The default email is user's name plus '@student.gla.ac.uk'
+        t.email = f_name+'.'+s_name + '@student.gla.ac.uk'
         # Students are not staffs
         t.is_staff = False
-        # The default password is user's name + '123'.
-        t.set_password(name + '123')
+        # The default password is user's name plus '123'.
+        t.set_password(f_name + '123')
         t.save()
 
     for name in staff_usernames:
-        # Create staff account.
-        s = User.objects.get_or_create(username=name)[0]
-        s.email = name + '@student.gla.ac.uk'
+        f_name = name.split(" ")[0]
+        s_name = name.split(" ")[1]
+        s = User.objects.get_or_create(username=f_name)[0]
+        s.first_name = f_name
+        s.last_name = s_name
+        s.email = f_name+'.'+s_name + '@gla.ac.uk'
         s.is_staff = True
-        s.set_password(name + '123')
+        s.set_password(f_name + '123')
         s.save()
     return
 
 
 def populate_staff(staffs_info):
-    # Staff's information with course
     for info in staffs_info:
-        s = Staff.objects.get_or_create(user=User.objects.get(username=info['name']))[0]
+        s = Staff.objects.get_or_create(
+            user=User.objects.get(username=info['name']))[0]
         s.courses.set(Course.objects.filter(name__in=info['courses']))
         s.type = info['type']
         s.save()
@@ -64,9 +69,9 @@ def populate_staff(staffs_info):
 
 
 def populate_student(students_info):
-    # Student's information with course
     for info in students_info:
-        t = Student.objects.get_or_create(user=User.objects.get(username=info['name']))[0]
+        t = Student.objects.get_or_create(
+            user=User.objects.get(username=info['name']))[0]
         t.courses.set(Course.objects.filter(name__in=info['courses']))
         t.degree = Degree.objects.get(name=info['degree'])
         t.save()
@@ -74,39 +79,38 @@ def populate_student(students_info):
 
 
 def populate_course(courses_info):
-    # Course's code, name,description and prerequisite 
     for info in courses_info:
         t = Course.objects.get_or_create(code=info['code'])[0]
         t.name = info['name']
         t.description = info['description']
-        t.prerequisite.set(Course.objects.filter(name__in=info['prerequisite']))
+        t.prerequisite.set(Course.objects.filter(
+            name__in=info['prerequisite']))
         t.save()
     return
 
 
 def populate_assignment(assignments_info):
-    # Assignment's title,details and belongs to what course
     for info in assignments_info:
-        t = Assignment.objects.get_or_create(course=Course.objects.get(name=info['course']), title=info['title'])[0]
+        t = Assignment.objects.get_or_create(course=Course.objects.get(
+            name=info['course']), title=info['title'],deadline = datetime(*info['deadline']) )[0]
         t.detail = info['detail']
-        t.deadline = datetime(*info['deadline'])
+        print(datetime(*info['deadline']))
         t.save()
     return
 
 
 def populate_grade(grades_info):
-    # Student's grade and belongs to what assignment, what course
     for info in grades_info:
         g = Grade.objects.get_or_create(student=Student.objects.get(user=User.objects.get(username=info['student'])),
-                                        course=Course.objects.get(name=info['course']),
-                                        assignment=Assignment.objects.get(title=info['assignment']))[0]
+                                        course=Course.objects.get(
+                                            name=info['course']),
+                                        assignment=Assignment.objects.get(title=info['assignment'], course = Course.objects.get(name = info['course'])))[0]
         g.result = info['result']
         g.save()
     return
 
 
 def populate_degree(degrees_info):
-    # Degree of student,use to filter the course student can enroll
     for info in degrees_info:
         d = Degree.objects.get_or_create(name=info['name'])[0]
         d.course.set(Course.objects.filter(name__in=info['courses']))
@@ -115,164 +119,237 @@ def populate_degree(degrees_info):
 
 
 def populate_event(events_info):
-    # Including labs, assignments and tutorials, each event has name, address/zoom link, belongs to one course
     for info in events_info:
-        e = Event.objects.get_or_create(id=info['id'])[0]
-        e.course = Course.objects.get(name=info['course'])
-        e.name = info['name']
+        e = Event.objects.get_or_create(name=info['name'], course = Course.objects.get(name=info['course']))[0]
         e.description = info['description']
         e.location = info['location']
         e.type = info['type']
+        e.start = info['start']
+        e.end = info['end']
+        e.repeat = info['repeat']
         e.save()
     return
 
 
-def populate_time_slot(time_slots_info):
-    # Time slot has start date time and end date time, belongs to concreate event
-    for info in time_slots_info:
-        t = TimeSlot.objects.get_or_create(
-            event=Event.objects.get(id=info['event']),
-            start=datetime(*info['from']),
-            end=datetime(*info['to']),
-            repeat='RRULE:FREQ=WEEKLY'
-        )[0]
-        t.save()
-    return
-
-
 def populate():
+    thisWeek = date.today().isocalendar()[1]
+    d = str(date.today().year)+"-W"+str(thisWeek)
+    monday = datetime.strptime(d + '-1', "%Y-W%W-%w")
+    tuesday = datetime.strptime(d + '-2', "%Y-W%W-%w")
+
+    wedensday = datetime.strptime(d + '-3', "%Y-W%W-%w")
+
+    thursday = datetime.strptime(d + '-4', "%Y-W%W-%w")
+
+    friday = datetime.strptime(d + '-5', "%Y-W%W-%w")
     # Set usernames here.
     # The default email is username plus '@student.gla.ac.uk'
     # The default password is username plus '123'.
-    student_usernames = ['Amelia', 'Emily', 'Jack', 'Mason', ]
-    staff_usernames = ['Charlotte', 'Harry', ]
-    staffs_info = [{'name': 'Charlotte', 'type': Staff.PROFESSOR, 'courses': ['course A', 'course B']},
-                   {'name': 'Harry', 'type': Staff.TEACHING_ASSISTANT, 'courses': ['course C', 'course C Hard']}]
+    student_usernames = ['Mikayla Wilkerson',
+                         'Nur Ferry', 'Donald Odom', 'Sue Perry', ]
+    staff_usernames = ['Radhika Merritt ', 'Peyton Vega', ]
+
+    staffs_info = [{'name': 'Radhika', 'type': Staff.PROFESSOR, 'courses': ['Introduction to CS', 'Intermediate CS']},
+                   {'name': 'Peyton', 'type': Staff.TEACHING_ASSISTANT, 'courses': ['Big Data', 'Database Theory']}]
     students_info = [
         {
-            'name': 'Amelia', 'courses': ['course A', 'course B', 'course C', 'course C Hard'],
-            'degree': 'Business Administration and Management',
+            'name': 'Mikayla', 'courses': ['Introduction to CS', 'Intermediate CS', 'Database Theory', 'Big Data'],
+            'degree': 'Computer Science',
         },
         {
-            'name': 'Emily', 'courses': ['course A', 'course B'], 'degree': 'Electrical, Electronics & Communication '
-                                                                            'Engineering',
+            'name': 'Nur', 'courses': ['Introduction to CS', 'Database Theory'], 'degree': 'Computer Science',
         },
         {
-            'name': 'Jack', 'courses': ['course A', 'course C'], 'degree': 'Education Leadership & Administration',
+            'name': 'Donald', 'courses': ['Intermediate CS', 'Big Data'], 'degree': 'Computer Science',
         },
         {
-            'name': 'Mason', 'courses': ['course C', 'course C Hard'], 'degree': 'Business/Commerce',
+            'name': 'Sue', 'courses': ['Intermediate CS', 'Database Theory'], 'degree': 'Computer Science',
         },
     ]
 
     # Set courses info here.
+
     courses_info = [
-        {'code': 'COMPSCI2333', 'name': 'course A', 'prerequisite': [],
-         'description': 'course A description', },
-        {'code': 'COMPSCI3467', 'name': 'course B', 'prerequisite': [],
-         'description': 'course B description', },
-        {'code': 'COMPSCI4599', 'name': 'course C', 'prerequisite': ['course B', ],
-         'description': 'course C description', },
-        {'code': 'COMPSCI4653', 'name': 'course C Hard', 'prerequisite': ['course C', ],
-         'description': 'course C Hard description', },
+        {'code': 'CS50', 'name': 'Introduction to CS', 'prerequisite': [],
+         'description': 'This is an introductory course to computer science taken by all first year students.',
+         'endDate':date.today() + timedelta(days=365) },
+        {'code': 'CS60', 'name': 'Intermediate CS', 'prerequisite': [],
+         'description': 'This is an intermediate course in computer science taken by all first year students.',
+         'endDate':date.today() + timedelta(days=365) },
+        {'code': 'CS55', 'name': 'Database Theory', 'prerequisite': ['course B', ],
+         'description': 'This course covers the basics of databases and the theory behind them. The course also includes practical work.',
+         'endDate':date.today() + timedelta(days=365) },
+        {'code': 'CS100', 'name': 'Big Data', 'prerequisite': ['course C', ],
+         'description': 'The Big Data course covers the basics of Big Data and introduces students to python and fundamental libraries to do Big Data analysis.', 
+         'endDate':date.today() + timedelta(days=365)},
     ]
 
     # Set events info here.
     events_info = [
         {
-            'id': 1,
-            'course': 'course A',
-            'name': 'event 01',
-            'description': 'event 01 description',
-            'location': '123.45,234,56',
+            'course': 'Introduction to CS',
+            'name': 'Lecture',
+            'description': 'This is the daily CS50 lecture. During these classes we will cover all the basics of CS.',
+            'location': 'B1024',
+            'geoUri': 'geo:55.87351,-4.29332?z=19',
             'type': Event.lecture,
+            'start': datetime.today().replace(hour=9, minute=0),
+            'end': datetime.today().replace(hour=10, minute=30),
+            'repeat': 'RRULE:FREQ=DAILY'
         },
         {
-            'id': 2,
-            'course': 'course A',
-            'name': 'event 02',
-            'description': 'event 02 description',
-            'location': '123.45,234,56',
+            'course': 'Introduction to CS',
+            'name': 'Lab',
+            'description': 'This is the weekly CS50 lab where we do a practical exercise each week.',
+            'location': 'James Watt South Room 354',
+            'geoUri': 'geo:55.87088,-4.28712?z=19',
             'type': Event.lab,
-
+            'start': monday.replace(hour=12, minute=0),
+            'end': monday.replace(hour=14, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
         },
         {
-            'id': 3,
-            'course': 'course B',
-            'name': 'event 03',
-            'description': 'event 03 description',
-            'location': '123.45,234,56',
+            'course': 'Introduction to CS',
+            'name': 'Tutorial',
+            'description': 'This is the monday CS50 Tutorial.',
+            'location': 'Hunter Hall East',
+            'geoUri': 'geo:55.87121,-4.28832?z=19',
             'type': Event.tutorial,
+            'start':  monday.replace(hour=10, minute=0),
+            'end': monday.replace(hour=11, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
+        },
 
+        {
+            'course': 'Intermediate CS',
+            'name': 'Lecture',
+            'description': 'This is the Tuesday CS60 lecture. During these classes we will cover more advanced topics in CS.',
+            'location': 'B1024',
+            'geoUri': 'geo:55.87351,-4.29332?z=19',
+            'type': Event.lecture,
+            'start': tuesday.replace(hour=10, minute=0),
+            'end': tuesday.replace(hour=11, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
         },
         {
-            'id': 4,
-            'course': 'course B',
-            'name': 'event 04',
-            'description': 'event 04 description',
-            'location': '123.45,234,56',
+            'course': 'Intermediate CS',
+            'name': 'Lab',
+            'description': 'This is the weekly CS60 lab where we do a practical exercise each week.',
+            'location': 'James Watt South Room 354',
+            'geoUri': 'geo:55.87088,-4.28712?z=19',
             'type': Event.lab,
-
+            'start': tuesday.replace(hour=15, minute=0),
+            'end': tuesday.replace(hour=16, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
         },
         {
-            'id': 5,
-            'course': 'course C',
-            'name': 'event 05',
-            'description': 'event 05 description',
-            'location': '123.45,234,56',
-            'type': Event.lecture,
+            'course': 'Intermediate CS',
+            'name': 'Tutorial',
+            'description': 'This is the Wed CS60 Tutorial.',
+            'location': 'Hunter Hall East',
+            'geoUri': 'geo:55.87121,-4.28832?z=19',
+            'type': Event.tutorial,
+            'start': wedensday.replace(hour=15, minute=0),
+            'end': wedensday.replace(hour=16, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
+        },
 
+        {
+            'course': 'Database Theory',
+            'name': 'Lecture',
+            'description': 'This is the Thursday CS55 lecture. During these classes we will cover more advanced topics in CS.',
+            'location': 'B1024',
+            'geoUri': 'geo:55.87351,-4.29332?z=19',
+            'type': Event.lecture,
+            'start': thursday.replace(hour=15, minute=0),
+            'end': thursday.replace(hour=16, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
         },
         {
-            'id': 6,
-            'course': 'course C Hard',
-            'name': 'event 06',
-            'description': 'event 06 description',
-            'location': '123.45,234,56',
-            'type': Event.lecture,
+            'course': 'Database Theory',
+            'name': 'Lab',
+            'description': 'This is the weekly CS55 lab where we do a practical exercise each week.',
+            'location': 'James Watt South Room 354',
+            'geoUri': 'geo:55.87088,-4.28712?z=19',
+            'type': Event.lab,
+            'start': thursday.replace(hour=12, minute=0),
+            'end': thursday.replace(hour=14, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
+        },
+        {
+            'course': 'Database Theory',
+            'name': 'Tutorial',
+            'description': 'This is the Friday CS55 Tutorial.',
+            'location': 'Thomson Building 234',
+            'geoUri': 'geo:55.87146,-4.28709?z=19',
+            'type': Event.tutorial,
+            'start': friday.replace(hour=12, minute=0),
+            'end': friday.replace(hour=14, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
+        },
 
+        {
+            'course': 'Big Data',
+            'name': 'Lecture',
+            'description': 'This is the Wednesday CS100 lecture. During these classes we will cover more advanced topics in CS.',
+            'location': 'B1024',
+            'geoUri': 'geo:55.87351,-4.29332?z=19',
+            'type': Event.lecture,
+            'start': wedensday.replace(hour=12, minute=0),
+            'end': wedensday.replace(hour=14, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
+        },
+        {
+            'course': 'Big Data',
+            'name': 'Lab',
+            'description': 'This is the weekly CS100 lab where we do a practical exercise each week.',
+            'location': 'James Watt South Room 354',
+            'geoUri': 'geo:55.87088,-4.28712?z=19',
+            'type': Event.lab,
+            'start': tuesday.replace(hour=12, minute=0),
+            'end': tuesday.replace(hour=14, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
+        },
+        {
+            'course': 'Big Data',
+            'name': 'Tutorial',
+            'description': 'This is the Monday CS100 Tutorial.',
+            'location': 'Thomson Building 234',
+            'geoUri': 'geo:55.87146,-4.28709?z=19',
+            'type': Event.tutorial,
+            'start': monday.replace(hour=15, minute=0),
+            'end': monday.replace(hour=16, minute=30),
+            'repeat': 'RRULE:FREQ=WEEKLY'
         },
     ]
 
     # Set assignments here.
     assignments_info = [
-        {'course': 'course A', 'title': 'Assignment 01', 'detail': 'Assignment 01 detail.',
-         'deadline': [2022, 3, 21, 12, 0]},
-        {'course': 'course A', 'title': 'Assignment 02', 'detail': 'Assignment 02 detail.',
-         'deadline': [2022, 3, 22, 12, 0]},
-        {'course': 'course B', 'title': 'Assignment 03', 'detail': 'Assignment 03 detail.',
-         'deadline': [2022, 3, 21, 9, 0]},
-        {'course': 'course C', 'title': 'Assignment 04', 'detail': 'Assignment 04 detail.',
-         'deadline': [2022, 4, 1, 12, 0]},
-        {'course': 'course C Hard', 'title': 'Assignment 05', 'detail': 'Assignment 05 detail.',
-         'deadline': [2022, 4, 1, 18, 0]},
-        {'course': 'course C Hard', 'title': 'Assignment 06', 'detail': 'Assignment 06 detail.',
-         'deadline': [2022, 4, 2, 19, 0]},
+        {'course': 'Database Theory', 'title': 'Assignment AE1', 'detail': 'Do some cool Database thing and submit it before the deadline',
+         'deadline': [2022, 6, 2, 19, 0]},
+        {'course': 'Database Theory', 'title': 'Assignment AE2', 'detail': 'Do some cool Database thing again and submit it before the deadline',
+         'deadline': [2022, 8, 2, 19, 0]},
+        {'course': 'Intermediate CS', 'title': 'Assignment AE1', 'detail': 'Do some cool CS thing and submit it before the deadline',
+         'deadline': [2022, 6, 2, 19, 0]},
+        {'course': 'Intermediate CS', 'title': 'Assignment AE2', 'detail': 'Do some cool CS thing again and submit it before the deadline',
+         'deadline': [2022, 6, 2, 19, 0]},
+        {'course': 'Big Data', 'title': 'Assignment AE1', 'detail': 'Do some cool Big Data thing and submit it before the deadline',
+         'deadline': [2022, 6, 2, 19, 0]},
     ]
     # Set grades here.
     grades_info = [
-        {'student': 'Jack', 'course': 'course A', 'assignment': 'Assignment 01', 'result': 60, },
-        {'student': 'Jack', 'course': 'course A', 'assignment': 'Assignment 02', 'result': 70, },
-        {'student': 'Mason', 'course': 'course B', 'assignment': 'Assignment 03', 'result': 80, },
-        {'student': 'Amelia', 'course': 'course C', 'assignment': 'Assignment 04', 'result': 90, },
-        {'student': 'Amelia', 'course': 'course C Hard', 'assignment': 'Assignment 05', 'result': 100, },
+        {'student': 'Mikayla', 'course': 'Database Theory',
+            'assignment': 'Assignment AE1', 'result': 60, },
+        {'student': 'Mikayla', 'course': 'Database Theory',
+            'assignment': 'Assignment AE2', 'result': 90, },
+
+        {'student': 'Donald', 'course': 'Intermediate CS',
+            'assignment': 'Assignment AE1', 'result': 70, },
     ]
     # Set degrees here.
     degrees_info = [
-        {'name': 'Business Administration and Management', 'courses': ['course A', 'course B', ], },
-        {'name': 'Electrical, Electronics & Communication Engineering', 'courses': ['course B', 'course C', ], },
-        {'name': 'Education Leadership & Administration', 'courses': ['course A', 'course C', ], },
-        {'name': 'Business/Commerce', 'courses': ['course A', 'course B', 'course C', ], },
-
-    ]
-
-    time_slots_info = [
-        {'event': 1, 'from': [2022, 1, 10, 12, 30], 'to': [2022, 1, 10, 14, 30]},
-        {'event': 2, 'from': [2022, 1, 11, 13, 0], 'to': [2022, 1, 11, 15, 0]},
-        {'event': 3, 'from': [2022, 1, 12, 9, 0], 'to': [2022, 1, 12, 11, 0]},
-        {'event': 4, 'from': [2022, 1, 13, 11, 30], 'to': [2022, 1, 13, 13, 30]},
-        {'event': 5, 'from': [2022, 1, 14, 14, 0], 'to': [2022, 1, 14, 16, 0]},
-        {'event': 6, 'from': [2022, 1, 11, 9, 0], 'to': [2022, 1, 11, 11, 30]},
+        {'name': 'Computer Science',
+            'courses': ['Introduction to CS', 'Intermediate CS', 'Database Theory', 'Big Data'], },
     ]
 
     populate_user(student_usernames, staff_usernames)
@@ -283,11 +360,9 @@ def populate():
     populate_student(students_info)
     populate_grade(grades_info)
     populate_event(events_info)
-    populate_time_slot(time_slots_info)
 
 
-# Start execution
 if __name__ == '__main__':
     print('Starting LTC++ population script...')
     populate()
-    print('Done. Ignore those time zone warnings. Everything is OK.')
+    print('Done. Everything is OK.')
