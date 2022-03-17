@@ -38,11 +38,11 @@ class Staff(models.Model):
     )
 
     def get_time_slots(self):
-        # get all the timeslots with the current course and events
         t = []
         for course in self.courses.all():
             for event in course.event_set.all():
                     t.append(event)
+        pks = [i.pk for i in t]
         return Event.objects.filter(pk__in=pks)
     def get_assignments(self):
         a = []
