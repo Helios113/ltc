@@ -65,7 +65,7 @@ Find Meeting Time {% endblock %} {% block body_block %}
                     <div class="overflow-auto">
                         <div class="panel-body">
                             <ul id="right_pane" class="list-group">
-                                {% if meetings %} {% for m in meetings %}
+                                {% if m %} {% for m in meetings %}
                                 <a
                                     class="list-group-item"
                                     href="{% url 'ltc:team_schedule_page' m.slug %}"
