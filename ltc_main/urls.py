@@ -2,6 +2,7 @@ from django.urls import path
 from .views import views
 from .views import timetable_views
 from .views import scheduler_view
+
 app_name = 'ltc'
 
 urlpatterns = [
@@ -13,7 +14,7 @@ urlpatterns = [
 
     # Pages for adding new items.
     path('add_course/', views.add_course, name='add_course'),
-    path('add_assignment/', views.add_assignment, name='add_assignment'),
+    path('add_assignment/<slug:slug>/', views.add_assignment, name='add_assignment'),
     path('add_time_slot/', views.add_time_slot, name='add_time_slot'),
     path('add_grade/', views.add_grade, name='add_grade'),
     path('add_degree/', views.add_degree, name='add_degree'),
@@ -41,7 +42,6 @@ urlpatterns = [
     path('delete_grade/<slug:slug>/', views.delete_grade, name='delete_grade'),
     path('delete_degree/<slug:slug>/', views.delete_degree, name='delete_degree'),
 
-
     # Pages for editing items.
     path('edit_course/<slug:slug>/', views.edit_course, name='edit_course'),
     path('edit_assignment/<slug:slug>/',
@@ -51,7 +51,6 @@ urlpatterns = [
 
     path('edit_grade/<slug:slug>/', views.edit_grade, name='edit_grade'),
     path('edit_degree/<slug:slug>/', views.edit_degree, name='edit_degree'),
-
 
     # Event create, edit and delete
     path('add_event/<slug:slug>/', views.add_event, name='add_event'),
@@ -71,7 +70,6 @@ urlpatterns = [
     # TimeTable
     path('timetable/time_table/', timetable_views.timetable, name='timetable'),
 
-     path('staff_grades/', views.staff_grades, name='staff_grades'),
-
+    path('staff_grades/', views.staff_grades, name='staff_grades'),
 
 ]
