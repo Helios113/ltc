@@ -14,7 +14,7 @@ urlpatterns = [
 
     # Pages for adding new items.
     path('add_course/', views.add_course, name='add_course'),
-    path('add_assignment/', views.add_assignment, name='add_assignment'),
+    path('add_assignment/<slug:slug>/', views.add_assignment, name='add_assignment'),
     path('add_time_slot/', views.add_time_slot, name='add_time_slot'),
     path('add_grade/', views.add_grade, name='add_grade'),
     path('add_degree/', views.add_degree, name='add_degree'),

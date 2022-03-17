@@ -6,7 +6,7 @@ Assignment {% endblock %} {% block body_block %} {% if added %}
 <form
     id="assignment_form"
     method="post"
-    action="{% url 'ltc:add_assignment' %}"
+    action="{% url 'ltc:add_assignment' course.slug %}"
     enctype="multipart/form-data"
 >
     {% csrf_token %}

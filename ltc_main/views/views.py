@@ -42,9 +42,9 @@ def index(request):
         eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour, minute=i[1].minute),
         cName=i[2].event.course.name,
         eName=i[2].event.name),
-                     "link": i[2].event.slug}
-                    for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
-    current_courses = [i for i in u.courses.all() if i.endDate>date.today()]
+        "link": i[2].event.slug}
+        for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
+    current_courses = [i for i in u.courses.all() if i.endDate > date.today()]
     context = {
         'person': u,
         'courses_taken': current_courses,
@@ -156,6 +156,22 @@ def add_anything(request, form_class, html, data):
     return render(request, html, context)
 
 
+def add_assignment_2(request, form_class, html, data):
+    form = form_class(data)
+    added = False
+    if request.method == 'POST':
+        form = form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            added = True
+        else:
+            print(form.errors)
+    else:
+        pass
+    context = {'form': form, 'course': data['course'], 'added': added}
+    return render(request, html, context)
+
+
 @login_required
 def add_course(request):
     data = {}
@@ -166,14 +182,15 @@ def add_course(request):
 def add_event(request, slug, type):
     a = get_object_or_404(Course, slug=slug)
     type = type[0:-1]
-    data = {'course': a,'type':type}
+    data = {'course': a, 'type': type}
     return add_anything(request, EventForm, 'ltc/add_menus/add_event.html', data)
 
 
 @login_required
-def add_assignment(request):
-    data = {}
-    return add_anything(request, AssignmentForm, 'ltc/add_menus/add_assignment.html', data)
+def add_assignment(request, slug):
+    a = get_object_or_404(Course, slug=slug)
+    data = {'course': a}
+    return add_assignment_2(request, AssignmentForm, 'ltc/add_menus/add_assignment.html', data)
 
 
 @login_required
