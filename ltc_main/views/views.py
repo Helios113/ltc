@@ -42,12 +42,12 @@ def index(request):
         eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour, minute=i[1].minute),
         cName=i[2].event.course.name,
         eName=i[2].event.name),
-                     "link": i[2].event.slug}
-                    for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
-    current_courses = [i for i in u.courses.all() if i.ednDate>date.today()]
+        "link": i[2].event.slug}
+        for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
+    current_courses = [i for i in u.courses.all() if i.ednDate > date.today()]
     context = {
         'person': u,
-        'courses_taken':current_courses,
+        'courses_taken': current_courses,
         'time': todaysAgenda,
         'assignments': deadlines
     }
@@ -158,34 +158,39 @@ def add_anything(request, form_class, html, data):
 
 @login_required
 def add_course(request):
-    return add_anything(request, CourseForm, 'ltc/add_menus/add_course.html')
+    data = {}
+    return add_anything(request, CourseForm, 'ltc/add_menus/add_course.html', data)
 
 
 @login_required
 def add_event(request, slug):
     a = get_object_or_404(Course, slug=slug)
     data = {'course': a}
-    return add_anything(request,EventForm, 'ltc/add_menus/add_event.html', data)
+    return add_anything(request, EventForm, 'ltc/add_menus/add_event.html', data)
 
 
 @login_required
 def add_assignment(request):
-    return add_anything(request, AssignmentForm, 'ltc/add_menus/add_assignment.html')
+    data = {}
+    return add_anything(request, AssignmentForm, 'ltc/add_menus/add_assignment.html', data)
 
 
 @login_required
 def add_time_slot(request):
-    return add_anything(request, TimeSlotForm, 'ltc/add_time_slot.html')
+    data = {}
+    return add_anything(request, TimeSlotForm, 'ltc/add_time_slot.html', data)
 
 
 @login_required
 def add_grade(request):
-    return add_anything(request, GradeForm, 'ltc/add_grade.html')
+    data = {}
+    return add_anything(request, GradeForm, 'ltc/add_grade.html,data', data)
 
 
 @login_required
 def add_degree(request):
-    return add_anything(request, DegreeForm, 'ltc/add_degree.html')
+    data = {}
+    return add_anything(request, DegreeForm, 'ltc/add_degree.html', data)
 
 
 @login_required
