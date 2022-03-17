@@ -87,7 +87,7 @@ class Assignment(models.Model):
     title = models.CharField(max_length=128)
     detail = models.TextField(max_length=512, null=True, blank=True)
     slug = models.SlugField(null=True, blank=True)
-    deadline = models.DateTimeField(null=True)
+    deadline = models.DateTimeField()
 
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))

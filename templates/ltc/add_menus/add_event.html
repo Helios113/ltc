@@ -6,18 +6,45 @@
 {% endblock %}
 
 {% block body_block %}
-    {% if added %}
-    <strong>New event added!</strong>
-    <a href="{% url 'ltc:index' %}">Back to homepage.</a><br />
-    {% endif %}
+    <form
+    id="event_form"
+    method="post"
+    action="{% url 'ltc:add_event' data.course.slug data.type  %}"
+    enctype="multipart/form-data"
+    >
 
     {% csrf_token %}
-
-    <!-- Display each form -->
-    {{ form.as_p }}
-    <!-- Provide a button to click to submit the form. -->
-
-    <input type="submit" name="submit" value="Add new event" />
+    <div class="form-group">
+        
+        {{ form.non_field_errors }}
+        <div class="fieldWrapper form-group">
+            {{ form.name.errors }}
+            <label for="{{ form.subject.id_for_label }}">Name:</label>
+            {{ form.name }}
+            <small id="{{ form.subject.id_for_label }}Help" class="form-text text-muted">Name of the event</small>
+        </div>
+        <div class="fieldWrapper form-group">
+            {{ form.description.errors }}
+            <label for="{{ form.subject.id_for_label }}">Description:</label>
+            {{ form.description }}
+            <small id="{{ form.subject.id_for_label }}Help" class="form-text text-muted">Description of the event</small>
+        </div>
+        <div class="fieldWrapper form-group">
+            {{ form.location.errors }}
+            <label for="{{ form.subject.id_for_label }}">Location:</label>
+            {{ form.location }}
+            <small id="{{ form.subject.id_for_label }}Help" class="form-text text-muted">Location of the event. Can be a link.</small>
+        </div>
+        <div class="fieldWrapper form-group">
+            {{ form.geoUri.errors }}
+            <label for="{{ form.subject.id_for_label }}">geoUri:</label>
+            {{ form.geoUri }}
+            <small id="{{ form.subject.id_for_label }}Help" class="form-text text-muted">GeoUri of the event if in person. Can be gotten from <a href="https://www.openstreetmap.org/#map=17/55.87243/-4.28800" target="_blank">openstreetmap</a></small>
+        </div>
+       
+        
+    </div>
+    <button type="submit" class="btn btn-primary">Add new event</button>
     </form>
 
 {% endblock %}

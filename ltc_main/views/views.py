@@ -1,3 +1,4 @@
+from calendar import c
 from xmlrpc.client import FastParser
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
@@ -146,18 +147,22 @@ def user_logout(request):
 
 
 def add_anything(request, form_class, html, data):
-    form = form_class(data)
-    added = False
+    form = form_class(initial = data)
+
     if request.method == 'POST':
         form = form_class(request.POST)
+        form.course = data['course']
+        form.type = data['type']
+        print("We received the form")
+        print(data)
         if form.is_valid():
+            print("Valid")
             form.save()
-            added = True
-        else:
-            print(form.errors)
-    else:
-        pass
-    context = {'form': form, 'added': added}
+            return redirect(reverse('ltc:course_page',
+                                    kwargs={'slug':
+                                            data['course'].slug}))
+    
+    context = {'form': form, 'data': data}
     return render(request, html, context)
 
 
@@ -166,6 +171,7 @@ def add_assignment_2(request, form_class, html, data):
     added = False
     if request.method == 'POST':
         form = form_class(request.POST)
+       
         if form.is_valid():
             form.save()
             added = True
@@ -186,16 +192,54 @@ def add_course(request):
 @login_required
 def add_event(request, slug, type):
     a = get_object_or_404(Course, slug=slug)
-    type = type[0:-1]
-    data = {'course': a, 'type': type}
-    return add_anything(request, EventForm, 'ltc/add_menus/add_event.html', data)
+    if request.method == 'GET':
+        type = type[0:-1]
+        data = {'course': a, 'type': type}
+        form = EventForm()
+        context = {'form': form, 'data': data}
+        return render(request, 'ltc/add_menus/add_event.html', context)
+
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.course = a
+            obj.type = type
+            obj.save()
+            return redirect(reverse('ltc:course_page',
+                                    kwargs={'slug':
+                                           slug}))
+        else:
+            data = {'course': a, 'type': type}
+            context = {'form': form, 'data': data}
+            return render(request, 'ltc/add_menus/add_event.html', context)
+    
+    
 
 
 @login_required
 def add_assignment(request, slug):
     a = get_object_or_404(Course, slug=slug)
-    data = {'course': a}
-    return add_assignment_2(request, AssignmentForm, 'ltc/add_menus/add_assignment.html', data)
+    
+    if request.method == 'GET':
+        data = {'course': a}
+        form = AssignmentForm()
+        context = {'form': form, 'data': data}
+        return render(request, 'ltc/add_menus/add_assignment.html', context)
+
+    if request.method == 'POST':
+        form = AssignmentForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.course = a
+            obj.save()
+            return redirect(reverse('ltc:course_page',
+                                    kwargs={'slug':
+                                           slug}))
+        else:
+            data = {'course': a}
+            context = {'form': form, 'data': data}
+            return render(request, 'ltc/add_menus/add_assignment.html', context)
 
 
 @login_required

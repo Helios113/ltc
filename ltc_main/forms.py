@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from datetime import datetime
 
 
 class UserForm(forms.ModelForm):
@@ -28,10 +29,18 @@ class CourseForm(forms.ModelForm):
 
 
 class AssignmentForm(forms.ModelForm):
+    deadline = forms.SplitDateTimeField(widget = forms.SplitDateTimeWidget(date_attrs={'type': 'date'}, time_attrs={'type': 'time'}))
+
+    def __init__(self, *args, **kwargs):
+        super(forms.ModelForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
     class Meta:
         model = Assignment
-        exclude = ('slug',)
+        exclude = ('slug', 'course')
 
+        
 
 """
 class TimeSlotForm(forms.ModelForm):
@@ -42,9 +51,14 @@ class TimeSlotForm(forms.ModelForm):
 
 
 class EventForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(forms.ModelForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
     class Meta:
         model = Event
-        exclude = ('slug',)
+        exclude = ('slug', 'course', 'type')
 
 
 class GradeForm(forms.ModelForm):
