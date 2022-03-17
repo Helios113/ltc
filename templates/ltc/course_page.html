@@ -1,31 +1,30 @@
 {% extends 'ltc/base.html' %} {% load staticfiles %} {% block title_block %}
-Course Page {% endblock %} {% block body_block %}
-<!-- Navigation bar -->
-<div class="row">
-    <div class="col-sm-3">
-        <div
-            id="scroll-list"
-            class="mt-3 list-group sticky-top"
-            style="top: 1em"
-        >
-            <a
-                class="list-group-item list-group-item-action"
-                href="#list-item-1"
+    Course Page {% endblock %} {% block body_block %}
+    <div class="row">
+        <div class="col-sm-3">
+            <div
+                    id="scroll-list"
+                    class="mt-3 list-group sticky-top"
+                    style="top: 1em"
+            >
+                <a
+                        class="list-group-item list-group-item-action"
+                        href="#list-item-1"
                 >Lectures</a
-            >
-            <a
-                class="list-group-item list-group-item-action"
-                href="#list-item-2"
+                >
+                <a
+                        class="list-group-item list-group-item-action"
+                        href="#list-item-2"
                 >Tutorials</a
-            >
-            <a
-                class="list-group-item list-group-item-action"
-                href="#list-item-3"
+                >
+                <a
+                        class="list-group-item list-group-item-action"
+                        href="#list-item-3"
                 >Labs</a
-            >
-            <a
-                class="list-group-item list-group-item-action"
-                href="#list-item-4"
+                >
+                <a
+                        class="list-group-item list-group-item-action"
+                        href="#list-item-4"
                 >Assignments</a
             >
         </div>
@@ -36,7 +35,6 @@ Course Page {% endblock %} {% block body_block %}
             <p>{{ course.description }}</p>
             By Which Staff:{{ course.staff }}
         </div>
-        <!-- List the current events of the course -->
         <div>
             {% for e in events%}
             <div class="pb-4">
@@ -44,7 +42,6 @@ Course Page {% endblock %} {% block body_block %}
                 <h4 id="list-item-{{forloop.counter}}">{{e.0}}</h4>
                 <div class="list-group">
                     {% if e.1 %} {% for l in e.1 %}
-                     <!-- Staff can jump to the events page and can edit or delete -->
                     <a
                         href="{% url 'ltc:event_page' l.slug %}"
                         class="list-group-item list-group-item-action"
@@ -69,7 +66,7 @@ Course Page {% endblock %} {% block body_block %}
                     </a>
                     {% endif%} {% if user.is_staff %}
                     <a
-                        href="{% url 'ltc:add_event' %}"
+                        href="{% url 'ltc:add_event' course.slug e.0 %}"
                         class="list-group-item list-group-item-action"
                     >
                         <div class="d-flex w-100 justify-content-between">
@@ -84,7 +81,6 @@ Course Page {% endblock %} {% block body_block %}
                 <hr class="my-12" />
                 <h4 id="list-item-4">Assignments</h4>
                 <div class="list-group">
-                     <!-- List the assignment and staff can jump to the events page and can edit or delete -->
                     {% for a in assignments%}
                     <a
                         href="{% url 'ltc:assignment_page' a.slug %}"
@@ -100,9 +96,8 @@ Course Page {% endblock %} {% block body_block %}
                         <small>And some small print.</small>
                     </a>
                     {% endfor %} {% if user.is_staff %}
-                     <!-- Staff can add assignment -->
                     <a
-                        href="{% url 'ltc:add_assignment' %}"
+                        href="{% url 'ltc:add_assignment' course.slug %}"
                         class="list-group-item list-group-item-action"
                     >
                         <div class="d-flex w-100 justify-content-between">
@@ -110,33 +105,32 @@ Course Page {% endblock %} {% block body_block %}
                         </div>
                     </a>
                     {% endif %}
+                    </div>
                 </div>
-            </div>
 
-            <div class="pb-4">
-                {% if user.is_staff %}
-                 <!-- Staff can delete the course -->
-                <hr class="my-12" />
-                <h4 id="list-item-5">Delete this course</h4>
-                <div class="list-group">
-                    <a href="" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">Delete this course permanently</h5>
+                <div class="pb-4">
+                    {% if user.is_staff %}
+                        <hr class="my-12"/>
+                        <h4 id="list-item-5">Delete this course</h4>
+                        <div class="list-group">
+                            <a href="" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">Delete this course permanently</h5>
+                                </div>
+                                <p class="mb-1">
+                                    Some placeholder content in a paragraph.
+                                </p>
+                                <small>And some small print.</small>
+                            </a>
                         </div>
-                        <p class="mb-1">
-                            Some placeholder content in a paragraph.
-                        </p>
-                        <small>And some small print.</small>
-                    </a>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
         </div>
     </div>
-</div>
-{% endblock %} {% block footer_block%}
-<script
-    type="text/javascript"
-    src="{% static 'javascript/scroll.js' %}"
-></script>
-{% endblock%}
+{% endblock %} {% block footer_block %}
+    <script
+            type="text/javascript"
+            src="{% static 'javascript/scroll.js' %}"
+    ></script>
+{% endblock %}

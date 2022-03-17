@@ -26,25 +26,22 @@ def populate_user(student_usernames, staff_usernames):
     # Set up superuser account.
     admin = User.objects.get_or_create(username='admin')[0]
     admin.set_password('123456')
-    # The default email is user's name + '@student.gla.ac.uk'
     admin.email = "admin@student.gla.ac.uk"
-    # Superuser has staff permission
     admin.is_staff = True
     admin.is_superuser = True
     admin.save()
 
     for name in student_usernames:
-        # Create student account.
         t = User.objects.get_or_create(username=name)[0]
+        # The default email is user's name plus '@student.gla.ac.uk'
         t.email = name + '@student.gla.ac.uk'
         # Students are not staffs
         t.is_staff = False
-        # The default password is user's name + '123'.
+        # The default password is user's name plus '123'.
         t.set_password(name + '123')
         t.save()
 
     for name in staff_usernames:
-        # Create staff account.
         s = User.objects.get_or_create(username=name)[0]
         s.email = name + '@student.gla.ac.uk'
         s.is_staff = True
@@ -54,7 +51,6 @@ def populate_user(student_usernames, staff_usernames):
 
 
 def populate_staff(staffs_info):
-    # Staff's information with course
     for info in staffs_info:
         s = Staff.objects.get_or_create(user=User.objects.get(username=info['name']))[0]
         s.courses.set(Course.objects.filter(name__in=info['courses']))
@@ -64,7 +60,6 @@ def populate_staff(staffs_info):
 
 
 def populate_student(students_info):
-    # Student's information with course
     for info in students_info:
         t = Student.objects.get_or_create(user=User.objects.get(username=info['name']))[0]
         t.courses.set(Course.objects.filter(name__in=info['courses']))
@@ -74,7 +69,6 @@ def populate_student(students_info):
 
 
 def populate_course(courses_info):
-    # Course's code, name,description and prerequisite 
     for info in courses_info:
         t = Course.objects.get_or_create(code=info['code'])[0]
         t.name = info['name']
@@ -85,16 +79,15 @@ def populate_course(courses_info):
 
 
 def populate_assignment(assignments_info):
-    # Assignment's title,details and belongs to what course
     for info in assignments_info:
         t = Assignment.objects.get_or_create(course=Course.objects.get(name=info['course']), title=info['title'])[0]
         t.detail = info['detail']
+        t.deadline = datetime(*info['deadline'])
         t.save()
     return
 
 
 def populate_grade(grades_info):
-    # Student's grade and belongs to what assignment, what course
     for info in grades_info:
         g = Grade.objects.get_or_create(student=Student.objects.get(user=User.objects.get(username=info['student'])),
                                         course=Course.objects.get(name=info['course']),
@@ -105,7 +98,6 @@ def populate_grade(grades_info):
 
 
 def populate_degree(degrees_info):
-    # Degree of student,use to filter the course student can enroll
     for info in degrees_info:
         d = Degree.objects.get_or_create(name=info['name'])[0]
         d.course.set(Course.objects.filter(name__in=info['courses']))
@@ -114,7 +106,6 @@ def populate_degree(degrees_info):
 
 
 def populate_event(events_info):
-    # Including labs, assignments and tutorials, each event has name, address/zoom link, belongs to one course
     for info in events_info:
         e = Event.objects.get_or_create(id=info['id'])[0]
         e.course = Course.objects.get(name=info['course'])
@@ -127,7 +118,6 @@ def populate_event(events_info):
 
 
 def populate_time_slot(time_slots_info):
-    # Time slot has start date time and end date time, belongs to concreate event
     for info in time_slots_info:
         t = TimeSlot.objects.get_or_create(
             event=Event.objects.get(id=info['event']),
@@ -138,17 +128,19 @@ def populate_time_slot(time_slots_info):
         t.save()
     return
 
+
 def populate():
     # Set usernames here.
     # The default email is username plus '@student.gla.ac.uk'
     # The default password is username plus '123'.
     student_usernames = ['Amelia', 'Emily', 'Jack', 'Mason', ]
     staff_usernames = ['Charlotte', 'Harry', ]
-    staffs_info = [{'name': 'Charlotte', 'type': Staff.PROFESSOR, 'courses':['course A','course B']},
-                   {'name': 'Harry', 'type': Staff.TEACHING_ASSISTANT, 'courses':['course C','course C Hard']}]
+    staffs_info = [{'name': 'Charlotte', 'type': Staff.PROFESSOR, 'courses': ['course A', 'course B']},
+                   {'name': 'Harry', 'type': Staff.TEACHING_ASSISTANT, 'courses': ['course C', 'course C Hard']}]
     students_info = [
         {
-            'name': 'Amelia', 'courses': ['course A', 'course B','course C', 'course C Hard'], 'degree': 'Business Administration and Management',
+            'name': 'Amelia', 'courses': ['course A', 'course B', 'course C', 'course C Hard'],
+            'degree': 'Business Administration and Management',
         },
         {
             'name': 'Emily', 'courses': ['course A', 'course B'], 'degree': 'Electrical, Electronics & Communication '
@@ -233,12 +225,18 @@ def populate():
 
     # Set assignments here.
     assignments_info = [
-        {'course': 'course A', 'title': 'Assignment 01', 'detail': 'Assignment 01 detail.'},
-        {'course': 'course A', 'title': 'Assignment 02', 'detail': 'Assignment 02 detail.'},
-        {'course': 'course B', 'title': 'Assignment 03', 'detail': 'Assignment 03 detail.'},
-        {'course': 'course C', 'title': 'Assignment 04', 'detail': 'Assignment 04 detail.'},
-        {'course': 'course C Hard', 'title': 'Assignment 05', 'detail': 'Assignment 05 detail.'},
-        {'course': 'course C Hard', 'title': 'Assignment 06', 'detail': 'Assignment 06 detail.'},
+        {'course': 'course A', 'title': 'Assignment 01', 'detail': 'Assignment 01 detail.',
+         'deadline': [2022, 3, 21, 12, 0]},
+        {'course': 'course A', 'title': 'Assignment 02', 'detail': 'Assignment 02 detail.',
+         'deadline': [2022, 3, 22, 12, 0]},
+        {'course': 'course B', 'title': 'Assignment 03', 'detail': 'Assignment 03 detail.',
+         'deadline': [2022, 3, 21, 9, 0]},
+        {'course': 'course C', 'title': 'Assignment 04', 'detail': 'Assignment 04 detail.',
+         'deadline': [2022, 4, 1, 12, 0]},
+        {'course': 'course C Hard', 'title': 'Assignment 05', 'detail': 'Assignment 05 detail.',
+         'deadline': [2022, 4, 1, 18, 0]},
+        {'course': 'course C Hard', 'title': 'Assignment 06', 'detail': 'Assignment 06 detail.',
+         'deadline': [2022, 4, 2, 19, 0]},
     ]
     # Set grades here.
     grades_info = [
@@ -277,7 +275,6 @@ def populate():
     populate_time_slot(time_slots_info)
 
 
-# Start execution
 if __name__ == '__main__':
     print('Starting LTC++ population script...')
     populate()

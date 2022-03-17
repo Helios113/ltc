@@ -2,6 +2,7 @@ from django.urls import path
 from .views import views
 from .views import timetable_views
 from .views import scheduler_view
+
 app_name = 'ltc'
 
 urlpatterns = [
@@ -13,14 +14,12 @@ urlpatterns = [
 
     # Pages for adding new items.
     path('add_course/', views.add_course, name='add_course'),
-    path('add_assignment/', views.add_assignment, name='add_assignment'),
+    path('add_assignment/<slug:slug>/', views.add_assignment, name='add_assignment'),
     path('add_time_slot/', views.add_time_slot, name='add_time_slot'),
     path('add_grade/', views.add_grade, name='add_grade'),
     path('add_degree/', views.add_degree, name='add_degree'),
 
     # Pages for viewing items.
-    path('student_page/<slug:slug>/', views.student_page, name='student_page'),
-    path('staff_page/<slug:slug>/', views.staff_page, name='staff_page'),
     path('course_page/<slug:slug>/', views.course_page, name='course_page'),
     path('courses', views.courses, name='courses'),
     path('assignment_page/<slug:slug>/',
@@ -43,7 +42,6 @@ urlpatterns = [
     path('delete_grade/<slug:slug>/', views.delete_grade, name='delete_grade'),
     path('delete_degree/<slug:slug>/', views.delete_degree, name='delete_degree'),
 
-
     # Pages for editing items.
     path('edit_course/<slug:slug>/', views.edit_course, name='edit_course'),
     path('edit_assignment/<slug:slug>/',
@@ -54,25 +52,24 @@ urlpatterns = [
     path('edit_grade/<slug:slug>/', views.edit_grade, name='edit_grade'),
     path('edit_degree/<slug:slug>/', views.edit_degree, name='edit_degree'),
 
-
-    # Pages for event create, edit and delete
-    path('add_event/', views.add_event, name='add_event'),
+    # Event create, edit and delete
+    path('add_event/<slug:slug>/<str:type>', views.add_event, name='add_event'),
     path('event_page/<slug:slug>/', views.event_page, name='event_page'),
     path('edit_event/<slug:slug>/', views.edit_event, name='edit_event'),
     path('delete_event/<slug:slug>/', views.delete_event, name='delete_event'),
 
-    # Pages for find meeting time
+    # Find meeting time
     path('find_meeting_time/', scheduler_view.find_meeting_time,
          name='find_meeting_time'),
     path('find_meeting_time/<slug:category_slug>/team_schedule_page/',
          scheduler_view.team_schedule_page, name='team_schedule_page'),
 
-    # Pages for displaying grades
+    # Grades
     path('grade/', views.grades, name='grades'),
 
-    # Page for displaying the TimeTable
+    # TimeTable
     path('timetable/time_table/', timetable_views.timetable, name='timetable'),
 
-
+    path('staff_grades/', views.staff_grades, name='staff_grades'),
 
 ]

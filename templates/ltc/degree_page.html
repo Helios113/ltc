@@ -11,7 +11,6 @@
 
     Including Courses:
     <ul>
-    <!-- Filter the course student can have with this degree -->
     {% for course in courses %}
        <li><a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a></li>
     {% empty %}

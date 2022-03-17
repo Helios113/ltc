@@ -32,7 +32,7 @@ function initMap() {
     }
 
 }
-// # Will handle the location error and pop-up message
+
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.setPosition(pos);
     infoWindow.setContent(

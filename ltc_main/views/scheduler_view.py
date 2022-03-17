@@ -16,7 +16,6 @@ from datetime import date
 
 @login_required
 def find_meeting_time(request):
-    # Find out the timeslot both user and member are free 
     meetings = TeamMeeting.objects.filter(members=request.user)
     context = {'nbar': "meeting",
                'form': MeetingForm,
@@ -28,7 +27,7 @@ def find_meeting_time(request):
             # Check that name is unique for this user before save
             #print("This is the meeting id:", form.id)
             meeting = form.save(commit=True)
-            meeting.owner.add(User.objects.get(username=request.user))
+            meeting.owner=User.objects.get(username=request.user)
             meeting.members.add(User.objects.get(username=request.user))
             meeting.saveSlug()
             meeting.save()
@@ -83,7 +82,6 @@ def team_schedule_page(request, category_slug):
 
 
 def TimeHelper(meeting, calTimes):
-    # Find out the free timeslots of team members and put them in an array 
     meeting_times = []
     for m in meeting.members.all():
         if m.is_staff:
