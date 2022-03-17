@@ -83,6 +83,7 @@ def team_schedule_page(request, category_slug):
 
 
 def TimeHelper(meeting, calTimes):
+    # Find out the free timeslots of team members and put them in an array 
     meeting_times = []
     for m in meeting.members.all():
         if m.is_staff:

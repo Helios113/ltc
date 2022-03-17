@@ -45,7 +45,7 @@ def timetable(request):
         return render(request, 'ltc/timetable/time_table.html', timetable_helper(u, thisWeek))
 
 def timetable_helper(u,week,direction=0):
-    # 
+    # Calculate the free timeslots and put them in an array 
     d = str(datetime.date.today().year)+"-W"+str(week)
     startDate = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
     endDate = datetime.datetime.strptime(d + '-6', "%Y-W%W-%w")

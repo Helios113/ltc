@@ -22,7 +22,6 @@ def index(request):
     clean_meetings(user)
     # get the relevant user based on their status
     # for each user type extract needed info
-    # student will     and staff will
     if user.is_staff:
         u = Staff.objects.filter(user=user).first()
         deadlines = ""
@@ -139,6 +138,7 @@ def user_logout(request):
 
 
 def add_anything(request, form_class, html):
+    # add new things function for staff
     form = form_class
     added = False
     if request.method == 'POST':
