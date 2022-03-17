@@ -384,7 +384,7 @@ def edit_assignment(request, slug):
     else:
         pass
     context = {'form': form, 'slug': slug}
-    return render(request, 'ltc/edit_assignment.html', context)
+    return render(request, 'ltc/edit_menus/edit_assignment.html', context)
 
 
 @login_required
