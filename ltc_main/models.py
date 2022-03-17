@@ -15,6 +15,7 @@ from eventtools.models import BaseEvent, BaseOccurrence
 # Create your models here.
 
 class Staff(models.Model):
+    # There are three types of choice for staff, Professor, Teaching assistant and Administrator
     PROFESSOR = 'Professor'
     TEACHING_ASSISTANT = 'Teaching assistant'
     ADMINISTRATOR = 'Administrator'
@@ -37,6 +38,7 @@ class Staff(models.Model):
     )
 
     def get_time_slots(self):
+        # get all the timeslots with the current course and events
         t = []
         for course in self.courses.all():
             for event in course.event_set.all():
@@ -59,6 +61,8 @@ class Staff(models.Model):
 
 
 class Course(models.Model):
+    # One courses can be enrolled by many students, courses have events like lab, tutorials and labs with time slots, 
+    # Some courses may have request for relative prerequisite
     code = models.CharField(max_length=128, unique=True)
     endDate = models.DateField(default=datetime.date.today())
     name = models.CharField(max_length=128, default='default')
@@ -70,6 +74,7 @@ class Course(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
+        # Auto-generate the icon for course
         self.photo = ig.generate_identicon(self.name)
         super(Course, self).save(*args, **kwargs)
 
@@ -82,6 +87,7 @@ class Assignment(models.Model):
     title = models.CharField(max_length=128)
     detail = models.TextField(max_length=512, null=True, blank=True)
     slug = models.SlugField(null=True, blank=True)
+    # Deadline setting for assignment
     deadline = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
@@ -114,6 +120,8 @@ class Degree(models.Model):
 
 
 class Event(BaseEvent):
+    # A course can have many events, and there are 3 types of events: lab, tutorials and lectures, a map or a zoom links 
+    # will be auto-generated when clicked the concreate event page
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=512, null=True)
@@ -182,6 +190,8 @@ class Student(models.Model):
 
 
 class TeamMeeting(models.Model):
+    # User can select the team members to arrange a team meeting, they are allowed to have a team meeting
+    # in different week. Finding the available timeslots among all members and name the meeting
     thisWeek = datetime.date.today().isocalendar()[1]
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owner", null=True)
     members = models.ManyToManyField(User, blank=True)
