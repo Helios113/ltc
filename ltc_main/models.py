@@ -179,7 +179,6 @@ class Student(models.Model):
         return a
 
     degree = models.ForeignKey(Degree, null=True, on_delete=models.CASCADE)
-
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
         super(Student, self).save(*args, **kwargs)
@@ -200,8 +199,8 @@ class TeamMeeting(models.Model):
     weekNumber = models.IntegerField(
         'Week Number', choices=choices, default=thisWeek)
 
-    # The name of this function must be 'save' rather than 'saveSlug'. Because it should be an overwritten function.
-    def save(self, *args, **kwargs):
+    #This is intentional
+    def saveSlug(self, *args, **kwargs):
         self.slug = slugify(str(self))
         super(TeamMeeting, self).save(*args, **kwargs)
 
