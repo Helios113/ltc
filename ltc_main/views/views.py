@@ -35,7 +35,7 @@ def index(request):
         u = Student.objects.filter(user=user).first()
         assignments = u.get_assignments()  # check if this is true
 
-        deadlines = [i for i in assignments if i.deadline > timezone.now()]
+        deadlines = [i for i in assignments if i.deadline > datetime.now()]
 
     todaysAgenda = [{"text": "{sTime}-{eTime}\t{cName}: {eName}".format(
         sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour, minute=i[0].minute),
@@ -44,10 +44,10 @@ def index(request):
         eName=i[2].event.name),
                      "link": i[2].event.slug}
                     for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
-
+    current_courses = [i for i in u.courses.all() if i.ednDate>date.today()]
     context = {
         'person': u,
-        'courses_taken': u.courses.all(),
+        'courses_taken':current_courses,
         'time': todaysAgenda,
         'assignments': deadlines
     }
@@ -182,35 +182,6 @@ def add_grade(request):
 @login_required
 def add_degree(request):
     return add_anything(request, DegreeForm, 'ltc/add_degree.html')
-
-
-# Student page view
-# TODO: make it use the not simple template
-@login_required
-def student_page(request, slug):
-    s = get_object_or_404(Student, slug=slug)
-    events = s.event_set.all()
-    courses = s.get_courses()
-    available_time_slots = s.get_available_time_slots()
-    context = {'student': s, 'courses': courses, 'events': events,
-               'available_time_slots': available_time_slots}
-    return render(request, 'ltc/student_page.html', context)
-
-
-# Staff page view
-
-
-@login_required
-def staff_page(request, slug):
-    p = get_object_or_404(Staff, slug=slug)
-    courses = p.course_set.all()
-    available_time_slots = p.get_available_time_slots()
-    context = {'staff': p, 'courses': courses,
-               'available_time_slots': available_time_slots}
-    return render(request, 'ltc/staff_page.html', context)
-
-
-# Course page view
 
 
 @login_required
@@ -406,7 +377,14 @@ def edit_time_slot(request, slug):
 
 
 def courses(request):
-    courses = Course.objects.all()
+    user = request.user
+    # get the relevant user based on their status
+    # for each user type extract needed info
+    if user.is_staff:
+        u = Staff.objects.filter(user=user).first()
+    else:
+        u = Student.objects.filter(user=user).first()
+    courses = u.courses.all()
     context = {
         'nbar': 'courses',
         'courses': courses
