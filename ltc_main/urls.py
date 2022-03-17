@@ -2,6 +2,7 @@ from django.urls import path
 from .views import views
 from .views import timetable_views
 from .views import scheduler_view
+from .views import delete_views
 
 app_name = 'ltc'
 
@@ -14,8 +15,8 @@ urlpatterns = [
 
     # Pages for adding new items.
     path('add_course/', views.add_course, name='add_course'),
-    path('add_assignment/<slug:slug>/', views.add_assignment, name='add_assignment'),
-    path('add_time_slot/', views.add_time_slot, name='add_time_slot'),
+    path('add_assignment/<slug:slug>/',
+         views.add_assignment, name='add_assignment'),
     path('add_grade/', views.add_grade, name='add_grade'),
     path('add_degree/', views.add_degree, name='add_degree'),
 
@@ -24,39 +25,34 @@ urlpatterns = [
     path('courses', views.courses, name='courses'),
     path('assignment_page/<slug:slug>/',
          views.assignment_page, name='assignment_page'),
-    path('time_slot_page/<slug:slug>/',
-         views.time_slot_page, name='time_slot_page'),
     path('grade_page/<slug:slug>/', views.grade_page, name='grade_page'),
-    path('degree_page/<slug:slug>/', views.degree_page, name='degree_page'),
+#     path('degree_page/<slug:slug>/', views.degree_page, name='degree_page'),
 
     # Pages for deleting items.
-    path('delete_student/<slug:slug>/',
-         views.delete_student, name='delete_student'),
-    path('delete_staff/<slug:slug>/', views.delete_staff, name='delete_staff'),
-    path('delete_course/<slug:slug>/', views.delete_course, name='delete_course'),
+    path('delete_course/<slug:slug>/',
+         delete_views.delete_course, name='delete_course'),
     path('delete_assignment/<slug:slug>/',
-         views.delete_assignment, name='delete_assignment'),
-    path('delete_time_slot/<slug:slug>/',
-         views.delete_time_slot, name='delete_time_slot'),
+         delete_views.delete_assignment, name='delete_assignment'),
 
-    path('delete_grade/<slug:slug>/', views.delete_grade, name='delete_grade'),
-    path('delete_degree/<slug:slug>/', views.delete_degree, name='delete_degree'),
+    path('delete_grade/<slug:slug>/',
+         delete_views.delete_grade, name='delete_grade'),
+    path('delete_degree/<slug:slug>/',
+         delete_views.delete_degree, name='delete_degree'),
 
     # Pages for editing items.
     path('edit_course/<slug:slug>/', views.edit_course, name='edit_course'),
     path('edit_assignment/<slug:slug>/',
          views.edit_assignment, name='edit_assignment'),
-    path('edit_time_slot/<slug:slug>/',
-         views.edit_time_slot, name='edit_time_slot'),
 
     path('edit_grade/<slug:slug>/', views.edit_grade, name='edit_grade'),
-    path('edit_degree/<slug:slug>/', views.edit_degree, name='edit_degree'),
+#     path('edit_degree/<slug:slug>/', views.edit_degree, name='edit_degree'),
 
     # Event create, edit and delete
-    path('add_event/<slug:slug>/<str:type>', views.add_event, name='add_event'),
+    path('add_event/<slug:slug>/<str:type>',
+         views.add_event, name='add_event'),
     path('event_page/<slug:slug>/', views.event_page, name='event_page'),
     path('edit_event/<slug:slug>/', views.edit_event, name='edit_event'),
-    path('delete_event/<slug:slug>/', views.delete_event, name='delete_event'),
+    path('delete_event/<slug:slug>/', delete_views.delete_event, name='delete_event'),
 
     # Pages for find meeting time
     path('find_meeting_time/', scheduler_view.find_meeting_time,

@@ -37,6 +37,10 @@ def index(request):
         assignments = u.get_assignments()  # check if this is true
 
         deadlines = [i for i in assignments if i.deadline > datetime.now()]
+    
+    
+    print(u.get_time_slots())
+
 
     todaysAgenda = [{"text": "{sTime}-{eTime}\t{cName}: {eName}".format(
         sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour, minute=i[0].minute),
@@ -185,12 +189,23 @@ def add_assignment_2(request, form_class, html, data):
 
 @login_required
 def add_course(request):
-    data = {}
-    return add_anything(request, CourseForm, 'ltc/add_menus/add_course.html', data)
+    if request.user.is_staff is False:
+        return redirect(reverse('ltc:courses'))
+    form = CourseForm()
+    if request.method == 'POST':
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            obj = form.save()
+            Staff.objects.filter(user = request.user)[0].courses.add(obj)
+            return redirect(reverse('ltc:courses'))
+    
+    context = {'form': form}
+    return render(request, 'ltc/add_menus/add_course.html', context)
 
 
 @login_required
 def add_event(request, slug, type):
+    
     a = get_object_or_404(Course, slug=slug)
     if request.method == 'GET':
         type = type[0:-1]
@@ -242,10 +257,6 @@ def add_assignment(request, slug):
             return render(request, 'ltc/add_menus/add_assignment.html', context)
 
 
-@login_required
-def add_time_slot(request):
-    data = {}
-    return add_anything(request, TimeSlotForm, 'ltc/add_time_slot.html', data)
 
 
 @login_required
@@ -283,6 +294,8 @@ def event_page(request, slug):
         'event': e,
         'course': course,
     }
+    
+        
     return render(request, 'ltc/event_page.html', context)
 
 
@@ -301,15 +314,6 @@ def assignment_page(request, slug):
 
 
 @login_required
-def time_slot_page(request, slug):
-    t = get_object_or_404(TimeSlot, slug=slug)
-    day = t.day
-    time = t.time
-    context = {'time_slot': t, 'day': day, 'time': time}
-    return render(request, 'ltc/time_slot_page.html', context)
-
-
-@login_required
 def grade_page(request, slug):
     g = get_object_or_404(Grade, slug=slug)
     student = g.student
@@ -324,77 +328,6 @@ def grade_page(request, slug):
     }
     return render(request, 'ltc/grade_page.html', context)
 
-
-@login_required
-def degree_page(request, slug):
-    d = get_object_or_404(Degree, slug=slug)
-    courses = d.course.all()
-
-    context = {
-        'degree': d,
-        'courses': courses,
-    }
-    return render(request, 'ltc/degree_page.html', context)
-
-
-@login_required
-def delete_student(request, slug):
-    s = get_object_or_404(Student, slug=slug)
-    if s.user == request.user:
-        user_logout(request)
-    s.delete()
-    return redirect('ltc:index')
-
-
-@login_required
-def delete_staff(request, slug):
-    p = get_object_or_404(Staff, slug=slug)
-    if p.user == request.user:
-        user_logout(request)
-    p.delete()
-    return redirect('ltc:index')
-
-
-@login_required
-def delete_course(request, slug):
-    c = get_object_or_404(Course, slug=slug)
-    c.delete()
-    return redirect('ltc:index')
-
-
-@login_required
-def delete_event(request, slug):
-    e = get_object_or_404(Event, slug=slug)
-    e.delete()
-    return redirect('ltc:index')
-
-
-@login_required
-def delete_assignment(request, slug):
-    a = get_object_or_404(Assignment, slug=slug)
-    a.delete()
-    return redirect('ltc:index')
-
-
-@login_required
-def delete_time_slot(request, slug):
-    t = get_object_or_404(TimeSlot, slug=slug)
-    t.delete()
-    return redirect('ltc:index')
-
-
-@login_required
-def delete_grade(request, slug):
-    g = get_object_or_404(Grade, slug=slug)
-    g.delete()
-    return redirect('ltc:index')
-
-
-@login_required
-def delete_degree(request, slug):
-    d = get_object_or_404(Degree, slug=slug)
-    d.delete()
-    return redirect('ltc:index')
 
 
 @login_required
@@ -411,7 +344,7 @@ def edit_course(request, slug):
     else:
         pass
     context = {'form': form, 'slug': slug}
-    return render(request, 'ltc/edit_course.html', context)
+    return render(request, 'ltc/edit_menus/edit_course.html', context)
 
 
 @login_required
@@ -431,21 +364,6 @@ def edit_assignment(request, slug):
     return render(request, 'ltc/edit_menus/edit_assignment.html', context)
 
 
-@login_required
-def edit_time_slot(request, slug):
-    t = get_object_or_404(TimeSlot, slug=slug)
-    form = TimeSlotForm(instance=t)
-    if request.method == 'POST':
-        form = TimeSlotForm(request.POST, instance=t)
-        if form.is_valid():
-            form.save()
-            return redirect('ltc:time_slot_page', t.slug)
-        else:
-            print(form.errors)
-    else:
-        pass
-    context = {'form': form, 'slug': slug}
-    return render(request, 'ltc/edit_time_slot.html', context)
 
 
 # Base course view
@@ -485,9 +403,9 @@ def edit_grade(request, slug):
     return edit_anything(request, Grade, GradeForm, 'ltc/edit_grade.html', slug, 'ltc:grade_page')
 
 
-@login_required
-def edit_degree(request, slug):
-    return edit_anything(request, Degree, DegreeForm, 'ltc/edit_degree.html', slug, 'ltc:degree_page')
+# @login_required
+# def edit_degree(request, slug):
+#     return edit_anything(request, Degree, DegreeForm, 'ltc/edit_degree.html', slug, 'ltc:degree_page')
 
 
 @login_required

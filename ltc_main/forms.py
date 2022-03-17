@@ -1,3 +1,4 @@
+from math import degrees
 from django import forms
 from .models import *
 from datetime import datetime
@@ -23,13 +24,23 @@ class UserForm(forms.ModelForm):
 
 
 class CourseForm(forms.ModelForm):
+    endDate = forms.DateField(widget=forms.TextInput(attrs={'type': 'date'}))
+    degree = forms.ModelChoiceField(
+        queryset=Degree.objects.all(), required=True,)
+
+    def __init__(self, *args, **kwargs):
+        super(forms.ModelForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
     class Meta:
         model = Course
         exclude = ('slug', 'photo')
 
 
 class AssignmentForm(forms.ModelForm):
-    deadline = forms.SplitDateTimeField(widget = forms.SplitDateTimeWidget(date_attrs={'type': 'date'}, time_attrs={'type': 'time'}))
+    deadline = forms.SplitDateTimeField(widget=forms.SplitDateTimeWidget(
+        date_attrs={'type': 'date'}, time_attrs={'type': 'time'}))
 
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)
@@ -40,17 +51,23 @@ class AssignmentForm(forms.ModelForm):
         model = Assignment
         exclude = ('slug', 'course')
 
-        
-
-"""
-class TimeSlotForm(forms.ModelForm):
-    class Meta:
-        model = TimeSlot
-        exclude = ('slug',)
-"""
-
 
 class EventForm(forms.ModelForm):
+    # start = forms.SplitDateTimeField(widget=forms.SplitDateTimeWidget(
+    #     date_attrs={'type': 'date'}, time_attrs={'type': 'time'}), required=True)
+
+    # end = forms.SplitDateTimeField(widget=forms.SplitDateTimeWidget(
+    #     date_attrs={'type': 'date'}, time_attrs={'type': 'time'}), required=True)
+    # EVENTTOOLS_REPEAT_CHOICES = (
+    #     ("RRULE:FREQ=DAILY", 'Daily'),
+    #     ("RRULE:FREQ=WEEKLY", 'Weekly'),
+    #     ("RRULE:FREQ=MONTHLY", 'Monthly'),
+    #     ("RRULE:FREQ=YEARLY", 'Yearly'),
+    # )
+    # repeat = forms.ChoiceField(
+    #     choices=EVENTTOOLS_REPEAT_CHOICES, required=False)
+    # repeat_until = forms.DateField(widget=forms.TextInput(attrs={'type': 'date'}))
+
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():

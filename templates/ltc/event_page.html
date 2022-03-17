@@ -4,9 +4,12 @@ event.name }} {% endblock %} {% block body_block %}
 <div class="row">
     <div class="card" style="width: 100%">
         <div class="card-body">
-            <h5 class="card-title">{{ event.name }}</h5>
-            <p class="card-text">{{ event.description }}</p>
-            <a id="link">{{ event.location }}</a>
+            <div class="col-9">
+                <h5 class="card-title">{{ event.name }}</h5>
+                <p class="card-text">{{ event.description }}</p>
+                <a id="link">{{ event.location }}</a>
+                <p class="card-text">{{ event.timeslot }}</p>
+            </div>
         </div>
     </div>
 </div>
