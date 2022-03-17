@@ -10,8 +10,6 @@
     <strong>New event added!</strong>
     <a href="{% url 'ltc:index' %}">Back to homepage.</a><br />
     {% endif %}
-    <!-- <form id="course_form" method="post" action="{% url 'ltc:add_event'%}"
-    enctype="multipart/form-data"> -->
 
     {% csrf_token %}
 
