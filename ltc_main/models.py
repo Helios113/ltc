@@ -164,7 +164,6 @@ class Student(models.Model):
 
     courses = models.ManyToManyField(Course, blank=True)
 
-    # TODO: Assignment has the same issue as Time Slots.
     def get_assignments(self):
         a = []
         for course in self.courses.all():
