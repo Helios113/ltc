@@ -116,7 +116,7 @@ class Degree(models.Model):
         return str(self.name)
 
 
-class Event(BaseEvent):
+class Event(BaseOccurrence):
     # A course can have many events, and there are 3 types of events: lab, tutorials and lectures, a map or a zoom links 
     # will be auto-generated when clicked the concreate event page
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
