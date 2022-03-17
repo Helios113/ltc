@@ -9,6 +9,6 @@ admin.site.register(Assignment)
 admin.site.register(Event)
 admin.site.register(TimeSlot)
 admin.site.register(Grade)
-admin.site.register(Degree)#
+admin.site.register(Degree)
 admin.site.register(TeamMeeting)
 

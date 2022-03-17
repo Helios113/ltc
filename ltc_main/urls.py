@@ -54,7 +54,7 @@ urlpatterns = [
 
 
     # Event create, edit and delete
-    path('add_event/', views.add_event, name='add_event'),
+    path('add_event/<slug:slug>/', views.add_event, name='add_event'),
     path('event_page/<slug:slug>/', views.event_page, name='event_page'),
     path('edit_event/<slug:slug>/', views.edit_event, name='edit_event'),
     path('delete_event/<slug:slug>/', views.delete_event, name='delete_event'),
