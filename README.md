@@ -41,62 +41,12 @@ http://127.0.0.1:8000/ltc/
 * Follow the links on that page to register and login.
 * Here are some pre-registered student accounts:
 ```
-Username:       Amelia      Emily       Jack        Mason
-Password: 	Amelia123   Emily123    Jack123     Mason123
+Username:       Mikayla      Nur       Donald        Sue
+Password: 	Mikayla123   Nur123    Donald123     Sue123
 ```
 * Some staff accounts as well:
 ```
-Username:       Charlotte       Harry
-Password: 	Charlotte123    Harry123
+Username:       Radhika       Peyton
+Password: 	Radhika123    Peyton123
 ```
 * You can find these accounts in populate_ltc.py
-
-# Changelog
-All notable changes to this project will be documented in this file.
-## [1.0.0] - 2022-02-14
-### Added
-* Initial commit.
-## [1.0.1] - 2022-02-15
-### Added
-* README file added.
-### Changed
-* Models.py updated.
-## [1.0.2] - 2022-02-16
-### Added
-* Index, login and registration page added.
-* Human-readable changelog added.
-* Users can add courses now.
-* Users can add assignments now.
-* Log out function added.
-* Student page added.
-* Staff page added.
-* Course page added.
-### Fixed
-* Typo:   Assigment -> Assignment
-## [1.0.3] - 2022-02-18
-### Added
-* requirements.txt added.
-* Users can add timeslots now.
-* Assignment page added.
-* Timeslot page added.
-* More dummy data.
-### Changed
-* Rename: TimePeriod -> TimeSlot
-## [1.0.4] - 2022-02-19
-### Added
-* Users can delete students, professors, courses, assignments and time slots now.
-* Users can edit courses, assignments and time slots now.
-### Changed
-* For convenience, all data can be directly accessed from the index page.
-* Rename: Professor ->  Staff
-## [1.0.5] - 2022-02-20
-### Added
-* Added Event, Grade and Degree.
-* More dummy data.
-* Courses now have codes.
-* New function: Find shared available time
-### Changed
-* Moved some fields of Course to Event.
-### Fixed
-* Fixed a bug in the registration page.
-

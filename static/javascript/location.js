@@ -4,7 +4,8 @@ const isLink = $("#link");
 
 $(document).ready(function () {
     if (isValidHttpUrl(isLink.html())) {
-        isLink.href = isLink.html();
+        console.log(isLink.html());
+        isLink.attr("href", isLink.html());
     }
     const url = new URL(loc.html());
     const data = url.pathname.split(",");
@@ -34,7 +35,6 @@ $(document).ready(function () {
     });
     map.addLayer(layer);
 });
-map.addLayer(layer);
 function isValidHttpUrl(string) {
     let url;
 
