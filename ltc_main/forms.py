@@ -24,7 +24,7 @@ class UserForm(forms.ModelForm):
 
 
 class CourseForm(forms.ModelForm):
-    endDate = forms.DateField(widget=forms.TextInput(attrs={'type': 'date'}))
+    endDate = forms.DateField(label='End Date',widget=forms.TextInput(attrs={'type': 'date',}))
     degree = forms.ModelChoiceField(
         queryset=Degree.objects.all(), required=True,)
 
@@ -108,3 +108,21 @@ class MeetingForm(forms.ModelForm):
         widgets = {
             'made_on': DateInput(),
         }
+
+def make_grading_form(assignment):
+    """
+    Returns a grading form for the given assignment, 
+    restricting the student choices to those in the 
+    course's atendees. 
+    """
+    class GradingForm(forms.ModelForm):
+        student = forms.ModelChoiceField(queryset=Student.objects.filter(courses=assignment.course))
+        def __init__(self, *args, **kwargs):
+            super(forms.ModelForm, self).__init__(*args, **kwargs)
+            for visible in self.visible_fields():
+                visible.field.widget.attrs['class'] = 'form-control'
+
+        class Meta:
+            model = Grade
+            exclude=('course', 'assignment')
+    return GradingForm

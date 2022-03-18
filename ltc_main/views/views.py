@@ -15,7 +15,9 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from datetime import date
 from datetime import datetime
+from django.forms import inlineformset_factory
 
+from django.forms import modelformset_factory
 
 # Create your views here.
 
@@ -445,3 +447,25 @@ def staff_grades(request):
     context = {"data": u.get_assignments(),
                "nbar": "grades"}
     return render(request, 'ltc/staff_grades.html', context)
+
+
+def grade_assignment(request, slug):
+    a = get_object_or_404(Assignment,slug=slug)
+    # generate a membership form for the given employee
+    GradingForm = make_grading_form(a)
+    size = Student.objects.filter(courses=a.course).count()
+    GradingFormSet = modelformset_factory(Grade, form=GradingForm,max_num=size, extra=size)
+
+    if request.method == "POST":
+        formset = GradingFormSet(request.POST, queryset=Grade.objects.filter(assignment=a))
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for member in instances:
+                member.assignment = a
+                member.course = a.course
+                member.save()
+            formset.save_m2m()
+            return redirect('ltc:staff_grades')
+    else:
+        formset = GradingFormSet(queryset=Grade.objects.filter(assignment=a),)
+    return render(request, 'ltc/grade_assignment.html', {'formset': formset})

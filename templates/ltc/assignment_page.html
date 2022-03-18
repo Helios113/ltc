@@ -12,6 +12,7 @@
     <br />
     Detail:{{ detail }}
     <br />
+    <a href="{% url 'ltc:grade_assignment' assignment.slug %}"><button>Grade Assignment</button></a>
     <a href="{% url 'ltc:edit_assignment' assignment.slug %}"><button>Edit Assignment</button></a>
     <a href="{% url 'ltc:delete_assignment' assignment.slug %}"><button>Delete Assignment</button></a>
 {% endblock %}

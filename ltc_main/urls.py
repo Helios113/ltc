@@ -67,5 +67,6 @@ urlpatterns = [
     path('timetable/time_table/', timetable_views.timetable, name='timetable'),
 
     path('staff_grades/', views.staff_grades, name='staff_grades'),
+    path('grade_assignment/<slug:slug>', views.grade_assignment, name='grade_assignment'),
 
 ]

@@ -6,10 +6,6 @@
 {% endblock %}
 
 {% block body_block %}
-    {% if added %}
-    <strong>New course added!</strong>
-    <a href="{% url 'ltc:index' %}">Back to homepage.</a><br />
-    {% endif %}
     <form id="course_form" method="post" action="{% url 'ltc:add_course' %}"
     enctype="multipart/form-data">
 
@@ -19,7 +15,7 @@
     {{ form.as_p }}
     <!-- Provide a button to click to submit the form. -->
 
-    <input type="submit" name="submit" value="Add new course" />
+    <button type="submit" class="btn btn-primary">Add new course</button>
     </form>
 
 {% endblock %}

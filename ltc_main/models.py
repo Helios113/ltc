@@ -101,6 +101,9 @@ class Grade(models.Model):
     assignment = models.ForeignKey(
         Assignment, on_delete=models.CASCADE)
     result = models.IntegerField(default=0)
+    class Meta:
+        unique_together = ('student', 'course','assignment',)
+
 
 
 class Degree(models.Model):
