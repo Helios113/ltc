@@ -33,23 +33,22 @@ def index(request):
     # for each user type extract needed info
     if user.is_staff:
         u = Staff.objects.filter(user=user).first()
-        deadlines = ""
     else:
         u = Student.objects.filter(user=user).first()
-        assignments = u.get_assignments()  # check if this is true
 
-        deadlines = [i for i in assignments if i.deadline > datetime.now()]
-    
-    
+    assignments = u.get_assignments()
+    deadlines = [i for i in assignments if i.deadline > datetime.now()]
+
     print(u.get_time_slots())
 
-
-    todaysAgenda = [{"text": "{sTime}-{eTime}\t{cName}: {eName}".format(
-        sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour, minute=i[0].minute),
-        eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour, minute=i[1].minute),
-        cName=i[2].course.name,
-        eName=i[2].name),
-        "link": i[2].slug}
+    todaysAgenda = [{"time": "{sTime}-{eTime}".format(
+        sTime="{hour:02d}:{minute:02d}".format(
+            hour=i[0].hour, minute=i[0].minute),
+        eTime="{hour:02d}:{minute:02d}".format(
+            hour=i[1].hour, minute=i[1].minute),
+    ),
+        "link": i[2].slug, 'text':"{cName}: {eName}".format(cName=i[2].course.name,
+                                                            eName=i[2].name)}
         for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
     current_courses = [i for i in u.courses.all() if i.endDate > date.today()]
     context = {
@@ -86,21 +85,21 @@ def register(request):
                 s = Student.objects.create(user=t)
                 s.degree = degree
                 s.save()
-            # Professor    
+            # Professor
             elif form.cleaned_data['identity'] == UserForm.PROFESSOR:
                 t.is_staff = True
                 t.save()
                 p = Staff.objects.create(user=t)
                 p.type = Staff.PROFESSOR
                 p.save()
-            # TA    
+            # TA
             elif form.cleaned_data['identity'] == UserForm.TEACHING_ASSISTANT:
                 t.is_staff = True
                 t.save()
                 p = Staff.objects.create(user=t)
                 p.type = Staff.TEACHING_ASSISTANT
                 p.save()
-            # Administrator    
+            # Administrator
             elif form.cleaned_data['identity'] == UserForm.ADMINISTRATOR:
                 t.is_staff = True
                 t.is_superuser = True
@@ -143,53 +142,13 @@ def user_login(request):
 # Base logout form
 
 
-@login_required
+@ login_required
 def user_logout(request):
     logout(request)
     return redirect(reverse('ltc:index'))
 
 
-# Add base view
-
-
-def add_anything(request, form_class, html, data):
-    form = form_class(initial = data)
-
-    if request.method == 'POST':
-        form = form_class(request.POST)
-        form.course = data['course']
-        form.type = data['type']
-        print("We received the form")
-        print(data)
-        if form.is_valid():
-            print("Valid")
-            form.save()
-            return redirect(reverse('ltc:course_page',
-                                    kwargs={'slug':
-                                            data['course'].slug}))
-    
-    context = {'form': form, 'data': data}
-    return render(request, html, context)
-
-
-def add_assignment_2(request, form_class, html, data):
-    form = form_class(data)
-    added = False
-    if request.method == 'POST':
-        form = form_class(request.POST)
-       
-        if form.is_valid():
-            form.save()
-            added = True
-        else:
-            print(form.errors)
-    else:
-        pass
-    context = {'form': form, 'course': data['course'], 'added': added}
-    return render(request, html, context)
-
-
-@login_required
+@ login_required
 def add_course(request):
     if request.user.is_staff is False:
         return redirect(reverse('ltc:courses'))
@@ -198,16 +157,16 @@ def add_course(request):
         form = CourseForm(request.POST)
         if form.is_valid():
             obj = form.save()
-            Staff.objects.filter(user = request.user)[0].courses.add(obj)
+            Staff.objects.filter(user=request.user)[0].courses.add(obj)
             return redirect(reverse('ltc:courses'))
-    
+
     context = {'form': form}
     return render(request, 'ltc/add_menus/add_course.html', context)
 
 
-@login_required
+@ login_required
 def add_event(request, slug, type):
-    
+
     a = get_object_or_404(Course, slug=slug)
     if request.method == 'GET':
         type = type[0:-1]
@@ -225,19 +184,17 @@ def add_event(request, slug, type):
             obj.save()
             return redirect(reverse('ltc:course_page',
                                     kwargs={'slug':
-                                           slug}))
+                                            slug}))
         else:
             data = {'course': a, 'type': type}
             context = {'form': form, 'data': data}
             return render(request, 'ltc/add_menus/add_event.html', context)
-    
-    
 
 
-@login_required
+@ login_required
 def add_assignment(request, slug):
     a = get_object_or_404(Course, slug=slug)
-    
+
     if request.method == 'GET':
         data = {'course': a}
         form = AssignmentForm()
@@ -252,43 +209,30 @@ def add_assignment(request, slug):
             obj.save()
             return redirect(reverse('ltc:course_page',
                                     kwargs={'slug':
-                                           slug}))
+                                            slug}))
         else:
             data = {'course': a}
             context = {'form': form, 'data': data}
             return render(request, 'ltc/add_menus/add_assignment.html', context)
 
 
-
-
-@login_required
-def add_grade(request):
-    data = {}
-    return add_anything(request, GradeForm, 'ltc/add_grade.html,data', data)
-
-
-@login_required
-def add_degree(request):
-    data = {}
-    return add_anything(request, DegreeForm, 'ltc/add_degree.html', data)
-
-
-@login_required
+@ login_required
 def course_page(request, slug):
     c = get_object_or_404(Course, slug=slug)
     prerequisites = c.prerequisite.all()
     assignments = c.assignment_set.all()
     events = c.event_set.all()
+    staff = Staff.objects.filter(courses = c)
     data = [["Lectures", []], ["Tutorials", []], ["Labs", []]]
     data[0][1] = [i for i in events if i.type == 'Lecture']
     data[1][1] = [i for i in events if i.type == 'Tutorial']
     data[2][1] = [i for i in events if i.type == 'Lab']
     context = {'course': c, 'prerequisites': prerequisites,
-               'assignments': assignments, 'events': data, 'user': request.user}
+               'assignments': assignments, 'events': data, 'user': request.user, 'staff':list(staff)}
     return render(request, 'ltc/course_page.html', context)
 
 
-@login_required
+@ login_required
 def event_page(request, slug):
     e = get_object_or_404(Event, slug=slug)
     course = e.course
@@ -296,8 +240,7 @@ def event_page(request, slug):
         'event': e,
         'course': course,
     }
-    
-        
+
     return render(request, 'ltc/event_page.html', context)
 
 
@@ -329,7 +272,6 @@ def grade_page(request, slug):
         'course': course,
     }
     return render(request, 'ltc/grade_page.html', context)
-
 
 
 @login_required
@@ -364,8 +306,6 @@ def edit_assignment(request, slug):
         pass
     context = {'form': form, 'slug': slug}
     return render(request, 'ltc/edit_menus/edit_assignment.html', context)
-
-
 
 
 # Base course view
@@ -431,8 +371,9 @@ def grades(request):
 
     courseList = []
     for c in courses:
-        grade_query = allGrades.filter(course=c[0]);
-        courseList.append({"id": c[0], "name": grade_query[0].course, "grades": grade_query})
+        grade_query = allGrades.filter(course=c[0])
+        courseList.append(
+            {"id": c[0], "name": grade_query[0].course, "grades": grade_query})
 
     context = {"data": courseList,
                "nbar": "grades"}
@@ -450,14 +391,16 @@ def staff_grades(request):
 
 
 def grade_assignment(request, slug):
-    a = get_object_or_404(Assignment,slug=slug)
+    a = get_object_or_404(Assignment, slug=slug)
     # generate a membership form for the given employee
     GradingForm = make_grading_form(a)
     size = Student.objects.filter(courses=a.course).count()
-    GradingFormSet = modelformset_factory(Grade, form=GradingForm,max_num=size, extra=size)
+    GradingFormSet = modelformset_factory(
+        Grade, form=GradingForm, max_num=size, extra=size)
 
     if request.method == "POST":
-        formset = GradingFormSet(request.POST, queryset=Grade.objects.filter(assignment=a))
+        formset = GradingFormSet(
+            request.POST, queryset=Grade.objects.filter(assignment=a))
         if formset.is_valid():
             instances = formset.save(commit=False)
             for member in instances:

@@ -36,11 +36,20 @@ Course Page {% endblock %} {% block body_block %}
                 <div class="col-8">
                     <h2>{{ course.code }}: {{ course.name }}</h2>
                     <p>{{ course.description }}</p>
-                    By Which Staff:{{ course.staff }}
+                    Delivered by: {% for s in staff %}
+                    {{ s.user.first_name }}
+                    {{ s.user.last_name }}
+                    {% if forloop.last == False%},{% endif%}
+                    {% endfor %}
                 </div>
                 <div class="col-4 text-right">
                     {% if user.is_staff %}
-                    <a href={% url 'ltc:edit_course' course.slug %} type="button" class="btn btn-primary">Edit</a>
+                    <a
+                        href="{% url 'ltc:edit_course' course.slug %}"
+                        type="button"
+                        class="btn btn-primary"
+                        >Edit</a
+                    >
                     {%endif%}
                 </div>
             </div>
@@ -53,17 +62,15 @@ Course Page {% endblock %} {% block body_block %}
                 <h4 id="list-item-{{forloop.counter}}">{{e.0}}</h4>
                 <div class="list-group">
                     {% if e.1 %} {% for l in e.1 %}
-                     <!-- Staff can jump to the events page and can edit or delete -->
+                    <!-- Staff can jump to the events page and can edit or delete -->
                     <a
                         href="{% url 'ltc:event_page' l.slug %}"
                         class="list-group-item list-group-item-action"
                     >
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">{{l.name}}</h5>
-                            <small>3 days ago</small>
                         </div>
                         <p class="mb-1">{{l.description}}</p>
-                        <small>And some small print.</small>
                     </a>
                     {% endfor %} {% else %}
                     <a class="list-group-item list-group-item-action">
@@ -93,7 +100,7 @@ Course Page {% endblock %} {% block body_block %}
                 <hr class="my-12" />
                 <h4 id="list-item-4">Assignments</h4>
                 <div class="list-group">
-                     <!-- List the assignment and staff can jump to the events page and can edit or delete -->
+                    <!-- List the assignment and staff can jump to the events page and can edit or delete -->
                     {% for a in assignments%}
                     <a
                         href="{% url 'ltc:assignment_page' a.slug %}"
@@ -101,15 +108,13 @@ Course Page {% endblock %} {% block body_block %}
                     >
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">{{a.title}}</h5>
-                            <small>3 days ago</small>
                         </div>
                         <p class="mb-1">
                             Some placeholder content in a paragraph.
                         </p>
-                        <small>And some small print.</small>
                     </a>
                     {% endfor %} {% if user.is_staff %}
-                     <!-- Staff can add assignment -->
+                    <!-- Staff can add assignment -->
                     <a
                         href="{% url 'ltc:add_assignment' course.slug %}"
                         class="list-group-item list-group-item-action"
@@ -125,37 +130,65 @@ Course Page {% endblock %} {% block body_block %}
             <div class="pb-4">
                 {% if user.is_staff %}
                 <hr class="my-12" />
-                <h4 id="list-item-5">Delete this course</h4>
+                <h4 id="list-item-5 ">Delete this course</h4>
                 <div class="list-group">
-                    <a data-toggle="modal" data-target="#Modal" class="list-group-item list-group-item-action">
+                    <a
+                        data-toggle="modal"
+                        data-target="#Modal"
+                        class="list-group-item list-group-item-danger"
+                    >
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">Delete this course permanently</h5>
                         </div>
                         <p class="mb-1">
                             Some placeholder content in a paragraph.
                         </p>
-                        <small>And some small print.</small>
                     </a>
                 </div>
-                <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+                <div
+                    class="modal fade"
+                    id="Modal"
+                    tabindex="-1"
+                    aria-labelledby="ModalLabel"
+                    aria-hidden="true"
+                >
                     <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="ModalLabel">Delete course</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="ModalLabel">
+                                    Delete course
+                                </h5>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                >
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete this course?
+                                There is no going back.
+                            </div>
+                            <div class="modal-footer">
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary"
+                                    data-dismiss="modal"
+                                >
+                                    Close
+                                </button>
+                                <a
+                                    href="{% url 'ltc:delete_course' course.slug %}"
+                                    type="button"
+                                    class="btn btn-danger"
+                                    >Delete</a
+                                >
+                            </div>
                         </div>
-                        <div class="modal-body">
-                          Are you sure you want to delete this course? There is no going back.
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                          <a href="{% url 'ltc:delete_course' course.slug %}" type="button" class="btn btn-danger">Delete</a>
-                        </div>
-                      </div>
                     </div>
-                  </div>
+                </div>
                 {% endif %}
             </div>
         </div>

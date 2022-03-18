@@ -41,15 +41,17 @@ class Staff(models.Model):
         t = []
         for course in self.courses.all():
             for event in course.event_set.all():
-                    t.append(event)
+                t.append(event)
         pks = [i.pk for i in t]
         return Event.objects.filter(pk__in=pks)
+
     def get_assignments(self):
         a = []
         for course in self.courses.all():
             for assignment in course.assignment_set.all():
                 a.append(assignment)
         return a
+
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
         super(Staff, self).save(*args, **kwargs)
@@ -59,7 +61,7 @@ class Staff(models.Model):
 
 
 class Course(models.Model):
-    # One courses can be enrolled by many students, courses have events like lab, tutorials and labs with time slots, 
+    # One courses can be enrolled by many students, courses have events like lab, tutorials and labs with time slots,
     # Some courses may have request for relative prerequisite
     code = models.CharField(max_length=128, unique=True)
     endDate = models.DateField(default=datetime.date.today())
@@ -92,7 +94,7 @@ class Assignment(models.Model):
         super(Assignment, self).save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.course) + ' ' + self.title
+        return str(self.course.code) + ' ' + self.title
 
 
 class Grade(models.Model):
@@ -101,9 +103,9 @@ class Grade(models.Model):
     assignment = models.ForeignKey(
         Assignment, on_delete=models.CASCADE)
     result = models.IntegerField(default=0)
-    class Meta:
-        unique_together = ('student', 'course','assignment',)
 
+    class Meta:
+        unique_together = ('student', 'course', 'assignment',)
 
 
 class Degree(models.Model):
@@ -120,13 +122,14 @@ class Degree(models.Model):
 
 
 class Event(BaseOccurrence):
-    # A course can have many events, and there are 3 types of events: lab, tutorials and lectures, a map or a zoom links 
+    # A course can have many events, and there are 3 types of events: lab, tutorials and lectures, a map or a zoom links
     # will be auto-generated when clicked the concreate event page
     course = models.ForeignKey(Course, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=128)
     description = models.TextField(max_length=512, null=True)
     location = models.CharField(max_length=128)
-    geoUri = models.CharField(max_length=128, default="geo:55.8726,-4.2896?z=16")
+    geoUri = models.CharField(
+        max_length=128, default="geo:55.8726,-4.2896?z=16")
     lecture = 'Lecture'
     tutorial = 'Tutorial'
     lab = 'Lab'
@@ -149,6 +152,7 @@ class Event(BaseOccurrence):
     def __str__(self):
         return str(self.course.name+"-"+self.name)
 
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, null=True, blank=True)
@@ -160,7 +164,7 @@ class Student(models.Model):
         t = []
         for course in self.courses.all():
             for event in course.event_set.all():
-                    t.append(event)
+                t.append(event)
         pks = [i.pk for i in t]
         return Event.objects.filter(pk__in=pks)
 
@@ -174,6 +178,7 @@ class Student(models.Model):
         return a
 
     degree = models.ForeignKey(Degree, null=True, on_delete=models.CASCADE)
+
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self))
         super(Student, self).save(*args, **kwargs)
@@ -186,7 +191,8 @@ class TeamMeeting(models.Model):
     # User can select the team members to arrange a team meeting, they are allowed to have a team meeting
     # in different week. Finding the available timeslots among all members and name the meeting
     thisWeek = datetime.date.today().isocalendar()[1]
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owner", null=True)
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="owner", null=True)
     members = models.ManyToManyField(User, blank=True)
     name = models.CharField(max_length=128, blank=False)
     slug = models.SlugField(unique=True, editable=False, null=True, blank=True)

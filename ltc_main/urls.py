@@ -17,8 +17,6 @@ urlpatterns = [
     path('add_course/', views.add_course, name='add_course'),
     path('add_assignment/<slug:slug>/',
          views.add_assignment, name='add_assignment'),
-    path('add_grade/', views.add_grade, name='add_grade'),
-    path('add_degree/', views.add_degree, name='add_degree'),
 
     # Pages for viewing items.
     path('course_page/<slug:slug>/', views.course_page, name='course_page'),

@@ -7,58 +7,67 @@ Admin?: {{ user.is_superuser }}<br />
 {% endif%} -->
 <div class="row">
     <div class="col-12">
-      <div class="row">
-        <h3>Welcome, {{user.username}}!</h3>
-      </div>
-      <div class="row">
-        <h5>{% if user.is_staff %}Staff{% else %}Student perusing {{person.degree.name}}{% endif %}</h5>
-      </div>
+        <div class="row">
+            <h3>Welcome, {{user.username}}!</h3>
+        </div>
+        <div class="row">
+            <h5>
+                {% if user.is_staff %}Staff{% else %}Student perusing
+                {{person.degree.name}}{% endif %}
+            </h5>
+        </div>
     </div>
 </div>
 <hr class="my-12" />
 <div class="row">
-  <div class="col-4 border-right">
-    <h4>Next today</h4>
-    <div class="list-group">
-      <!-- List the event of this day -->
-      {% for e in time %}
-      <a href={% url 'ltc:event_page' e.link %} class="list-group-item list-group-item-action"
-        >{{ e.text }}</a
-      >
-      {% empty %}<a class="list-group-item list-group-item-action">
-        Great job! Nothing left today.</a
-      >
-      {% endfor %}
+    <div class="col-4 border-right">
+        <h4>Next today</h4>
+        <div class="list-group">
+            <!-- List the event of this day -->
+            {% for e in time %}
+            <a
+                href="{% url 'ltc:event_page' e.link %}"
+                class="list-group-item list-group-item-action"
+                >{{ e.text }}<span class="badge badge-light">{{ e.time }}</span></a
+            >
+            {% empty %}<a class="list-group-item list-group-item-action">
+                Great job! Nothing left today.</a
+            >
+            {% endfor %}
+        </div>
     </div>
-  </div>
-  <div class="col-4 border-right">
-    <h4>Deliverables</h4>
-    <div class="list-group">
-       <!-- List the assignment -->
-      {% for a in assignments %}
-      <a href={% url 'ltc:assignment_page' a.slug %} class="list-group-item list-group-item-action">{{ a }}</a>
-      {% empty %}<a class="list-group-item list-group-item-action">
-        Great job! Nothing left to submit.</a
-      >
-      {% endfor %}
+    <div class="col-4 border-right">
+        <h4>Deliverables</h4>
+        <div class="list-group">
+            <!-- List the assignment -->
+            {% for a in assignments %}
+            <a
+                href="{% url 'ltc:assignment_page' a.slug %}"
+                class="list-group-item list-group-item-action"
+                >{{ a }}<span class="badge badge-light">{{ a.deadline }}</span></a
+            >
+            {% empty %}<a class="list-group-item list-group-item-action">
+                Great job! Nothing left to submit.</a
+            >
+            {% endfor %}
+        </div>
     </div>
-  </div>
-  <div class="col-4">
-    <h4>Current courses</h4>
-    <div class="list-group">
-       <!-- List the current course -->
-      {% for c in courses_taken %}
-      <a
-        href="{% url 'ltc:course_page' c.slug %}"
-        class="list-group-item list-group-item-action"
-        >{{ c }}</a
-      >
-      {% empty %}<a class="list-group-item list-group-item-action"
-        >No current courses.</a
-      >
-      {% endfor %}
+    <div class="col-4">
+        <h4>Current courses</h4>
+        <div class="list-group">
+            <!-- List the current course -->
+            {% for c in courses_taken %}
+            <a
+                href="{% url 'ltc:course_page' c.slug %}"
+                class="list-group-item list-group-item-action"
+                >{{ c }}</a
+            >
+            {% empty %}<a class="list-group-item list-group-item-action"
+                >No current courses.</a
+            >
+            {% endfor %}
+        </div>
     </div>
-  </div>
 </div>
 
 {% endblock %}
