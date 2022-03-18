@@ -1,7 +1,12 @@
 {% extends 'ltc/base.html' %} {% load staticfiles %} {% block title_block %}
 Grades {% endblock %} {% block body_block %}
-<h2 class="text-muted">Grades</h2>
+<div class="row pb-5">
+    <div class="col-sm-6">
+        <h2 class="text-muted">Grades</h2>
+    </div>
+</div>
 <div class="list-group">
+    {% if data %}
     <div class="accordion" id="accordion">
         {% for g in data %}
         <div class="card">
@@ -32,7 +37,13 @@ Grades {% endblock %} {% block body_block %}
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
+    {% endfor %} {% else %}
+    <div class="card" >
+        <div class="card-body">
+            <h2 class="card-title">No grades</h2>
+        </div>
+    </div>
+    {% endif%}
 </div>
 {% endblock %}

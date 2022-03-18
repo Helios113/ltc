@@ -66,5 +66,7 @@ urlpatterns = [
 
     path('staff_grades/', views.staff_grades, name='staff_grades'),
     path('grade_assignment/<slug:slug>', views.grade_assignment, name='grade_assignment'),
+    
+    path('join_course/', views.join_course, name='join_course'),
 
 ]

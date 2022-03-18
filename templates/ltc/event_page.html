@@ -37,6 +37,7 @@ event.name }} {% endblock %} {% block body_block %}
             data-toggle="modal"
             data-target="#Modal"
             type="button"
+            href=""
             class="btn btn-danger"
         >
             Delete
@@ -75,6 +76,7 @@ event.name }} {% endblock %} {% block body_block %}
                         <a
                             href="{% url 'ltc:delete_event' event.slug %}"
                             type="button"
+                            href=""
                             class="btn btn-danger"
                             >Delete</a
                         >

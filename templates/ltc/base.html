@@ -81,6 +81,11 @@
                             ><i class="fa fa-clock-o fa-lg"></i> Schedule a
                             meeting</a
                         >
+                        <a
+                            class="nav-item nav-link {% if nbar == 'join' %}active{% endif %}"
+                            href="{% url 'ltc:join_course' %}"
+                            ><i class="fa fa-plus-circle fa-lg"></i> Join a course</a
+                        >
                         {% endif %}
                     </div>
                     <!-- Right aligned field -->

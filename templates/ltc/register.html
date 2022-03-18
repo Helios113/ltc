@@ -1,27 +1,36 @@
-{% extends 'ltc/base.html' %}
-{% load staticfiles %}
+{% extends 'ltc/base.html' %} {% load staticfiles %} {% block title_block %}
+Register {% endblock %} {% block body_block %}
+<div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <form
+            id="user_form"
+            method="post"
+            action="{% url 'ltc:register' %}"
+            enctype="multipart/form-data"
+        >
+            {% csrf_token %}
+            <div class="text-center">
+                <h1 class="mb-8">Register for LTC++</h1>
+                <p class="text-black-50">Please enter your details!</p>
+            </div>
+            <!-- Display each form and choose the register type -->
+            {{ form.as_p }}
+            <!-- Provide a button to click to submit the form. -->
 
-{% block title_block %}
-    Register
-{% endblock %}
+            <div class="text-center">
+                <button class="btn btn-primary mb-3" type="submit">
+                    Register
+                </button>
+                <p class="mb-3">
+                    Already have an account?
+                    <!-- Jump to the register page -->
+                    <a href="{% url 'ltc:login' %}" class="text-black-50"
+                        >Log in!</a
+                    >
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
 
-{% block body_block %}
-    <h1>Register for LTC++</h1>
-    {% if registered %}
-    <strong>Thank you for registering!</strong>
-    <a href="{% url 'ltc:index' %}">Return to the homepage.</a><br />
-    {% else %}
-    <strong>register here!</strong><br />
-    <form id="user_form" method="post" action="{% url 'ltc:register' %}"
-    enctype="multipart/form-data">
-
-    {% csrf_token %}
-
-    <!-- Display each form and choose the register type -->
-    {{ form.as_p }}
-    <!-- Provide a button to click to submit the form. -->
-
-    <input type="submit" name="submit" value="Register" />
-    </form>
-    {% endif %}
 {% endblock %}

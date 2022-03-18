@@ -36,14 +36,14 @@ Course Page {% endblock %} {% block body_block %}
                 <div class="col-8">
                     <h2>{{ course.code }}: {{ course.name }}</h2>
                     <p>{{ course.description }}</p>
-                    Delivered by: {% for s in staff %}
-                    {{ s.user.first_name }}
-                    {{ s.user.last_name }}
-                    {% if forloop.last == False%},{% endif%}
+                    Delivered by: {% for s in staff %} {{ s.user.first_name }}
+                    {{ s.user.last_name }} 
+                    {% if forloop.last == False%},{%endif%}
                     {% endfor %}
                 </div>
                 <div class="col-4 text-right">
-                    {% if user.is_staff %}
+                    <div class="row">
+                    {% if user.is_staff and add == False %}
                     <a
                         href="{% url 'ltc:edit_course' course.slug %}"
                         type="button"
@@ -51,6 +51,19 @@ Course Page {% endblock %} {% block body_block %}
                         >Edit</a
                     >
                     {%endif%}
+                    <form
+                        action="{% url 'ltc:course_page' course.slug %}"
+                        method="post"
+                        enctype="multipart/form-data"
+                    >
+                    {% csrf_token %}
+                    {% if add == True %}
+                    <button type="submit" class="btn btn-success">Join</button>
+                    {% else %}
+                    <button type="submit" class="btn btn-warning">Drop</button>
+                    {%endif%}
+                    </form>
+                </div>
                 </div>
             </div>
         </div>
@@ -101,7 +114,7 @@ Course Page {% endblock %} {% block body_block %}
                 <h4 id="list-item-4">Assignments</h4>
                 <div class="list-group">
                     <!-- List the assignment and staff can jump to the events page and can edit or delete -->
-                    {% for a in assignments%}
+                    {% if assignments %} {% for a in assignments%}
                     <a
                         href="{% url 'ltc:assignment_page' a.slug %}"
                         class="list-group-item list-group-item-action"
@@ -113,7 +126,18 @@ Course Page {% endblock %} {% block body_block %}
                             Some placeholder content in a paragraph.
                         </p>
                     </a>
-                    {% endfor %} {% if user.is_staff %}
+                    {% endfor %} {% else %}
+                    <a class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">No assignments in this course</h5>
+                        </div>
+                        <p class="mb-1">{{l.description}}</p>
+                        <small
+                            >This means that the course director has not added
+                            any materials for this section.</small
+                        >
+                    </a>
+                    {% endif %} {% if user.is_staff %}
                     <!-- Staff can add assignment -->
                     <a
                         href="{% url 'ltc:add_assignment' course.slug %}"

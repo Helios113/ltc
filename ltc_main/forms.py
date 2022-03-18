@@ -1,4 +1,3 @@
-from math import degrees
 from django import forms
 from .models import *
 from datetime import datetime
@@ -16,11 +15,19 @@ class UserForm(forms.ModelForm):
         (ADMINISTRATOR, 'Staff - Administrator'),
     ]
     password = forms.CharField(widget=forms.PasswordInput())
+
+    degree = forms.ModelChoiceField(
+        queryset=Degree.objects.all(), required=True,)
     identity = forms.ChoiceField(choices=CHOICES, initial=STUDENT)
+
+    def __init__(self, *args, **kwargs):
+        super(forms.ModelForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
 
     class Meta:
         model = User
-        fields = ('username', 'password',)
+        fields = ('username','password','first_name', 'last_name')
 
 
 class CourseForm(forms.ModelForm):

@@ -81,7 +81,7 @@ def register(request):
             if form.cleaned_data['identity'] == UserForm.STUDENT:
                 t.is_staff = False
                 t.save()
-                degree = Degree.objects.get(id=1)
+                degree = form.cleaned_data['degree']
                 s = Student.objects.create(user=t)
                 s.degree = degree
                 s.save()
@@ -108,8 +108,10 @@ def register(request):
                 p.type = Staff.ADMINISTRATOR
                 p.save()
             else:
-                raise RuntimeError('Unknown identity. Ask Xinyu for detail.')
+                raise RuntimeError('Unknown identity.')
             registered = True
+            return redirect('ltc:index')
+            
         else:
             print(form.errors)
     else:
@@ -218,7 +220,23 @@ def add_assignment(request, slug):
 
 @ login_required
 def course_page(request, slug):
+    user = request.user
+    if user.is_staff:
+        u = Staff.objects.get(user=user)
+    else:
+        u = Student.objects.get(user=user)
     c = get_object_or_404(Course, slug=slug)
+    if c in list(u.courses.all()):
+        add = False
+    else:
+        add = True;
+    if request.method == 'POST':
+        if add:
+            u.courses.add(c)
+            add = False
+        else:
+            u.courses.remove(c)
+            add = True
     prerequisites = c.prerequisite.all()
     assignments = c.assignment_set.all()
     events = c.event_set.all()
@@ -227,8 +245,9 @@ def course_page(request, slug):
     data[0][1] = [i for i in events if i.type == 'Lecture']
     data[1][1] = [i for i in events if i.type == 'Tutorial']
     data[2][1] = [i for i in events if i.type == 'Lab']
+    
     context = {'course': c, 'prerequisites': prerequisites,
-               'assignments': assignments, 'events': data, 'user': request.user, 'staff':list(staff)}
+               'assignments': assignments, 'events': data, 'user': user, 'staff':list(staff), 'add':add}
     return render(request, 'ltc/course_page.html', context)
 
 
@@ -389,7 +408,7 @@ def staff_grades(request):
                "nbar": "grades"}
     return render(request, 'ltc/staff_grades.html', context)
 
-
+@login_required
 def grade_assignment(request, slug):
     a = get_object_or_404(Assignment, slug=slug)
     # generate a membership form for the given employee
@@ -412,3 +431,18 @@ def grade_assignment(request, slug):
     else:
         formset = GradingFormSet(queryset=Grade.objects.filter(assignment=a),)
     return render(request, 'ltc/grade_assignment.html', {'formset': formset})
+
+@login_required
+def join_course(request):
+    user = request.user
+    if user.is_staff:
+        u = Staff.objects.get(user=user)
+        courses = Course.objects.all();
+    else:
+        u = Student.objects.get(user=user)
+        courses = u.degree.course.all()
+    courses = list(set(courses) - set(u.courses.all()))
+    context = {"courses": courses,
+               "nbar": "join",
+               "u":u}
+    return render(request, 'ltc/join_course.html', context)
