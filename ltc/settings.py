@@ -41,9 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ltc_main',
-    'bootstrap_datepicker_plus',
 ]
-INSTALLED_APPS += ('mathfilters', 'datetimewidget', )
+INSTALLED_APPS += ('mathfilters', )
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
