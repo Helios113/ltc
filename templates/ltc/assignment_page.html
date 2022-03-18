@@ -6,6 +6,7 @@ Assignment Page {% endblock %} {% block body_block %}
             <h5 class="card-title">{{ course }}</h5>
             <h6>{{ title }}</h6>
             <p class="card-text">{{ detail }}</p>
+            Deadline: <span class="badge badge-light">{{ assignment.deadline }}</span>
             {% if user.is_staff %}
             <div class="btn-group" role="group">
                 <a
