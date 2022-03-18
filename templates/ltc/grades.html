@@ -7,7 +7,7 @@ Grades {% endblock %} {% block body_block %}
 </div>
 <div class="list-group">
     {% if data %}
-    <div class="accordion" id="accordion">
+    <div id="accordion">
         {% for g in data %}
         <div class="card">
             <div class="card-header" id="{{g.id}}">
@@ -24,6 +24,7 @@ Grades {% endblock %} {% block body_block %}
                     </button>
                 </h2>
             </div>
+
             <div
                 id="collapse{{g.id}}"
                 class="collapse"

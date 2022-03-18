@@ -133,7 +133,7 @@ def user_login(request):
                 return HttpResponse("Your LTC++ account is disabled.")
         else:
             print(f"Invalid login details: {username}, {password}")
-            return HttpResponse("Invalid login details supplied.")
+            return render(request, 'ltc/login.html', context={'login':False})
     else:
         return render(request, 'ltc/login.html')
 
