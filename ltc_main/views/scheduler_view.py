@@ -50,7 +50,7 @@ def team_schedule_page(request, category_slug):
         students = User.objects.filter(Q(username__icontains=url_parameter) | Q(
             first_name__icontains=url_parameter) | Q(last_name__icontains=url_parameter))[:10]
         students = [item for item in students.all(
-        ) if item not in meeting.members.all()]
+        ) if item not in meeting.members.all() and not item.is_superuser]
     else:
         students = None
         fresh = True
@@ -68,8 +68,8 @@ def team_schedule_page(request, category_slug):
     context['times'] = calTimes
 
     if request.method == 'POST':
-        print(request.POST['user'])
-        meeting.members.add(User.objects.get(username=request.POST['user']))
+        if 'user' in request.POST:
+            meeting.members.add(User.objects.get(username=request.POST['user']))
     if request.is_ajax():
         html = render_to_string(
             template_name="ltc/student_search_partial.html",
