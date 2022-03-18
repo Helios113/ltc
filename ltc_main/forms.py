@@ -67,7 +67,7 @@ class EventForm(forms.ModelForm):
     # repeat = forms.ChoiceField(
     #     choices=EVENTTOOLS_REPEAT_CHOICES, required=False)
     repeat_until = forms.DateField(
-        widget=forms.TextInput(attrs={'type': 'date'}))
+        widget=forms.TextInput(attrs={'type': 'date'}), required=False)
 
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)

@@ -1,21 +1,47 @@
-{% extends 'ltc/base.html' %}
-{% load staticfiles %}
-
-{% block title_block %}
-	Edit Assignment
-{% endblock %}
-
-{% block body_block %}
-    <form id="course_form" method="post" action="{% url 'ltc:edit_assignment' slug %}"
-    enctype="multipart/form-data">
-
+{% extends 'ltc/base.html' %} {% load staticfiles %} {% block title_block %}
+Edit Assignment {% endblock %} {% block body_block %}
+<form
+    id="course_form"
+    method="post"
+    action="{% url 'ltc:edit_assignment' slug %}"
+    enctype="multipart/form-data"
+>
     {% csrf_token %}
 
-    <!-- Display each form -->
-    {{ form.as_p }}
-    <!-- Provide a button to click to submit the form. -->
-
-    <input type="submit" name="submit" value="Edit assignment" />
-    </form>
+    <div class="form-group">
+        {{ form.non_field_errors }}
+        <div class="fieldWrapper form-group">
+            {{ form.title.errors }}
+            <label for="{{ form.title.id_for_label }}">Title:</label>
+            {{ form.title }}
+            <small
+                id="{{ form.title.id_for_label }}Help"
+                class="form-text text-muted"
+                >Title of the assignment</small
+            >
+        </div>
+        <div class="fieldWrapper form-group">
+            {{ form.detail.errors }}
+            <label for="{{ form.detail.id_for_label }}">Details:</label>
+            {{ form.detail }}
+            <small
+                id="{{ form.detail.id_for_label }}Help"
+                class="form-text text-muted"
+                >Details of the Assignment.</small
+            >
+        </div>
+        <div class="fieldWrapper form-group">
+            {{ form.deadline.errors }}
+            <label for="{{ form.deadline.id_for_label }}">Deadline:</label>
+            {{ form.deadline }}
+            <small
+                id="{{ form.deadline.id_for_label }}Help"
+                class="form-text text-muted"
+                >Deadline for assignment
+            </small>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save assignment</button>
+</form>
 
 {% endblock %}

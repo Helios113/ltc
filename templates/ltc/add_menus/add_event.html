@@ -1,25 +1,121 @@
-{% extends 'ltc/base.html' %}
-{% load staticfiles %}
-
-{% block title_block %}
-	Add Event
-{% endblock %}
-
-{% block body_block %}
-    <form
+{% extends 'ltc/base.html' %} {% load staticfiles %} {% block title_block %} Add
+Event {% endblock %} {% block body_block %}
+<form
     id="event_form"
     method="post"
     action="{% url 'ltc:add_event' data.course.slug data.type  %}"
     enctype="multipart/form-data"
-    >
-
-    {% csrf_token %}
-    <div class="form-group">
-        
-        {{form.as_p}}
-        
+>
+    {% csrf_token %} {{ form.non_field_errors }}
+    <div class="row">
+        <div class="fieldWrapper form-group col-12">
+            {{ form.name.errors }}
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            {{ form.name }}
+            <small
+                id="{{ form.name.id_for_label }}Help"
+                class="form-text text-muted"
+                >Name of the event</small
+            >
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Add new event</button>
-    </form>
+    <div class="row">
+        <div class="fieldWrapper form-group col-12">
+            {{ form.description.errors }}
+            <label for="{{ form.description.id_for_label }}"
+                >Description:</label
+            >
+            {{ form.description }}
+            <small
+                id="{{ form.description.id_for_label }}Help"
+                class="form-text text-muted"
+                >Description of the event</small
+            >
+        </div>
+    </div>
+    <div class="row">
+        <div class="fieldWrapper form-group col-12">
+            {{ form.location.errors }}
+            <label for="{{ form.location.id_for_label }}">Location:</label>
+            {{ form.location }}
+            <small
+                id="{{ form.location.id_for_label }}Help"
+                class="form-text text-muted"
+                >Location of the event. Can be a link.</small
+            >
+        </div>
+    </div>
+    <div class="row">
+        <div class="fieldWrapper form-group col-12">
+            {{ form.geoUri.errors }}
+            <label for="{{ form.geoUri.id_for_label }}">Geo URI:</label>
+            {{ form.geoUri }}
+            <small
+                id="{{ form.geoUri.id_for_label }}Help"
+                class="form-text text-muted"
+                >Geo URI for a physical location (Defaults to main building).
+                Get your Geo URI from
+                <a
+                    href="https://www.openstreetmap.org/#map=15/55.8719/-4.2874"
+                    target="_blank"
+                    >openstreetmap.org</a
+                >.</small
+            >
+        </div>
+    </div>
+    <div class="row">
+        <div class="fieldWrapper form-group col-3">
+            {{ form.start.errors }}
+            <label for="{{ form.start.id_for_label }}"
+                >Start time and date:</label
+            >
+            {{ form.start }}
+            <small
+                id="{{ form.start.id_for_label }}Help"
+                class="form-text text-muted"
+                >Start time for the event.</small
+            >
+        </div>
+        <div class="fieldWrapper form-group col-3">
+            {{ form.end.errors }}
+            <label for="{{ form.end.id_for_label }}"
+                >End time and date:</label
+            >
+            {{ form.end }}
+            <small
+                id="{{ form.end.id_for_label }}Help"
+                class="form-text text-muted"
+                >End time for the event.</small
+            >
+        </div>
+        <div class="fieldWrapper form-group col-3">
+            {{ form.repeat.errors }}
+            <label for="{{ form.repeat.id_for_label }}"
+                >Repeat:</label
+            >
+            {{ form.repeat }}
+            <small
+                id="{{ form.repeat.id_for_label }}Help"
+                class="form-text text-muted"
+                >Repeat (not mandatory)</small
+            >
+        </div>
+        <div class="fieldWrapper form-group col-3">
+            {{ form.repeat_until.errors }}
+            <label for="{{ form.repeat_until.id_for_label }}"
+                >Repeat until:</label
+            >
+            {{ form.repeat_until }}
+            <small
+                id="{{ form.repeat_until.id_for_label }}Help"
+                class="form-text text-muted"
+                >Repeat until (not mandatory)</small
+            >
+        </div>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Add new event</button>
+    </div>
+</form>
 
 {% endblock %}
