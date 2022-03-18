@@ -127,7 +127,7 @@ Course Page {% endblock %} {% block body_block %}
                 <hr class="my-12" />
                 <h4 id="list-item-5">Delete this course</h4>
                 <div class="list-group">
-                    <a data-toggle="modal" data-target="#exampleModal" class="list-group-item list-group-item-action">
+                    <a data-toggle="modal" data-target="#Modal" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">Delete this course permanently</h5>
                         </div>
@@ -137,11 +137,11 @@ Course Page {% endblock %} {% block body_block %}
                         <small>And some small print.</small>
                     </a>
                 </div>
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                          <h5 class="modal-title" id="ModalLabel">Delete course</h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
@@ -151,7 +151,7 @@ Course Page {% endblock %} {% block body_block %}
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                          <a href="{% url 'ltc:delete_course' course.slug %}" type="button" class="btn btn-danger">Delete course</a>
+                          <a href="{% url 'ltc:delete_course' course.slug %}" type="button" class="btn btn-danger">Delete</a>
                         </div>
                       </div>
                     </div>

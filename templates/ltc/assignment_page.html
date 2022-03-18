@@ -1,18 +1,76 @@
-{% extends 'ltc/base.html' %}
-{% load staticfiles %}
-
-{% block title_block %}
-	Assignment Page
-{% endblock %}
-
-{% block body_block %}
-    For Which Course:<a href="{% url 'ltc:course_page' course.slug %}">{{ course }}</a>
-    <br />
-    Title:{{ title }}
-    <br />
-    Detail:{{ detail }}
-    <br />
-    <a href="{% url 'ltc:grade_assignment' assignment.slug %}"><button>Grade Assignment</button></a>
-    <a href="{% url 'ltc:edit_assignment' assignment.slug %}"><button>Edit Assignment</button></a>
-    <a href="{% url 'ltc:delete_assignment' assignment.slug %}"><button>Delete Assignment</button></a>
+{% extends 'ltc/base.html' %} {% load staticfiles %} {% block title_block %}
+Assignment Page {% endblock %} {% block body_block %}
+<div class="row justify-content-center">
+    <div class="card col-10">
+        <div class="card-body">
+            <h5 class="card-title">{{ course }}</h5>
+            <h6>{{ title }}</h6>
+            <p class="card-text">{{ detail }}</p>
+            {% if user.is_staff %}
+            <div class="btn-group" role="group">
+                <a
+                    href="{% url 'ltc:grade_assignment' assignment.slug %}"
+                    type="button"
+                    class="btn btn-primary"
+                    >Grade</a
+                >
+                <a
+                    href="{% url 'ltc:edit_assignment' assignment.slug %}"
+                    type="button"
+                    class="btn btn-primary"
+                    >Edit</a
+                >
+                <a
+                    data-toggle="modal"
+                    data-target="#Modal"
+                    type="button"
+                    class="btn btn-danger"
+                    >Delete</a
+                >
+            </div>
+            <div
+                class="modal fade"
+                id="Modal"
+                tabindex="-1"
+            >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="ModalLabel">
+                                Delete assignment
+                            </h5>
+                            <button
+                                type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete this assignment?
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-dismiss="modal"
+                            >
+                                Close
+                            </button>
+                            <a
+                                href="{% url 'ltc:delete_assignment' assignment.slug %}"
+                                type="button"
+                                class="btn btn-danger"
+                                >Delete</a
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
