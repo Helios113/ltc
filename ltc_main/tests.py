@@ -27,27 +27,17 @@ class StudentModelTests(TestCase):
         Test if the get_time_slots() function works.
         """
         course = Course.objects.create(name='Math')
-        event01 = Event.objects.create(course=course, name='event 01')
-        event02 = Event.objects.create(course=course, name='event 02')
-        time_slot01 = TimeSlot.objects.create(
-            event=event01,
-            start=datetime(2022, 3, 17, 12, 0),
-            end=datetime(2022, 3, 17, 14, 0),
-            repeat='RRULE:FREQ=WEEKLY'
-        )
-        time_slot02 = TimeSlot.objects.create(
-            event=event02,
-            start=datetime(2022, 3, 16, 14, 0),
-            end=datetime(2022, 3, 16, 16, 0),
-            repeat='RRULE:FREQ=WEEKLY'
-        )
+        Event.objects.create(course=course, name='event 01', start=datetime(2022, 3, 17, 12, 0),
+                             end=datetime(2022, 3, 17, 14, 0), repeat='RRULE:FREQ=WEEKLY')
+        Event.objects.create(course=course, name='event 02', start=datetime(2022, 3, 16, 14, 0),
+                             end=datetime(2022, 3, 16, 16, 0), repeat='RRULE:FREQ=WEEKLY')
         user = User.objects.create(username='student')
         student = Student.objects.create(user=user)
         student.courses.add(course)
         time_slots = student.get_time_slots()
         self.assertQuerysetEqual(
             time_slots,
-            ['<TimeSlot: 2022-03-16 14:00:00>', '<TimeSlot: 2022-03-17 12:00:00>']
+            ['<Event: Math-event 02>', '<Event: Math-event 01>']
         )
 
     def test_assignments(self):
@@ -55,14 +45,13 @@ class StudentModelTests(TestCase):
         Test if the get_assignments() function works.
         """
         course = Course.objects.create(name='Math')
-        Assignment.objects.create(course=course,title='quiz')
-        Assignment.objects.create(course=course, title='exam')
-
+        Assignment.objects.create(course=course, title='quiz', deadline=datetime(2022, 6, 2, 19, 0))
+        Assignment.objects.create(course=course, title='exam', deadline=datetime(2022, 6, 3, 19, 0))
         user = User.objects.create(username='student')
         student = Student.objects.create(user=user)
         student.courses.add(course)
         assignments = student.get_assignments()
         self.assertQuerysetEqual(
             assignments,
-            ['<Assignment:  Math quiz>', '<Assignment:  Math exam>']
+            ['<Assignment:  quiz>', '<Assignment:  exam>']
         )
