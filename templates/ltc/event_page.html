@@ -7,7 +7,7 @@ event.name }} {% endblock %} {% block body_block %}
             <div class="col-9">
                 <h5 class="card-title">{{ event.name }}</h5>
                 <p class="card-text">{{ event.description }}</p>
-                <a id="link">{{ event.location }}</a>
+                <a href="" id="link">{{ event.location }}</a>
                 <p class="card-text">{{ event.timeslot }}</p>
             </div>
         </div>
@@ -28,6 +28,6 @@ event.name }} {% endblock %} {% block body_block %}
 <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.13.0/build/ol.js"></script>
 <script
     type="text/javascript"
-    src="{% static 'javascript/map/location.js' %}"
+    src="{% static 'javascript/location.js' %}"
 ></script>
 {% endblock %}

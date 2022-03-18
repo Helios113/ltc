@@ -83,6 +83,7 @@ def populate_course(courses_info):
         t = Course.objects.get_or_create(code=info['code'])[0]
         t.name = info['name']
         t.description = info['description']
+        t.endDate = info['endDate']
         t.prerequisite.set(Course.objects.filter(
             name__in=info['prerequisite']))
         t.save()
@@ -120,12 +121,12 @@ def populate_degree(degrees_info):
 
 def populate_event(events_info):
     for info in events_info:
-        e = Event.objects.get_or_create(name=info['name'], course = Course.objects.get(name=info['course']))[0]
+        e = Event.objects.get_or_create(name=info['name'], course = Course.objects.get(name=info['course']),start = info['start'],
+        end = info['end'])[0]
         e.description = info['description']
         e.location = info['location']
+        e.geoUri = info['geoUri']
         e.type = info['type']
-        e.start = info['start']
-        e.end = info['end']
         e.repeat = info['repeat']
         e.save()
     return
@@ -181,7 +182,7 @@ def populate():
          'endDate':date.today() + timedelta(days=365) },
         {'code': 'CS100', 'name': 'Big Data', 'prerequisite': ['course C', ],
          'description': 'The Big Data course covers the basics of Big Data and introduces students to python and fundamental libraries to do Big Data analysis.', 
-         'endDate':date.today() + timedelta(days=365)},
+         'endDate': date.today() + timedelta(days=365) },
     ]
 
     # Set events info here.

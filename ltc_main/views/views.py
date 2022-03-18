@@ -45,9 +45,9 @@ def index(request):
     todaysAgenda = [{"text": "{sTime}-{eTime}\t{cName}: {eName}".format(
         sTime="{hour:02d}:{minute:02d}".format(hour=i[0].hour, minute=i[0].minute),
         eTime="{hour:02d}:{minute:02d}".format(hour=i[1].hour, minute=i[1].minute),
-        cName=i[2].event.course.name,
-        eName=i[2].event.name),
-        "link": i[2].event.slug}
+        cName=i[2].course.name,
+        eName=i[2].name),
+        "link": i[2].slug}
         for i in u.get_time_slots().all_occurrences(from_date=datetime.now(), to_date=date.today())]
     current_courses = [i for i in u.courses.all() if i.endDate > date.today()]
     context = {
