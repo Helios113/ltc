@@ -15,7 +15,7 @@ python manage.py migrate
 * Next, populate some dummy data and start the server.
 
 ```
-python populate_ltc.py
+python populate_script.py
 python manage.py runserver
 ```
 
